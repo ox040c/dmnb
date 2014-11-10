@@ -1,6 +1,6 @@
 /// Interpreter
 
-enum Operator = {EQUAL, UNEQUAL, LESS, MORE, NO_MORE, NO_LESS, TOTAL_OPERATOR};
+enum Operator {EQUAL, UNEQUAL, LESS, MORE, NO_MORE, NO_LESS, TOTAL_OPERATOR};
 
 class Interpreter {
 private:
@@ -50,7 +50,7 @@ public:
 
 /// Catalog Manager
 
-enum DataType = {CHAR, INT, FLOAT, TOTAL_TYPE};
+enum DataType {CHAR, INT, FLOAT, TOTAL_TYPE};
 
 class Scheme {
 private:
@@ -151,7 +151,7 @@ public:
     unsigned int insert(const DBData data[],
                         const unsigned int &sizePerTable);
     void remove(const unsigned int &index,
-                const unsigned int )
+                const unsigned int );
     void writeBuffer(const DBData data[],
                      const std::string tableName,
                      const unsigned int &blockId,
