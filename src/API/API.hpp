@@ -10,19 +10,23 @@ typedef std::list < Attribute > Data;
 /// Attribute should be defined in recordManager.hpp
 /// It looks like this:
 ///     class Attribute {
-///
+///         DataType type;
+///         void *dataPtr;
+///         ...
+///     };
 
 class API {
 private:
     RecordManager &recordManager;
     IndexManager &indexManager;
     CatalogManger &catalogManager;
+    Data data;
 
 public:
     API(const CatalogManager &cat,
         const RecordManager &rec,
         const IndexManager &ind
-        ):catalogManager(cat), recordManager(rec), indexManager(ind) {}
+        ): catalogManager(cat), recordManager(rec), indexManager(ind) {}
 
     ~API() {}
 

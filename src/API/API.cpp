@@ -40,7 +40,7 @@ void API::dropIndex(const std::string &tableName, const std::string &indexName) 
     }
 }
 
-void API::select(const std::tableName) {
+const Data &API::select(const std::tableName) {
     if (!catalogManager.isTableExist(tableName)) {
         throw runtime_error(tableName + " dose not exist");
     } else {
@@ -48,4 +48,6 @@ void API::select(const std::tableName) {
     }
 }
 
-void API::select(const std::string &tableName, const Conditions &conditions);
+const Data &API::select(const std::string &tableName, const Conditions &conditions) {
+
+}
