@@ -8,26 +8,9 @@
 #include <vector>
 #include <map>
 #include <string>
+#include "CatalogManager.hpp"
 
-enum DataType {INT, FLOAT, CHAR, TOTAL_TYPE};
-
-class Scheme {
-private:
-    std::string name;
-    DataType dataType;
-    int charLength;
-    bool indexed;
-
-public:
-    void setName(const std::string &name);
-    void setDataType(const DataType &dataType);
-    void setCharLength(const int &charLength);
-
-    std::string getName();
-    DataType getDataType();
-    int getCharLength();
-    bool getIndexed();
-};
+#include "Utility.hpp"
 
 typedef std::list < Scheme > TableDefinition;
 typedef std::map < std::string, TableDefinition > TablesDefinition;
@@ -40,7 +23,7 @@ public:
     CatalogManager() {}
     ~CatalogManager() {}
 
-    bool isTableExisted(const std::string &tableName);
+    bool isTableExist(const std::string &tableName);
     bool isTableHasAttribute(const std::string &tableName, const std::string &attName);
     void readTable(const std::string &tableName);
     void createTable(const std::string &tableName, const std::TableDefinition &table);

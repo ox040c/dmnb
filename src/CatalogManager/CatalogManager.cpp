@@ -17,7 +17,7 @@ string parseNames(string &names) {
     return name;
 }
 
-bool CatalogManager::isTableExisted(const std::string &tableName) {
+bool CatalogManager::isTableExist(const std::string &tableName) {
     if (tables.count(tableName) != 0) return true;
     fstream input(tableName + ".def", ios::in | ios::binary);
     if (input.good()) return true;
@@ -38,7 +38,7 @@ bool CatalogManager::isTableHasAttribute(const std::string &tableName, const std
 }
 
 void CatalogManager::readTable(const std::string &tableName) {
-    if (!isTableExisted(tableName)) {
+    if (!isTableExist(tableName)) {
         throw runtime_error(tablename + " dose not exist");
     } else {
         if (tables.count(tableName) != 0) return;
@@ -71,7 +71,7 @@ void CatalogManager::readTable(const std::string &tableName) {
 }
 
 void CatalogManager::createTable(const std::string &tableName, const std::TableDefinition &table) {
-    if (isTableExisted(tableName)) {
+    if (isTableExist(tableName)) {
         throw runtime_error(tableName + " has existed");
     } else {
         fstream output(tableName+".def", ios::out | ios::binary);
@@ -104,7 +104,7 @@ void CatalogManager::createTable(const std::string &tableName, const std::TableD
 }
 
 void CatalogManager::dropTable(const std::string &tableName) {
-    if (!isTableExisted(tableName)) {
+    if (!isTableExist(tableName)) {
         throw runtime_error(tableName + ".def" + " does not exist");
     } else {
         if (remove(tableName + ".def") != 0) {

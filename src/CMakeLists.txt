@@ -28,6 +28,8 @@ file(GLOB h_main
 include_directories(
   "/usr/local/lib"
   "/usr/lib64"
+  
+  "./Utility"
   "./API"
   "./CatalogManager"
   "./Interpreter"
