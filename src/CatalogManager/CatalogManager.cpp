@@ -39,7 +39,7 @@ bool CatalogManager::isTableHasEntry(const std::string &tableName, const std::st
 
 void CatalogManager::readTable(const std::string &tableName) {
     if (!isTableExisted(tableName)) {
-        throw runtime_error(tablename + "dose not exist");
+        throw runtime_error(tablename + " dose not exist");
     } else {
         if (tables.count(tableName) != 0) return;
 
@@ -105,7 +105,7 @@ void CatalogManager::createTable(const std::string &tableName, const std::TableD
 
 void CatalogManager::dropTable(const std::string &tableName) {
     if (!isTableExisted(tableName)) {
-        throw runtime_error(tableName + ".def" + "does not exist");
+        throw runtime_error(tableName + ".def" + " does not exist");
     } else {
         if (remove(tableName + ".def") != 0) {
             throw runtime_error("failed to remove " + tableName + ".def");
