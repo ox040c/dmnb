@@ -40,7 +40,8 @@ public:
 
     void createTable(const std::string &tableName, const std::vector < Scheme > &data);
 
-    void dropTable(const std::string &tableName);   // indexManager.dropAddress() should be called
+    void dropTable(const std::string &tableName);   // [del]indexManager.dropAddress()[/del] should be called
+                                                    // sequencial index should be kept by recordManager?
     void dropIndex(const std::string &tableName);
     void select(const std::string &tableName,
                 const Conditions &conditions);      // no "or" in statement
