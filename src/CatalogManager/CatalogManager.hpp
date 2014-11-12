@@ -41,7 +41,7 @@ public:
     ~CatalogManager() {}
 
     bool isTableExisted(const std::string &tableName);
-    bool isTableHasEntry(const std::string &tableName, const std::string &entryName);
+    bool isTableHasAttribute(const std::string &tableName, const std::string &attName);
     void readTable(const std::string &tableName);
     void createTable(const std::string &tableName, const std::TableDefinition &table);
     void dropTable(const std::string &tableName);

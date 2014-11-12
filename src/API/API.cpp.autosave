@@ -1,0 +1,13 @@
+#include "API.hpp"
+#include "CatalogManager.hpp"
+
+/// TODO...
+///
+/// TxT
+///
+
+void API::createTable(const std::string &tableName, const std::vector<Scheme> &data) {
+    if (catalogManager.isTableExisted(tableName)) {
+        throw runtime_error
+    }
+}

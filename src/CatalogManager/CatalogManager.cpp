@@ -24,14 +24,14 @@ bool CatalogManager::isTableExisted(const std::string &tableName) {
     return false;
 }
 
-bool CatalogManager::isTableHasEntry(const std::string &tableName, const std::string &entryName) {
+bool CatalogManager::isTableHasAttribute(const std::string &tableName, const std::string &attName) {
     try {
         readTable(tableName);
     } catch (Exception e) {
         throw e;
     }
     for (list < Scheme >::iterator i = tables[tableName].begin(); i != tables[tableName].end(); ++i) {
-        if (i.getName() == entryName)
+        if (i.getName() == attName)
             return true;
     }
     return false;
