@@ -1,10 +1,16 @@
-#ifdef DATA_TYPE_HPP
+#ifndef DATA_TYPE_HPP
 #define DATA_TYPE_HPP
-
+#include <string>
+using namespace std;
 enum Operator {EQUAL, UNEQUAL, LESS, MORE, NO_MORE, NO_LESS, TOTAL_OPERATOR};
 
 enum DataType {INT, FLOAT, CHAR, TOTAL_TYPE};
 
+struct DataAddr {
+    string filename;
+    unsigned int dataaddr;
+    unsigned int datalen;
+};
 class Scheme {
 private:
     std::string name;
