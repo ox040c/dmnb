@@ -6,7 +6,6 @@
 #include <fstream>
 #include <map>
 
-using namespace std;
 class BufferManager{
 private:
 	ifstream infile;
