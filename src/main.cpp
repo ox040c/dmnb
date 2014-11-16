@@ -2,6 +2,8 @@
 #include <string>
 #include <cstdio>
 
+#include "Interpreter/parse.h"
+
 using namespace std;
 
 int main() {
@@ -30,9 +32,11 @@ int main() {
 
         str.clear();
         cout << "dMNb>";
-        cin >> str;
-        cout << str << endl;
-
+        getline(cin, str);
+	parse(str);
+        //cout << str << endl;
+	
+	    
     } while (str.length()); 
 
     return 0;
