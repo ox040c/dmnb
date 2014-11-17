@@ -5,15 +5,14 @@
 #ifndef API_HPP
 #define API_HPP
 
+#include <list>
+#include "RecordManager.hpp"
+#include "IndexManager.hpp"
+#include "CatalogManager.hpp"
+#include "Utility.hpp"
+
 typedef std::list < Condition > Conditions;
 typedef std::list < Attribute > Data;
-/// Attribute should be defined in recordManager.hpp
-/// It looks like this:
-///     class Attribute {
-///         DataType type;
-///         void *dataPtr;
-///         ...
-///     };
 
 class API {
 private:
