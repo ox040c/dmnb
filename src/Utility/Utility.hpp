@@ -32,33 +32,20 @@ struct DataAddr {
 };
 
 typedef struct SchemeType {
-
-public: //TODO: change to private
     std::string name;
     utls::DataType dataType;
     int charLength;
     bool indexed;
-public:
-    void setName(const std::string &name);
-    void setDataType(const utls::DataType &dataType);
-    void setCharLength(const int &charLength);
-
-    std::string getName();
-    utls::DataType getDataType();
-    int getCharLength();
-    bool getIndexed();
 } Scheme;
 
 typedef std::list < Scheme > TableDefinition;
 
 utls::DataType getDataType(const TableDefinition& td, const std::string attName) {
-    /*
-    for (const std::list <Scheme>::iterator i = td.begin(); i != td.end(); ++i) {
+    for (TableDefinition::const_iterator i = td.begin(); i != td.end(); ++i) {
         if (i->name == attName)
             return i->dataType;
     }
-    */
-    return utls::TOTAL_TYPE;
+    return (utls::DataType)utls::TOTAL_TYPE;
 }
 
 class Condition {

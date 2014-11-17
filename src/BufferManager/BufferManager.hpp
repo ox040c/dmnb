@@ -5,22 +5,20 @@
 #include <string>
 #include <fstream>
 #include <map>
-
+#include <vector>
 class BufferManager{
 private:
-	ifstream infile;
-	ofstream outfile;
-	map<int, string> pages_table;
-	map<int, int> pages_write_time;
-	map<int, unsigned int> pages_addr;
 	Page page[100];
+	int min_call();
+	int get_pageid(FilePtr);//找到有要寻找的page，若不存在这将block读入到page，返回pageID
+	void read_from_file(int,FilePtr);
 public:
 	BufferManager();
-	BufferManager();
 	~BufferManager();
-	unsigned int Insert(DataAddr & addr,char * data);
-	void Search(DataAddr & addr, char * ReturnDate);
-	void Delete(DataAddr & addr);
-	void Update(DataAddr & addr, char * ReturnDate);
+	void creat(std::string name);//建立一个表单，第一块block存储表格中数据的block 的数目
+	FilePtr Insert(FilePtr addr, const char * data); //通过DataAddr决定插入的文件
+	void Search(FilePtr addr, char * ReturnDate);//数据通过ReturnDate 返回
+	void Delete(FilePtr addr); //直接删除指定地点的指定长度，通过懒删除实现,记录在del_filename.txt中
+	void Update(FilePtr addr, const char * date);//把需要修改的数据传进来
 };
 #endif

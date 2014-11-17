@@ -62,7 +62,7 @@ void API::insertEntry(const string &tableName, const Entry &entry) {
         } else {
             int pos = recordManager.insert(tableName, entry);
             TableDefinition &df = catalogManager.getTableDef(tableName);
-            for (const TableDefinition::iterator &i = df.begin(); i != df.end(); ++i) {
+            for (TableDefinition::const_iterator &i = df.begin(); i != df.end(); ++i) {
                 string indexName = indexManager.getIndexName(tableName, i->name);
                 if (!indexName.empty()) {
                     indexManager.insert(indexName, pos,
