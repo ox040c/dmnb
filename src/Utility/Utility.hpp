@@ -2,6 +2,7 @@
 #define DATA_TYPE_HPP
 
 #include <string>
+#include <list>
 
 // applying namespace to avoid naming conflicts, thanks
 // NOTE: please add following line if you are using these types
@@ -9,11 +10,11 @@
 using namespace utls;
 */
 namespace utls {
-    
+
     enum Operator {EQUAL, UNEQUAL, LESS, MORE, NO_MORE, NO_LESS, TOTAL_OPERATOR};
 
     enum DataType {INT, FLOAT, CHAR, TOTAL_TYPE};
-        
+
 }
 
 typedef struct AttributeType {
@@ -50,11 +51,11 @@ public:
 typedef std::list < Scheme > TableDefinition;
 
 utls::DataType getDataType(const TableDefinition& td, const std::string attName) {
-    for (const list <Scheme>::iterator &i = td.begin(); i != td.end(); ++i) {
+    for (const std::list <Scheme>::iterator &i = td.begin(); i != td.end(); ++i) {
         if (i->name == attName)
             return i->dataType;
     }
-    return (utls::DataType)TOTAL_TYPE;
+    return utls::TOTAL_TYPE;
 }
 
 class Condition {
