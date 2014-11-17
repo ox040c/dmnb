@@ -36,5 +36,10 @@ public:
 
 //    int delete(int tid,int eid,int attrid,std::vector<char> v);
 // FIXME: `delete` is a reversed word in C++, change a name plz...
+
+// TODO:
+    std::string getIndexName(const std::string tableName,
+                             const std::string colName);
+// 返回表 tableName 建立在 colName 上的索引名，没有建立索引返回空串
 };
 #endif

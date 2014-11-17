@@ -21,6 +21,9 @@ typedef struct AttributeType {
     void *dataPtr;
 } Attribute;
 
+typedef std::list < Attribute > Entry;
+typedef std::list < Entry > Entries;
+
 struct DataAddr {
     std::string filename;
     unsigned int dataaddr;

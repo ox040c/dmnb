@@ -18,4 +18,8 @@ public:
                       const std::string &colName);
     // 给定表名，硬盘上位置，列名，返回一个存着值的void *
     
+    int insertEntry(const std::string &tableName,
+                    const Entry &entry);
+    // 给定表名，一条待插入的数据，插入后返回硬盘位置
+    
 };

@@ -38,7 +38,7 @@ void API::createIndex(const string &tableName,
                                     recordManager.getAttValue(tableName, pos, colName));
             }
         }
-    } catch (Exception e) {
+    } catch (exception &e) {
         throw e;
     }
 }
@@ -50,12 +50,32 @@ void API::dropIndex(const std::string &indexName) {
         } else {
             indexManager.dropIndex(tableName, indexName);
         }
-    } catch (Exception e) { // FIXME
+    } catch (exception &e) { // FIXME
             throw e;
     }
 }
 
-const Data &API::select(const std::tableName) {
+void API::insertEntry(const string &tableName, const Entry &entry) {
+    try {
+        if (!catalogManager.isTableExist(tableName)) {
+            throw runtime_error(tableName + " does not exist");
+        } else {
+            int pos = recordManager.insert(tableName, entry);
+            TableDefinition &df = catalogManager.getTableDef(tableName);
+            for (const TableDefinition::iterator &i = df.begin(); i != df.end(); ++i) {
+                string indexName = indexManager.getIndexName(tableName, i->name);
+                if (!indexName.empty()) {
+                    indexManager.insert(indexName, pos,
+                                        recordManager.getAttValue(tableName, pos, i->name));
+                }
+            }
+        }
+    } catch (exception &e) {
+        throw e;
+    }
+}
+
+const Entries &API::select(const std::tableName) {
     if (!catalogManager.isTableExist(tableName)) {
         throw runtime_error(tableName + " dose not exist");
     } else {
@@ -63,6 +83,6 @@ const Data &API::select(const std::tableName) {
     }
 }
 
-const Data &API::select(const std::string &tableName, const Conditions &conditions) {
+const Entries &API::select(const std::string &tableName, const Conditions &conditions) {
 
 }
