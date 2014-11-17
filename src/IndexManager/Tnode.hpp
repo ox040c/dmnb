@@ -1,11 +1,8 @@
 #ifndef TNODE_H_
 #define TNODE_H_
 
-#include "BufferManager.hpp"
-
 #define NULL 0
 #define filepoint int
-//#include "file.h"
 enum NODE_TYPE{INTERNAL, LEAF};        // 结点类型：内结点、叶子结点
 enum SIBLING_DIRECTION{LEFT, RIGHT};   // 兄弟结点方向：左兄弟结点、右兄弟结点
 typedef float KeyType;                 // 键类型
@@ -27,6 +24,7 @@ protected:
     KeyType keyvalues[MAXNUM_KEY];
     filepoint childpoint[MAXNUM_CHILD];
     filepoint sibling;
+    filepoint self;
     BufferManager &bufferManager;
 
 public:
@@ -40,6 +38,9 @@ public:
     virtual ~TNode();
     TNode getFromFile(filepoint p){
 
+    }
+    filepoint getself(){
+        return self;
     }
 
     filepoint writeToFile(){
@@ -128,13 +129,36 @@ public:
             newnode.setChildpoint(newindex,this->childpoint[original+1]);
             newindex++;
         }
-        filepoint page = newnode.writeToFile();
+        filepoint page = newnode.self();
         parentNode.insert(childIndex,childIndex+1,keyvalues[DEGREE],page);
     }
 
-    void mergeChild(CNode* parentNode, CNode* childNode, int keyIndex){  // 合并结点
+    void mergeChild(TNode* parentNode, TNode* childNode, int keyIndex){  // 合并结点
+        insert(MINNUM_KEY, MINNUM_KEY+1, parentNode->getKeyValue(keyIndex), childNode->getChild(0));
+        int i;
+        for (i=1; i<=childNode->getKeyNum(); ++i) {
+            insert(MINNUM_KEY+i, MINNUM_KEY+i+1, childNode->getKeyValue(i-1), childNode->getChild(i));
+        }
+        //父节点删除index的key
+        parentNode->removeKey(keyIndex, keyIndex+1);
+        delete parentNode->getChild(keyIndex+1);
     }
-    void borrowFrom(CNode* destNode, CNode* parentNode, int keyIndex, SIBLING_DIRECTION d) {// 从兄弟结点中借一个键值
+
+    void borrowFrom(TNode* siblingNode, TNode* parentNode, int keyIndex, int d) {// 从兄弟结点中借一个键值
+        switch(d){
+            case 0:{  // 从左兄弟结点借
+                insert(0, 0, siblingNode->getKeyValue(siblingNode->getKeyNum()-1,siblingNode->getChild(siblingNode->getKeyNum()));
+                parentNode->setKeyValue(keyIndex, siblingNode->getKeyValue(siblingNode->getKeyNum()));
+                siblingNode->removeKey(siblingNode->getKeyNum()-1, siblingNode->getKeyNum());
+                break;
+            }
+            case 1:{  // 从右兄弟结点借
+                insert(keynum, keynum+1, parentNode->getKeyValue(keyIndex), (siblingNode)->getChild(0));
+                parentNode->setKeyValue(keyIndex, siblingNode->getKeyValue(0));
+                siblingNode->removeKey(0, 0);
+                break;
+             }
+        }
     }
 
 };
