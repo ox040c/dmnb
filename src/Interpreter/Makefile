@@ -4,7 +4,7 @@ CC := g++
 
 all: $(RULE).o
 
-$(RULE).tab.c $(RULE).tab.h: $(RULE).y
+$(RULE).tab.c $(RULE).tab.h: $(RULE).y ../Utility/Utility.hpp
 	bison -d $(RULE).y
 
 lex.yy.c: $(RULE).tab.h $(RULE).l
@@ -12,10 +12,10 @@ lex.yy.c: $(RULE).tab.h $(RULE).l
 
 $(RULE).o: main.o lex.yy.c $(RULE).tab.c
 	$(CC) -o $@ $^
-	
+
 main.o: ../main.cpp
 	g++ ../main.cpp -c -o main.o
-	
+
 clean:
-	@rm -f lex.yy.c $(RULE).tab.h $(RULE).tab.c $(RULE).o 
+	@rm -f lex.yy.c $(RULE).tab.h $(RULE).tab.c $(RULE).o
 	@rm -f temp.sql main.o

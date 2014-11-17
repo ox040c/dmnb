@@ -4,8 +4,6 @@
 #include <iostream>
 #include <fstream>
 
-#include "../Utility/Utility.hpp"
-
 using namespace std;
 
 #include "parse.tab.h"  // to get the token types that we return
@@ -18,6 +16,14 @@ extern "C" FILE *yyin;
 extern int parse(string str);
 
 void yyerror(const char *s);
+
+#include "../Utility/Utility.hpp"
+void clear();
+void apnd(const Wrapper& a);
+// global vars
+WrapperList wlist;
+
+
 %}
 
 %union {
@@ -70,12 +76,12 @@ void yyerror(const char *s);
 // parsing rules
 
 list:
-      statement ';' { cout << "fst_stmt" << endl; }
-    | list statement ';' { cout << "stmt" << endl; }
+      statement ';' { clear(); cout << "fst_stmt" << endl; }
+    | list statement ';' { clear(); cout << "stmt" << endl; }
     ;
 
 // TODO: this is a nasty implementaion, needs improvement
-quit: QUIT { cout << "I quit\n"; exit(0); }
+quit: QUIT { clear(); cout << "I quit\n"; exit(0); }
 
 statement:
       CREATE create_stmt
@@ -95,15 +101,23 @@ create_stmt:
     ;
 
 attr_list:
-      attr_list ',' attr { cout << "attr\n"; }
-    | attr { cout << "fst attr\n"; }
+      attr_list ',' attr { cout << ""; }
+    | attr { cout << ""; }
     ;
 
 attr:
-      STRING CHAR '(' INT ')' { cout << "t_char" << $4; }
-    | STRING INT_type { cout << "t_int "; }
-    | STRING FLOAT_type { cout << "t_float "; }
+      STRING CHAR '(' INT ')' {
+        apnd(Wrapper(string($1), utls::CHAR, $4));
+    }
+    | STRING INT_type {
+        apnd(Wrapper(string($1), utls::INT));
+    }
+    | STRING FLOAT_type {
+        apnd(Wrapper(string($1), utls::FLOAT));
+    }
+    // TODO: pending
     | attr UNIQUE { cout << "uniq "; }
+    // TODO: pending
     | PRIMARY KEY '(' STRING ')' { cout << "key " << $4 << endl; }
     ;
 
@@ -118,14 +132,20 @@ delete_stmt:
     ;
 
 condition_list:
-      expr { cout << "fst_cond "; }
-    | condition_list AND expr { cout << "cond "; }
+      expr { cout << ""; }
+    | condition_list AND expr { cout << ""; }
     ;
 
 expr:
-      STRING OP STRING { cout << $1 << $2 << $3; }
-    | STRING OP INT { cout << $1 << $2 << $3; }
-    | STRING OP FLOAT { cout << $1 << $2 << $3; }
+      STRING OP STRING { apnd(Wrapper(string($1),
+        (op_t) $2, string($3)));
+    }
+    | STRING OP INT { apnd(Wrapper(string($1),
+        (op_t) $2, $3));
+    }
+    | STRING OP FLOAT { apnd(Wrapper(string($1),
+        (utls::Operator) $2, $3));
+    }
     ;
 
 drop_stmt:
@@ -139,9 +159,9 @@ insert_stmt:
     ;
 
 var:
-      STRING { cout << " str:" << $1; }
-    | FLOAT { cout << " flot:" << $1; }
-    | INT { cout << " int:" << $1; }
+      STRING { apnd(Wrapper(utls::CHAR, string($1))); }
+    | FLOAT { apnd(Wrapper(utls::FLOAT, $1)); }
+    | INT { apnd(Wrapper(utls::INT, $1)); }
     ;
 
 var_list:
@@ -180,8 +200,21 @@ int parse(string str) {
 	yyin = myfile;
 	// parse through the input until there is no more:
 	do {
+        clear();
 		yyparse();
 	} while (!feof(yyin));
+
+}
+
+void clear() {
+
+    wlist.clear();
+
+}
+
+void apnd(const Wrapper& a) {
+
+    wlist.push_back(a);
 
 }
 
