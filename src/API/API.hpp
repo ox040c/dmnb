@@ -11,6 +11,8 @@
 #include "CatalogManager.hpp"
 #include "Utility.hpp"
 
+using namespace utls;
+
 typedef std::list < Condition > Conditions;
 typedef std::list < Attribute > Data;
 

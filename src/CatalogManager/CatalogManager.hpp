@@ -12,6 +12,8 @@
 
 #include "Utility.hpp"
 
+using namespace utls;
+
 typedef std::map < std::string, TableDefinition > TablesDefinition;
 
 class CatalogManager {
