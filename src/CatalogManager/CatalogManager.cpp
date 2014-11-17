@@ -27,7 +27,7 @@ bool CatalogManager::isTableExist(const std::string &tableName) {
 bool CatalogManager::isTableHasAttribute(const std::string &tableName, const std::string &attName) {
     try {
         readTable(tableName);
-    } catch (Exception e) {
+    } catch (exception e) {
         throw e;
     }
     for (list < Scheme >::iterator i = tables[tableName].begin(); i != tables[tableName].end(); ++i) {

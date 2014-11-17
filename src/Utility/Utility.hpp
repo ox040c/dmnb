@@ -21,19 +21,21 @@ typedef struct AttributeType {
     void *dataPtr;
 } Attribute;
 
+typedef std::list < Attribute > Entry;
+typedef std::list < Entry > Entries;
+
 struct DataAddr {
     std::string filename;
     unsigned int dataaddr;
     unsigned int datalen;
 };
 
-class Scheme {
+typedef struct SchemeType {
 private:
     std::string name;
     utls::DataType dataType;
     int charLength;
     bool indexed;
-
 public:
     void setName(const std::string &name);
     void setDataType(const utls::DataType &dataType);
@@ -43,7 +45,17 @@ public:
     utls::DataType getDataType();
     int getCharLength();
     bool getIndexed();
-};
+} Scheme;
+
+typedef std::list < Scheme > TableDefinition;
+
+utls::DataType getDataType(const TableDefinition& td, const std::string attName) {
+    for (const list <Scheme>::iterator &i = td.begin(); i != td.end(); ++i) {
+        if (i->name == attName)
+            return i->dataType;
+    }
+    return (utls::DataType)TOTAL_TYPE;
+}
 
 class Condition {
 private:
