@@ -1,6 +1,8 @@
 #ifndef TNODE_H_
 #define TNODE_H_
 
+#include "BufferManager.hpp"
+
 #define NULL 0
 #define filepoint int
 //#include "file.h"

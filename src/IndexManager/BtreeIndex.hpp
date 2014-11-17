@@ -1,6 +1,6 @@
 #ifndef BtreeIndex
 #define BtreeIndex
-#include "Tnode.cpp"
+#include "Tnode.hpp"
 #include <vector>
 #define filepoint int
 template <type KeyType>
@@ -42,7 +42,7 @@ public:
 #ifndef BPLUS_TREE_H
 #define BPLUS_TREE_H
 
-#include "BPlus_node.h"
+#include "Tnode.hpp"
 
 using namespace std;
 

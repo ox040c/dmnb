@@ -1,12 +1,17 @@
 #ifndef indexManager
 #define indexManager
-#include "BtreeIndex"
-class indexManager{
+
+#include <list>
+#include <map>
+#include <set>
+#include "BtreeIndex.hpp"
+
+class IndexManager{
 private:
 	int indexcount;
-	set tid->attrid;
-	set<int> indexid;
-	map<tid,attrid>->filePoint;
+//	std::set tid->attrid;
+    std::set<int> indexid;
+//	std::map<tid,attrid>->filePoint;
 	BtreeIndex *Btree;
 	
 public:
@@ -18,6 +23,7 @@ public:
 	int search(int tid,int attrid,float key,int condition_info);
 	int search(int tid,int attrid,string key,int condition_info);
 	int insert(int tid,int eid,int attrid,std::vector<char> v);
-	int delete(int tid,int eid,int attrid,std::vector<char> v);
+//    int delete(int tid,int eid,int attrid,std::vector<char> v);
+// FIXME: `delete` is a reversed word in C++, change a name plz...
 };
 #endif
