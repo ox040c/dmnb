@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <iostream>
 
 // applying namespace to avoid naming conflicts, thanks
 // NOTE: please add following line if you are using these types

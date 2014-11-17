@@ -6,31 +6,33 @@
 #define API_HPP
 
 #include <list>
-#include "RecordManager.hpp"
-#include "IndexManager.hpp"
-#include "CatalogManager.hpp"
-#include "Utility.hpp"
+//#include "RecordManager.hpp"
+//#include "IndexManager.hpp"
+//#include "CatalogManager.hpp"
+#include "../Utility/Utility.hpp"
 
-using namespace utls;
-
-typedef std::list < Condition > Conditions;
+//using namespace utls;
 
 class API {
+    /*
 private:
     RecordManager &recordManager;
     IndexManager &indexManager;
     CatalogManger &catalogManager;
+    */
 
 public:
+    /*
     API(const CatalogManager &cat,
         const RecordManager &rec,
-        const IndexManager &ind
+    const IndexManager &ind
         ): catalogManager(cat), recordManager(rec), indexManager(ind) {}
 
     ~API() {}
+    */
 
     void createTable(const std::string &tableName,
-                     const std::vector < Scheme > &data);
+                     const TableDefinition &data);
 
     void dropTable(const std::string &tableName);   // [del]indexManager.dropAddress()[/del] should be called
                                                     // sequencial index should be kept by recordManager?
@@ -40,12 +42,13 @@ public:
     void dropIndex(const std::string &indexName);
     void insertEntry(const std::string &tableName,
                      const Entry &entry);
-    const Entries &select(const std::tableName);       // overload: select with no conditions
+    const Entries &select(const std::string &tableName);       // overload: select with no conditions
     const Entries &select(const std::string &tableName,
                 const Conditions &conditions);      // no "or" in statement
+    /* TODO:
     ConstItemIterator itemsBegin();
     ConstItemIterator itemsEnd();
-
+    */
 };
 
 #endif
