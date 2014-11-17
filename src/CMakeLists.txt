@@ -48,12 +48,19 @@ set(dmnb_src "./")
 file(GLOB SrcList
 
   "${dmnb_src}/API/*.cpp"
+  "${dmnb_src}/API/*.hpp"
   "${dmnb_src}/BufferManager/*.cpp"
+  "${dmnb_src}/BufferManager/*.hpp"
   "${dmnb_src}/CatalogManager/*.c*"
+  "${dmnb_src}/CatalogManager/*.h*"
   "${dmnb_src}/IndexManager/*.cpp"
+  "${dmnb_src}/IndexManager/*.hpp"
   "${dmnb_src}/Interpreter/*.c*"
+  "${dmnb_src}/Interpreter/*.h*"
   "${dmnb_src}/RecordManager/*.cpp"
+  "${dmnb_src}/RecordManager/*.hpp"
   "${dmnb_src}/Utility/*.cpp"
+  "${dmnb_src}/Utility/*.hpp"
   
   # TODO
 )
