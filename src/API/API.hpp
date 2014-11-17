@@ -33,8 +33,10 @@ public:
 
     void dropTable(const std::string &tableName);   // [del]indexManager.dropAddress()[/del] should be called
                                                     // sequencial index should be kept by recordManager?
-    void dropIndex(const std::string &tableName,
-                   const std::string &indexName);
+    void createIndex(const std::string &tableName,
+                     const std::string &colName,
+                     const std::string &indexName);
+    void dropIndex(const std::string &indexName);
     const Data &select(const std::tableName);       // overload: select with no conditions
     const Data &select(const std::string &tableName,
                 const Conditions &conditions);      // no "or" in statement

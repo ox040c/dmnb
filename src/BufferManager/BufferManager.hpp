@@ -1,12 +1,11 @@
 #ifndef BUFFER_MANAGER_h
 #define BUFFER_MANAGER_H
 #include "Utility.hpp"
-#include "Page.h"
+#include "Page.hpp"
 #include <string>
 #include <fstream>
 #include <map>
 
-using namespace std;
 class BufferManager{
 private:
 	ifstream infile;

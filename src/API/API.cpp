@@ -2,7 +2,7 @@
 
 /// TODO...
 ///
-/// TxT
+///
 ///
 
 void API::createTable(const std::string &tableName, const TableDefinition &data) {
@@ -24,18 +24,22 @@ void API::dropTable(const std::string &tableName) {
     }
 }
 
-void API::dropIndex(const std::string &tableName, const std::string &indexName) {
+void API::createIndex(const string &tableName,
+                      const string &colName,
+                      const string &indexName) {
+    if (indexManager.isIndexExist(indexName)) {
+
+    }
+}
+
+void API::dropIndex(const std::string &indexName) {
     try {
-        if (!catalogManager.isTableHasAttribute(tableName)) {
-            throw runtime_error(tableName + " dose not have attribute ", indexName);
+        if (!indexManager.isIndexExist(indexName)) {
+            throw runtime_error(indexName + " does not exist");
         } else {
-            if (!indexManager.isTableHasIndex(table, index)) {
-                throw runtime_error(tableName + " dost not have index on " + indexName);
-            } else {
-                indexManager.dropIndex(tableName, indexName);
-            }
+            indexManager.dropIndex(tableName, indexName);
         }
-    } catch (Exception e) { // Table dose not exist
+    } catch (Exception e) { // FIXME
             throw e;
     }
 }

@@ -1,5 +1,5 @@
-#ifndef indexManager
-#define indexManager
+#ifndef IndexManager_HPP
+#define IndexManager_HPP
 
 #include <list>
 #include <map>
