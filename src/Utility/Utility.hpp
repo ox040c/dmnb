@@ -18,23 +18,23 @@ struct DataAddr {
     unsigned int datalen;
 };
 
-class Scheme {
+typedef struct SchemeType {
 private:
     std::string name;
     DataType dataType;
     int charLength;
     bool indexed;
+} Scheme;
 
-public:
-    void setName(const std::string &name);
-    void setDataType(const DataType &dataType);
-    void setCharLength(const int &charLength);
+typedef std::list < Scheme > TableDefinition;
 
-    std::string getName();
-    DataType getDataType();
-    int getCharLength();
-    bool getIndexed();
-};
+DataType getDataType(const TableDefinition& td, const std::string attName) {
+    for (const list <Scheme>::iterator &i = td.begin(); i != td.end(); ++i) {
+        if (i->name == attName)
+            return i->dataType;
+    }
+    return (DataType)TOTAL_TYPE;
+}
 
 class Condition {
 private:

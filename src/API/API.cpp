@@ -27,14 +27,25 @@ void API::dropTable(const std::string &tableName) {
 void API::createIndex(const string &tableName,
                       const string &colName,
                       const string &indexName) {
-    if (indexManager.isIndexExist(indexName)) {
-
+    try {
+        if (indexManager.hasIndex(indexName)) {
+            throw runtime_error(indexName + " has existed");
+        } else {
+            indexManager.create_index(tableName, colName, indexName, getDataType(td, colName));
+            const TableDefinition &td = catalogManager.getTableDef(tableName);
+            while (int pos = recordManager.getNext(tableName)) {
+                indexManager.insert(indexName, pos,
+                                    recordManager.getAttValue(tableName, pos, colName));
+            }
+        }
+    } catch (Exception e) {
+        throw e;
     }
 }
 
 void API::dropIndex(const std::string &indexName) {
     try {
-        if (!indexManager.isIndexExist(indexName)) {
+        if (!indexManager.hasIndex(indexName)) {
             throw runtime_error(indexName + " does not exist");
         } else {
             indexManager.dropIndex(tableName, indexName);

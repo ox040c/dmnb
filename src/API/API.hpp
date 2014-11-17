@@ -29,7 +29,8 @@ public:
 
     ~API() {}
 
-    void createTable(const std::string &tableName, const std::vector < Scheme > &data);
+    void createTable(const std::string &tableName,
+                     const std::vector < Scheme > &data);
 
     void dropTable(const std::string &tableName);   // [del]indexManager.dropAddress()[/del] should be called
                                                     // sequencial index should be kept by recordManager?
