@@ -17,7 +17,7 @@ namespace utls {
 }
 
 typedef struct AttributeType {
-    DataType type;
+    utls::DataType type;
     void *dataPtr;
 } Attribute;
 
@@ -30,17 +30,17 @@ struct DataAddr {
 class Scheme {
 private:
     std::string name;
-    DataType dataType;
+    utls::DataType dataType;
     int charLength;
     bool indexed;
 
 public:
     void setName(const std::string &name);
-    void setDataType(const DataType &dataType);
+    void setDataType(const utls::DataType &dataType);
     void setCharLength(const int &charLength);
 
     std::string getName();
-    DataType getDataType();
+    utls::DataType getDataType();
     int getCharLength();
     bool getIndexed();
 };
@@ -48,16 +48,16 @@ public:
 class Condition {
 private:
     std::string key;
-    Operator op;
+    utls::Operator op;
     void *valuePtr;
 
 public:
     void setKey(const std::string &key);
-    void setOp(const Operator &op);
+    void setOp(const utls::Operator &op);
     void setValue(const void *valuePtr);
 
     std::string getKey();
-    Operator getOp();
+    utls::Operator getOp();
     void *getValuePtr();
 };
 

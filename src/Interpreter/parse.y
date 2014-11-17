@@ -18,15 +18,11 @@ extern int parse(string str);
 void yyerror(const char *s);
 %}
 
-// Bison fundamentally works by asking flex to get the next token, which it
-// returns as an object of type "yystype".  But tokens could be of any
-// arbitrary data type!  So we deal with that in Bison by defining a C union
-// holding each of the types of tokens that Flex could return, and have Bison
-// use that union instead of "int" for the definition of "yystype":
 %union {
 	int ival;
 	float fval;
 	char *sval;
+    int comp_sign;
 }
 
 // define the "terminal symbol" token types I'm going to use (in CAPS
@@ -34,19 +30,90 @@ void yyerror(const char *s);
 %token <ival> INT
 %token <fval> FLOAT
 %token <sval> STRING
+%token <comp_sign> OP
+
+// *****
+// * SQL keywords
+// *****
+%token ADD
+%token AND
+%token CHAR
+%token CREATE
+%token DATABASE
+%token DATABASES
+%token DELETE
+%token DROP
+%token EXIT
+%token FLOAT_type
+%token FROM
+%token INDEX
+%token INSERT
+%token INT_type
+%token KEY
+%token NOT
+%token ON
+%token PRIMARY
+%token SELECT
+%token TABLE
+%token VALUES
+%token UNIQUE
+%token WHERE
 
 %%
-// this is the actual grammar that bison will parse, but for right now it's just
-// something silly to echo to the screen what bison gets from flex.  We'll
-// make a real one shortly:
-snazzle:
-	snazzle INT { cout << "bison found an int: " << $2 << endl; }
-	| snazzle FLOAT { cout << "bison found a float: " << $2 << endl; }
-	| snazzle STRING { cout << "bison found a string: " << $2 << endl; } 
-	| INT { cout << "bison found an int: " << $1 << endl; }
-	| FLOAT { cout << "bison found a float: " << $1 << endl; }
-	| STRING { cout << "bison found a string: " << $1 << endl; }
-	;
+// parsing rules
+
+list:
+      statement { cout << "fst_stmt" << endl; }
+    | list statement { cout << "stmt" << endl; }
+    ;
+
+statement:
+      CREATE create_stmt ';'
+    | SELECT select_stmt ';'
+    | DROP drop_stmt ';'
+    ;
+
+
+create_stmt:
+      TABLE STRING '(' attr_list ')'
+        { cout << "create table" << endl; }
+    | INDEX STRING ON STRING '(' STRING ')'
+        { cout << "craete index" << $2 << $4 << $6; }
+    ;
+
+attr_list:
+      attr_list ',' attr { cout << "attr\n"; }
+    | attr { cout << "fst attr\n"; }
+    ;
+
+attr:
+      STRING CHAR '(' INT ')' { cout << "t_char" << $4; }
+    | STRING INT_type { cout << "t_int "; }
+    | STRING FLOAT_type { cout << "t_float "; }
+    | attr UNIQUE { cout << "uniq "; }
+    | PRIMARY KEY '(' STRING ')' { cout << "key " << $4 << endl; }
+    ;
+
+select_stmt:
+      '*' FROM STRING
+    | '*' FROM STRING WHERE condition_list
+    ;
+
+condition_list:
+      expr { cout << "fst_cond "; }
+    | condition_list AND expr { cout << "cond "; }
+    ;
+
+expr:
+      STRING OP STRING { cout << $1 << $2 << $3; }
+    | STRING OP INT { cout << $1 << $2 << $3; }
+    | STRING OP FLOAT { cout << $1 << $2 << $3; }
+    ;
+
+drop_stmt:
+    TABLE STRING { cout << "drop" << $2; }
+
+
 %%
 
 int parse(string str) {
@@ -57,9 +124,9 @@ int parse(string str) {
     try {
 
         fout.open("temp.sql");
-	fout << str;
-	fout.close();
-	
+        fout << str;
+        fout.close();
+
     }
     catch (...) {
 
@@ -68,7 +135,7 @@ int parse(string str) {
     }
 
 	// open a file handle to a particular file:
-	FILE *myfile = fopen("temp.sql", "r");
+	FILE *myfile = fopen("_temp.sql", "r");
 	// make sure it is valid:
 	if (!myfile) {
 		cout << "I can't open temp.sql file!" << endl;
