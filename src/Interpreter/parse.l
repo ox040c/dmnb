@@ -33,6 +33,7 @@ from|FROM { return FROM; }
 index|INDEX { return INDEX; }
 insert|INSERT { return INSERT; }
 int|INT4?|INTEGER { return INT_type; }
+into|INTO { return INTO; }
 key|KEY { return KEY; }
 not|NOT { return NOT; }
 on|ON { return ON; }
@@ -42,6 +43,8 @@ table|TABLE { return TABLE; }
 values?|VALUES? { return VALUES; }
 unique|UNIQUE { return UNIQUE; }
 where|WHERE { return WHERE; }
+
+quit|QUIT { return QUIT; }
 
 '(\\.|''|[^'\n])*' |
 \"(\\.|\"\"|[^"\n])*\" { yylval.sval = strdup(yytext); return STRING; }

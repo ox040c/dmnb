@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "../Utility/Utility.hpp"
+
 using namespace std;
 
 #include "parse.tab.h"  // to get the token types that we return
@@ -46,6 +48,7 @@ void yyerror(const char *s);
 %token EXIT
 %token FLOAT_type
 %token FROM
+%token INTO
 %token INDEX
 %token INSERT
 %token INT_type
@@ -59,18 +62,28 @@ void yyerror(const char *s);
 %token UNIQUE
 %token WHERE
 
+// non standard thing
+%token QUIT
+
+
 %%
 // parsing rules
 
 list:
-      statement { cout << "fst_stmt" << endl; }
-    | list statement { cout << "stmt" << endl; }
+      statement ';' { cout << "fst_stmt" << endl; }
+    | list statement ';' { cout << "stmt" << endl; }
     ;
 
+// TODO: this is a nasty implementaion, needs improvement
+quit: QUIT { cout << "I quit\n"; exit(0); }
+
 statement:
-      CREATE create_stmt ';'
-    | SELECT select_stmt ';'
-    | DROP drop_stmt ';'
+      CREATE create_stmt
+    | SELECT select_stmt
+    | DROP drop_stmt
+    | INSERT insert_stmt
+    | DELETE delete_stmt
+    | quit
     ;
 
 
@@ -99,6 +112,11 @@ select_stmt:
     | '*' FROM STRING WHERE condition_list
     ;
 
+delete_stmt:
+      FROM STRING
+    | FROM STRING WHERE condition_list
+    ;
+
 condition_list:
       expr { cout << "fst_cond "; }
     | condition_list AND expr { cout << "cond "; }
@@ -111,8 +129,25 @@ expr:
     ;
 
 drop_stmt:
-    TABLE STRING { cout << "drop" << $2; }
+      TABLE STRING { cout << "drop tbl" << $2; }
+    | INDEX STRING { cout << "drop idx" << $2; }
+    ;
 
+insert_stmt:
+      INTO STRING VALUES '(' var_list ')'
+        { cout << "insert "; }
+    ;
+
+var:
+      STRING { cout << " str:" << $1; }
+    | FLOAT { cout << " flot:" << $1; }
+    | INT { cout << " int:" << $1; }
+    ;
+
+var_list:
+      var
+    | var_list ',' var
+    ;
 
 %%
 
@@ -123,9 +158,9 @@ int parse(string str) {
     ofstream fout;
     try {
 
-        fout.open("temp.sql");
-        fout << str;
-        fout.close();
+        //fout.open("temp.sql");
+        //fout << str;
+        //fout.close();
 
     }
     catch (...) {
@@ -147,6 +182,7 @@ int parse(string str) {
 	do {
 		yyparse();
 	} while (!feof(yyin));
+
 }
 
 void yyerror(const char *s) {
