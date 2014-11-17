@@ -2,7 +2,7 @@
 #define BtreeIndex
 #include "Tnode.hpp"
 #include <vector>
-#define filepoint int
+typedef int filepoint;
 template <type KeyType>
 class BtreeIndex {
 private:
@@ -13,7 +13,6 @@ private:
 
     void recursive_insert(CNode* parentNode, KeyType key, const DataType& data);
     void recursive_remove(CNode* parentNode, KeyType key);
-    void printInConcavo(CNode *pNode, int count)const;
     bool recursive_search(CNode *pNode, KeyType key)const;
     void changeKey(CNode *pNode, KeyType oldKey, KeyType newKey);
     void search(KeyType key, SelectResult& result);
@@ -111,6 +110,41 @@ public:
         }
         recursive_remove(root, key);
         return true;
+    }
+
+    void recursive_remove(CNode* parentNode, KeyType key){
+        int keyIndex = parentNode->getKeyIndex(key);
+        int childIndex= parentNode->getChildIndex(key, keyIndex); // 孩子结点指针索引
+        if (parentNode->isleaf()) {// 找到目标叶子节点
+            parentNode->removeKey(keyIndex, childIndex);  // 直接删除
+            // 如果键值在内部结点中存在，也要相应的替换内部结点
+            if (childIndex==0 && !root->isleaf() && parentNode!=m_DataHead){
+                changeKey(root, key, parentNode->getKeyValue(0));
+            }
+        }
+        else {// 内结点
+            Tnode *pChildNode = (parentNode)->getChild(childIndex); //包含key的子树根节点
+            if (pChildNode->getKeyNum()==MINNUM_KEY){                       // 包含关键字达到下限值，进行相关操作
+                CNode *pLeft = childIndex>0 ? ((CInternalNode*)parentNode)->getChild(childIndex-1) : NULL;                       //左兄弟节点
+                CNode *pRight = childIndex<parentNode->getKeyNum() ? ((CInternalNode*)parentNode)->getChild(childIndex+1) : NULL;//右兄弟节点
+                // 先考虑从兄弟结点中借
+                if (pLeft && pLeft->getKeyNum()>MINNUM_KEY){// 左兄弟结点可借
+                    pChildNode->borrowFrom(pLeft, parentNode, childIndex-1, LEFT);
+                }
+                else if (pRight && pRight->getKeyNum()>MINNUM_KEY){//右兄弟结点可借
+                    pChildNode->borrowFrom(pRight, parentNode, childIndex, RIGHT);
+                }
+                //左右兄弟节点都不可借，考虑合并
+                else if (pLeft){                    //与左兄弟合并
+                    pLeft->mergeChild(parentNode, pChildNode, childIndex-1);
+                    pChildNode = pLeft;
+                }
+                else if (pRight){                   //与右兄弟合并
+                    pChildNode->mergeChild(parentNode, pRight, childIndex);
+                }
+            }
+            recursive_remove(pChildNode, key);
+        }
     }
 
     vector<filepoint> select(KeyType compareKey, int compareOpeartor);    // 范围查询，BETWEEN

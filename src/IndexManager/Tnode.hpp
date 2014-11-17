@@ -2,10 +2,9 @@
 #define TNODE_H_
 
 #define NULL 0
-#define filepoint int
+typedef int filepoint;
 enum NODE_TYPE{INTERNAL, LEAF};        // 结点类型：内结点、叶子结点
 enum SIBLING_DIRECTION{LEFT, RIGHT};   // 兄弟结点方向：左兄弟结点、右兄弟结点
-typedef float KeyType;                 // 键类型
 typedef int DataType;                  // 值类型
 const int ORDER = 20;                   // B+树的阶（非根内结点的最小子树个数）
 const int MINNUM_KEY = ORDER-1;        // 最小键值个数
