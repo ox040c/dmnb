@@ -19,8 +19,8 @@ project(dmnb)
 SET(src_main
     "./main.cpp")
     
-file(GLOB h_main
-    "*.hpp")
+#file(GLOB h_main
+#    "./*.hpp")
 
 # ----------------------------------------------------------------------
 # Setup link && include directories
@@ -29,10 +29,14 @@ include_directories(
   "/usr/local/lib"
   "/usr/lib64"
   
-  "./Utility"
   "./API"
+  "./BufferManager"
   "./CatalogManager"
+  "./IndexManager"
   "./Interpreter"
+  "./RecordManager"
+  "./Utility"
+  
   #TODO
 )
         
@@ -41,29 +45,28 @@ include_directories(
 
 set(dmnb_src "./")
 
-file(GLOB SrcCpp
-  "${dmnb_src}/*.cpp"
+file(GLOB SrcList
 
   "${dmnb_src}/API/*.cpp"
+  "${dmnb_src}/BufferManager/*.cpp"
   "${dmnb_src}/CatalogManager/*.c*"
-  "${dmnb_src}/Interpreter/*.cpp"
+  "${dmnb_src}/IndexManager/*.cpp"
+  "${dmnb_src}/Interpreter/*.c*"
+  "${dmnb_src}/RecordManager/*.cpp"
+  "${dmnb_src}/Utility/*.cpp"
+  
   # TODO
 )
 
 # ----------------------------------------------------------------------
-# Create the executable
+# Create the executable & Setup required libraries
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x") # required for unrestricted unions
+
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x") # required for unrestricted unions
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -p") # add gprof information
 
-add_library(dnmb_library  ${SrcCpp})
-
-# ----------------------------------------------------------------------
-# Setup required libraries
-
-ADD_EXECUTABLE(main ${src_main} ${h_main})
+ADD_EXECUTABLE(main ${src_main} ${SrcList})
 target_link_libraries(main
-   dnmb_library
    protobuf
 )
 
