@@ -3,9 +3,18 @@
 
 #include <string>
 
-enum Operator {EQUAL, UNEQUAL, LESS, MORE, NO_MORE, NO_LESS, TOTAL_OPERATOR};
+// applying namespace to avoid naming conflicts, thanks
+// NOTE: please add following line if you are using these types
+/*
+using namespace utls;
+*/
+namespace utls {
+    
+    enum Operator {EQUAL, UNEQUAL, LESS, MORE, NO_MORE, NO_LESS, TOTAL_OPERATOR};
 
-enum DataType {INT, FLOAT, CHAR, TOTAL_TYPE};
+    enum DataType {INT, FLOAT, CHAR, TOTAL_TYPE};
+        
+}
 
 typedef struct AttributeType {
     DataType type;
