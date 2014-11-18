@@ -94,7 +94,10 @@ public:
 
     int getKeyIndex(KeyType key)const{        // 找到键值在结点中存储的下标
         int left = 0;
-        int right = this->keynum;
+        int right = keynum;
+        if (keynum ==0) return 0;
+        if (keyvalues[right-1] < key) return keynum;
+        if (keyvalues[left] > key) return left;
         int mid = (left+right)/2;
         while (left!=right){
             if (key>keyvalues[mid]) left=mid;else right= mid;

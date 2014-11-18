@@ -36,6 +36,8 @@ public:
     BtreeIndex(const BufferManager &x){
         fp.filename = "index.data";
         fp.datalen = 4096;
+        root = ReadFromFile (rootloc);
+        firstloc = ReadFromFile (firstloc);
         buff = &x;
     }
 
@@ -46,8 +48,26 @@ public:
     void print()const;        // 打印树关键字
     void printData()const;    // 打印数据
 
-    int search(KeyType key){
-        return recursive_search(m_Root, key);
+    int find(KeyType key){
+        Tnode<KeyType> temp;
+        filepoint nextnode;
+        int keyindex;
+        int keynum;
+        temp = root;
+        while (temp.getLeaf ()==0){
+            keyindex = temp.getKeyIndex (key);
+            keynum = temp.getKeyNum ();
+            if (keyindex==keynum){
+                nextnode = temp.getChild (keynum);
+                temp = ReadFromFile (nextnode);
+            }
+            else{
+                nextnode = temp.getChild (keyindex);
+                temp = ReadFromFile (nextnode);
+            }
+        }
+
+
     }
 
     vector<filepoint> select(KeyType compareKey, int compareOpeartor){    // 范围查询，BETWEEN
