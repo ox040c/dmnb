@@ -20,5 +20,6 @@ api.o:  ../API/API.cpp ../API/API.hpp
 	g++ ../API/API.cpp -c -o api.o
 	
 clean:
-	@rm -f lex.yy.c $(RULE).tab.h $(RULE).tab.c $(RULE).o
-	@rm -f temp.sql main.o
+	@rm -f lex.yy.c $(RULE).tab.h $(RULE).tab.c
+	@rm -f temp.sql
+	@rm -f *.o

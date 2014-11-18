@@ -30,6 +30,7 @@ class Wrapper {
         utls::DataType type;
         utls::Operator op;
         bool isIndex;
+        bool isUnique;
         int intv;
         float floatv;
         std::string strv;
@@ -46,7 +47,9 @@ class Wrapper {
                 std::string strv = "",
                 bool isIndex = false):
             name(name), type(type), op(op), isIndex(isIndex),
-            intv(intv), floatv(floatv), strv(strv) { debug(); }
+            intv(intv), floatv(floatv), strv(strv), isUnique(false) {
+                //debug();
+            }
         Wrapper (std::string name,
                 utls::Operator op,
                 std::string strv,
@@ -55,7 +58,9 @@ class Wrapper {
                 float floatv = 0.0,
                 bool isIndex = false):
             name(name), type(type), op(op), isIndex(isIndex),
-            intv(intv), floatv(floatv), strv(strv) { debug(); }
+            intv(intv), floatv(floatv), strv(strv), isUnique(false) {
+                //debug();
+            }
         Wrapper (std::string name,
                 utls::Operator op,
                 float floatv,
@@ -64,19 +69,23 @@ class Wrapper {
                 std::string strv = "",
                 bool isIndex = false):
             name(name), type(type), op(op), isIndex(isIndex),
-            intv(intv), floatv(floatv), strv(strv) { debug(); }
+            intv(intv), floatv(floatv), strv(strv), isUnique(false) {
+                //debug();
+            }
 
         // Attribute
         Wrapper (std::string name,
                 utls::DataType type,
                 int intv = 0,
+                std::string strv = "", // indexName
                 bool isIndex = false,
-                utls::Operator op = utls::TOTAL_OP,
                 float floatv = 0.0,
-                std::string strv = ""
+                utls::Operator op = utls::TOTAL_OP
                 ):
             name(name), type(type), op(op), isIndex(isIndex),
-            intv(intv), floatv(floatv), strv(strv) { debug(); }
+            intv(intv), floatv(floatv), strv(strv), isUnique(false) {
+                //debug();
+            }
 
         // Values (insert into values (..)
         Wrapper (
@@ -89,7 +98,9 @@ class Wrapper {
                 utls::Operator op = utls::TOTAL_OP
                 ):
             name(name), type(type), op(op), isIndex(isIndex),
-            intv(intv), floatv(floatv), strv(strv) { debug(); }
+            intv(intv), floatv(floatv), strv(strv), isUnique(false) {
+                //debug();
+            }
         Wrapper (
                 utls::DataType type,
                 int intv,
@@ -100,7 +111,9 @@ class Wrapper {
                 utls::Operator op = utls::TOTAL_OP
                 ):
             name(name), type(type), op(op), isIndex(isIndex),
-            intv(intv), floatv(floatv), strv(strv) { debug(); }
+            intv(intv), floatv(floatv), strv(strv), isUnique(false) {
+                //debug();
+            }
         Wrapper (
                 utls::DataType type,
                 std::string strv,
@@ -111,19 +124,12 @@ class Wrapper {
                 utls::Operator op = utls::TOTAL_OP
                 ):
             name(name), type(type), op(op), isIndex(isIndex),
-            intv(intv), floatv(floatv), strv(strv) { debug(); }
+            intv(intv), floatv(floatv), strv(strv), isUnique(false) {
+                //debug();
+            }
 
-        /*~Wrapper() {
-          if ( valuep ) {
-          switch (op) {
-          case utls::INT: break;
-          case utls::FLOAT: break;
-          case utls::CHAR: delete (char*) valuepbreak;
-          }
-          }
-          }*/
-    private:
-        void debug() {
+    public:
+        void debug() const{
             std::cout << name;
             switch (op) {
                 case utls::EQUAL:   std::cout << " == "; break;
