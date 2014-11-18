@@ -9,7 +9,7 @@ utls::DataType getDataType(
     for (TableDefinition::const_iterator i = td.begin();
             i != td.end(); ++i) {
         if (i->name == attName)
-            return i->dataType;
+            return i->type;
     }
     return (utls::DataType)utls::TOTAL_TYPE;
 }

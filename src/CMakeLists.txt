@@ -25,9 +25,17 @@ SET(src_main
 # ----------------------------------------------------------------------
 # Setup link && include directories
 
-include_directories(
+link_directories(
   "/usr/local/lib"
   "/usr/lib64"
+)
+
+#add_subdirectory(
+#  "./CatalogManager"
+#)
+
+include_directories(
+  "/usr/local/include"
   
   "./API"
   "./BufferManager"

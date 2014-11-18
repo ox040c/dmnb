@@ -32,11 +32,10 @@ void protobuf_AssignDesc_TableProtobuf_2eproto() {
       "TableProtobuf.proto");
   GOOGLE_CHECK(file != NULL);
   TableProtobuf_descriptor_ = file->message_type(0);
-  static const int TableProtobuf_offsets_[4] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TableProtobuf, totalint_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TableProtobuf, totalfloat_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TableProtobuf, totalchar_),
+  static const int TableProtobuf_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TableProtobuf, names_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TableProtobuf, primary_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TableProtobuf, unique_),
   };
   TableProtobuf_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -79,9 +78,9 @@ void protobuf_AddDesc_TableProtobuf_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\023TableProtobuf.proto\"W\n\rTableProtobuf\022\020"
-    "\n\010totalInt\030\001 \002(\005\022\022\n\ntotalFloat\030\002 \002(\005\022\021\n\t"
-    "totalChar\030\003 \002(\005\022\r\n\005names\030\004 \002(\t", 110);
+    "\n\023TableProtobuf.proto\"\?\n\rTableProtobuf\022\r"
+    "\n\005names\030\001 \002(\t\022\017\n\007primary\030\002 \002(\t\022\016\n\006unique"
+    "\030\003 \002(\t", 86);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "TableProtobuf.proto", &protobuf_RegisterTypes);
   TableProtobuf::default_instance_ = new TableProtobuf();
@@ -99,10 +98,9 @@ struct StaticDescriptorInitializer_TableProtobuf_2eproto {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int TableProtobuf::kTotalIntFieldNumber;
-const int TableProtobuf::kTotalFloatFieldNumber;
-const int TableProtobuf::kTotalCharFieldNumber;
 const int TableProtobuf::kNamesFieldNumber;
+const int TableProtobuf::kPrimaryFieldNumber;
+const int TableProtobuf::kUniqueFieldNumber;
 #endif  // !_MSC_VER
 
 TableProtobuf::TableProtobuf()
@@ -121,10 +119,9 @@ TableProtobuf::TableProtobuf(const TableProtobuf& from)
 
 void TableProtobuf::SharedCtor() {
   _cached_size_ = 0;
-  totalint_ = 0;
-  totalfloat_ = 0;
-  totalchar_ = 0;
   names_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  primary_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  unique_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -135,6 +132,12 @@ TableProtobuf::~TableProtobuf() {
 void TableProtobuf::SharedDtor() {
   if (names_ != &::google::protobuf::internal::kEmptyString) {
     delete names_;
+  }
+  if (primary_ != &::google::protobuf::internal::kEmptyString) {
+    delete primary_;
+  }
+  if (unique_ != &::google::protobuf::internal::kEmptyString) {
+    delete unique_;
   }
   if (this != default_instance_) {
   }
@@ -163,12 +166,19 @@ TableProtobuf* TableProtobuf::New() const {
 
 void TableProtobuf::Clear() {
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    totalint_ = 0;
-    totalfloat_ = 0;
-    totalchar_ = 0;
     if (has_names()) {
       if (names_ != &::google::protobuf::internal::kEmptyString) {
         names_->clear();
+      }
+    }
+    if (has_primary()) {
+      if (primary_ != &::google::protobuf::internal::kEmptyString) {
+        primary_->clear();
+      }
+    }
+    if (has_unique()) {
+      if (unique_ != &::google::protobuf::internal::kEmptyString) {
+        unique_->clear();
       }
     }
   }
@@ -182,62 +192,48 @@ bool TableProtobuf::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 totalInt = 1;
+      // required string names = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &totalint_)));
-          set_has_totalint();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(16)) goto parse_totalFloat;
-        break;
-      }
-
-      // required int32 totalFloat = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_totalFloat:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &totalfloat_)));
-          set_has_totalfloat();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(24)) goto parse_totalChar;
-        break;
-      }
-
-      // required int32 totalChar = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_totalChar:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &totalchar_)));
-          set_has_totalchar();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(34)) goto parse_names;
-        break;
-      }
-
-      // required string names = 4;
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_names:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_names()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
             this->names().data(), this->names().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_primary;
+        break;
+      }
+
+      // required string primary = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_primary:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_primary()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->primary().data(), this->primary().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_unique;
+        break;
+      }
+
+      // required string unique = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_unique:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_unique()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->unique().data(), this->unique().length(),
             ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
@@ -264,28 +260,31 @@ bool TableProtobuf::MergePartialFromCodedStream(
 
 void TableProtobuf::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // required int32 totalInt = 1;
-  if (has_totalint()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->totalint(), output);
-  }
-
-  // required int32 totalFloat = 2;
-  if (has_totalfloat()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->totalfloat(), output);
-  }
-
-  // required int32 totalChar = 3;
-  if (has_totalchar()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->totalchar(), output);
-  }
-
-  // required string names = 4;
+  // required string names = 1;
   if (has_names()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->names().data(), this->names().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      4, this->names(), output);
+      1, this->names(), output);
+  }
+
+  // required string primary = 2;
+  if (has_primary()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->primary().data(), this->primary().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->primary(), output);
+  }
+
+  // required string unique = 3;
+  if (has_unique()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->unique().data(), this->unique().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->unique(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -296,29 +295,34 @@ void TableProtobuf::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* TableProtobuf::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // required int32 totalInt = 1;
-  if (has_totalint()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->totalint(), target);
-  }
-
-  // required int32 totalFloat = 2;
-  if (has_totalfloat()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->totalfloat(), target);
-  }
-
-  // required int32 totalChar = 3;
-  if (has_totalchar()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->totalchar(), target);
-  }
-
-  // required string names = 4;
+  // required string names = 1;
   if (has_names()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->names().data(), this->names().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->names(), target);
+        1, this->names(), target);
+  }
+
+  // required string primary = 2;
+  if (has_primary()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->primary().data(), this->primary().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->primary(), target);
+  }
+
+  // required string unique = 3;
+  if (has_unique()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->unique().data(), this->unique().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->unique(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -332,32 +336,25 @@ int TableProtobuf::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 totalInt = 1;
-    if (has_totalint()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->totalint());
-    }
-
-    // required int32 totalFloat = 2;
-    if (has_totalfloat()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->totalfloat());
-    }
-
-    // required int32 totalChar = 3;
-    if (has_totalchar()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->totalchar());
-    }
-
-    // required string names = 4;
+    // required string names = 1;
     if (has_names()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->names());
+    }
+
+    // required string primary = 2;
+    if (has_primary()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->primary());
+    }
+
+    // required string unique = 3;
+    if (has_unique()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->unique());
     }
 
   }
@@ -387,17 +384,14 @@ void TableProtobuf::MergeFrom(const ::google::protobuf::Message& from) {
 void TableProtobuf::MergeFrom(const TableProtobuf& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_totalint()) {
-      set_totalint(from.totalint());
-    }
-    if (from.has_totalfloat()) {
-      set_totalfloat(from.totalfloat());
-    }
-    if (from.has_totalchar()) {
-      set_totalchar(from.totalchar());
-    }
     if (from.has_names()) {
       set_names(from.names());
+    }
+    if (from.has_primary()) {
+      set_primary(from.primary());
+    }
+    if (from.has_unique()) {
+      set_unique(from.unique());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -416,17 +410,16 @@ void TableProtobuf::CopyFrom(const TableProtobuf& from) {
 }
 
 bool TableProtobuf::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
 
   return true;
 }
 
 void TableProtobuf::Swap(TableProtobuf* other) {
   if (other != this) {
-    std::swap(totalint_, other->totalint_);
-    std::swap(totalfloat_, other->totalfloat_);
-    std::swap(totalchar_, other->totalchar_);
     std::swap(names_, other->names_);
+    std::swap(primary_, other->primary_);
+    std::swap(unique_, other->unique_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

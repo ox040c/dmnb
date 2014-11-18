@@ -7,14 +7,13 @@
 using namespace std;
 
 string parseNames(string &names) {
-    string name;
+    char name[255];
     int idx = names.find("|");
     int len = names.copy(name, idx, 0);
     name[len] = '\0';
-    len = names.copy(names, names.length()-idx-1, idx+1);
-    names[len] = '\0';
+    names.erase(0, idx+1);
 
-    return name;
+    return string(name);
 }
 
 bool CatalogManager::isTableExist(const std::string &tableName) {
@@ -31,7 +30,7 @@ bool CatalogManager::isTableHasAttribute(const std::string &tableName, const std
         throw e;
     }
     for (TableDefinition::const_iterator i = tables[tableName].begin(); i != tables[tableName].end(); ++i) {
-        if (i.getName() == attName)
+        if (i->name == attName)
             return true;
     }
     return false;
@@ -39,7 +38,7 @@ bool CatalogManager::isTableHasAttribute(const std::string &tableName, const std
 
 void CatalogManager::readTable(const std::string &tableName) {
     if (!isTableExist(tableName)) {
-        throw runtime_error(tablename + " dose not exist");
+        throw runtime_error(tableName + " dose not exist");
     } else {
         if (tables.count(tableName) != 0) return;
 
@@ -82,17 +81,18 @@ void CatalogManager::readTable(const std::string &tableName) {
                 if (primaryMap.count(name) > 0) isPrimary = true;
                 if (uniqueMap.count(name) > 0) isUnique = true;
 
-                table.push_back(new Scheme(name,
-                                           type,
-                                           charLength,
-                                           isPrimary,
-                                           isUnique));
+                table.push_back(Scheme(name,
+                                       type,
+                                       charLength,
+                                       "",
+                                       isPrimary));
+                                       //TODO: isUnique));
             }
         }
     }
 }
 
-void CatalogManager::createTable(const std::string &tableName, const std::TableDefinition &table) {
+void CatalogManager::createTable(const std::string &tableName, const TableDefinition &table) {
     if (isTableExist(tableName)) {
         throw runtime_error(tableName + " has existed");
     } else {
@@ -103,16 +103,16 @@ void CatalogManager::createTable(const std::string &tableName, const std::TableD
         string primaryKey, uniqueKey;
         TableProtobuf tablePb;
         for (TableDefinition::const_iterator i = table.begin(); i != table.end(); ++i) {
-            names += i.name + "|";
-            type = i.type;
+            names += i->name + "|";
+            type = i->type;
             switch (type) {
                 case INT: names += "INT|"; break;
                 case FLOAT: names += "FLOAT|"; break;
                 case CHAR: names += "CHAR";
             }
-            if (type == CHAR) names += "|" + to_string(i.getCharLength()) + "|";
-            if (i.isPrimary) primaryKey += i.name + "|";
-            if (i.isUnique) uniqueKey += i.name + "|";
+            if (type == CHAR) names += "|" + to_string(i->intv) + "|";
+            if (i->isIndex) primaryKey += i->name + "|";
+            if (i->isUnique) uniqueKey += i->name + "|";
         }
         tablePb.set_names(names.c_str());
         tablePb.set_primary(primaryKey.c_str());
@@ -131,7 +131,7 @@ void CatalogManager::dropTable(const std::string &tableName) {
     if (!isTableExist(tableName)) {
         throw runtime_error(tableName + ".def" + " does not exist");
     } else {
-        if (remove(tableName + ".def") != 0) {
+        if (remove((tableName + ".def").c_str()) != 0) {
             throw runtime_error("failed to remove " + tableName + ".def");
         }
         if (tables.count(tableName) != 0) tables.erase(tableName);

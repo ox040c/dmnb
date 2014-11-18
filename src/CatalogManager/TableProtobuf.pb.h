@@ -89,31 +89,10 @@ class TableProtobuf : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required int32 totalInt = 1;
-  inline bool has_totalint() const;
-  inline void clear_totalint();
-  static const int kTotalIntFieldNumber = 1;
-  inline ::google::protobuf::int32 totalint() const;
-  inline void set_totalint(::google::protobuf::int32 value);
-
-  // required int32 totalFloat = 2;
-  inline bool has_totalfloat() const;
-  inline void clear_totalfloat();
-  static const int kTotalFloatFieldNumber = 2;
-  inline ::google::protobuf::int32 totalfloat() const;
-  inline void set_totalfloat(::google::protobuf::int32 value);
-
-  // required int32 totalChar = 3;
-  inline bool has_totalchar() const;
-  inline void clear_totalchar();
-  static const int kTotalCharFieldNumber = 3;
-  inline ::google::protobuf::int32 totalchar() const;
-  inline void set_totalchar(::google::protobuf::int32 value);
-
-  // required string names = 4;
+  // required string names = 1;
   inline bool has_names() const;
   inline void clear_names();
-  static const int kNamesFieldNumber = 4;
+  static const int kNamesFieldNumber = 1;
   inline const ::std::string& names() const;
   inline void set_names(const ::std::string& value);
   inline void set_names(const char* value);
@@ -122,26 +101,47 @@ class TableProtobuf : public ::google::protobuf::Message {
   inline ::std::string* release_names();
   inline void set_allocated_names(::std::string* names);
 
+  // required string primary = 2;
+  inline bool has_primary() const;
+  inline void clear_primary();
+  static const int kPrimaryFieldNumber = 2;
+  inline const ::std::string& primary() const;
+  inline void set_primary(const ::std::string& value);
+  inline void set_primary(const char* value);
+  inline void set_primary(const char* value, size_t size);
+  inline ::std::string* mutable_primary();
+  inline ::std::string* release_primary();
+  inline void set_allocated_primary(::std::string* primary);
+
+  // required string unique = 3;
+  inline bool has_unique() const;
+  inline void clear_unique();
+  static const int kUniqueFieldNumber = 3;
+  inline const ::std::string& unique() const;
+  inline void set_unique(const ::std::string& value);
+  inline void set_unique(const char* value);
+  inline void set_unique(const char* value, size_t size);
+  inline ::std::string* mutable_unique();
+  inline ::std::string* release_unique();
+  inline void set_allocated_unique(::std::string* unique);
+
   // @@protoc_insertion_point(class_scope:TableProtobuf)
  private:
-  inline void set_has_totalint();
-  inline void clear_has_totalint();
-  inline void set_has_totalfloat();
-  inline void clear_has_totalfloat();
-  inline void set_has_totalchar();
-  inline void clear_has_totalchar();
   inline void set_has_names();
   inline void clear_has_names();
+  inline void set_has_primary();
+  inline void clear_has_primary();
+  inline void set_has_unique();
+  inline void clear_has_unique();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
-  ::google::protobuf::int32 totalint_;
-  ::google::protobuf::int32 totalfloat_;
   ::std::string* names_;
-  ::google::protobuf::int32 totalchar_;
+  ::std::string* primary_;
+  ::std::string* unique_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
 
   friend void  protobuf_AddDesc_TableProtobuf_2eproto();
   friend void protobuf_AssignDesc_TableProtobuf_2eproto();
@@ -157,81 +157,15 @@ class TableProtobuf : public ::google::protobuf::Message {
 
 // TableProtobuf
 
-// required int32 totalInt = 1;
-inline bool TableProtobuf::has_totalint() const {
+// required string names = 1;
+inline bool TableProtobuf::has_names() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void TableProtobuf::set_has_totalint() {
+inline void TableProtobuf::set_has_names() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void TableProtobuf::clear_has_totalint() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void TableProtobuf::clear_totalint() {
-  totalint_ = 0;
-  clear_has_totalint();
-}
-inline ::google::protobuf::int32 TableProtobuf::totalint() const {
-  return totalint_;
-}
-inline void TableProtobuf::set_totalint(::google::protobuf::int32 value) {
-  set_has_totalint();
-  totalint_ = value;
-}
-
-// required int32 totalFloat = 2;
-inline bool TableProtobuf::has_totalfloat() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void TableProtobuf::set_has_totalfloat() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void TableProtobuf::clear_has_totalfloat() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void TableProtobuf::clear_totalfloat() {
-  totalfloat_ = 0;
-  clear_has_totalfloat();
-}
-inline ::google::protobuf::int32 TableProtobuf::totalfloat() const {
-  return totalfloat_;
-}
-inline void TableProtobuf::set_totalfloat(::google::protobuf::int32 value) {
-  set_has_totalfloat();
-  totalfloat_ = value;
-}
-
-// required int32 totalChar = 3;
-inline bool TableProtobuf::has_totalchar() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void TableProtobuf::set_has_totalchar() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void TableProtobuf::clear_has_totalchar() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void TableProtobuf::clear_totalchar() {
-  totalchar_ = 0;
-  clear_has_totalchar();
-}
-inline ::google::protobuf::int32 TableProtobuf::totalchar() const {
-  return totalchar_;
-}
-inline void TableProtobuf::set_totalchar(::google::protobuf::int32 value) {
-  set_has_totalchar();
-  totalchar_ = value;
-}
-
-// required string names = 4;
-inline bool TableProtobuf::has_names() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void TableProtobuf::set_has_names() {
-  _has_bits_[0] |= 0x00000008u;
-}
 inline void TableProtobuf::clear_has_names() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000001u;
 }
 inline void TableProtobuf::clear_names() {
   if (names_ != &::google::protobuf::internal::kEmptyString) {
@@ -290,6 +224,146 @@ inline void TableProtobuf::set_allocated_names(::std::string* names) {
   } else {
     clear_has_names();
     names_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// required string primary = 2;
+inline bool TableProtobuf::has_primary() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void TableProtobuf::set_has_primary() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void TableProtobuf::clear_has_primary() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void TableProtobuf::clear_primary() {
+  if (primary_ != &::google::protobuf::internal::kEmptyString) {
+    primary_->clear();
+  }
+  clear_has_primary();
+}
+inline const ::std::string& TableProtobuf::primary() const {
+  return *primary_;
+}
+inline void TableProtobuf::set_primary(const ::std::string& value) {
+  set_has_primary();
+  if (primary_ == &::google::protobuf::internal::kEmptyString) {
+    primary_ = new ::std::string;
+  }
+  primary_->assign(value);
+}
+inline void TableProtobuf::set_primary(const char* value) {
+  set_has_primary();
+  if (primary_ == &::google::protobuf::internal::kEmptyString) {
+    primary_ = new ::std::string;
+  }
+  primary_->assign(value);
+}
+inline void TableProtobuf::set_primary(const char* value, size_t size) {
+  set_has_primary();
+  if (primary_ == &::google::protobuf::internal::kEmptyString) {
+    primary_ = new ::std::string;
+  }
+  primary_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TableProtobuf::mutable_primary() {
+  set_has_primary();
+  if (primary_ == &::google::protobuf::internal::kEmptyString) {
+    primary_ = new ::std::string;
+  }
+  return primary_;
+}
+inline ::std::string* TableProtobuf::release_primary() {
+  clear_has_primary();
+  if (primary_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = primary_;
+    primary_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TableProtobuf::set_allocated_primary(::std::string* primary) {
+  if (primary_ != &::google::protobuf::internal::kEmptyString) {
+    delete primary_;
+  }
+  if (primary) {
+    set_has_primary();
+    primary_ = primary;
+  } else {
+    clear_has_primary();
+    primary_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// required string unique = 3;
+inline bool TableProtobuf::has_unique() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void TableProtobuf::set_has_unique() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void TableProtobuf::clear_has_unique() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void TableProtobuf::clear_unique() {
+  if (unique_ != &::google::protobuf::internal::kEmptyString) {
+    unique_->clear();
+  }
+  clear_has_unique();
+}
+inline const ::std::string& TableProtobuf::unique() const {
+  return *unique_;
+}
+inline void TableProtobuf::set_unique(const ::std::string& value) {
+  set_has_unique();
+  if (unique_ == &::google::protobuf::internal::kEmptyString) {
+    unique_ = new ::std::string;
+  }
+  unique_->assign(value);
+}
+inline void TableProtobuf::set_unique(const char* value) {
+  set_has_unique();
+  if (unique_ == &::google::protobuf::internal::kEmptyString) {
+    unique_ = new ::std::string;
+  }
+  unique_->assign(value);
+}
+inline void TableProtobuf::set_unique(const char* value, size_t size) {
+  set_has_unique();
+  if (unique_ == &::google::protobuf::internal::kEmptyString) {
+    unique_ = new ::std::string;
+  }
+  unique_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* TableProtobuf::mutable_unique() {
+  set_has_unique();
+  if (unique_ == &::google::protobuf::internal::kEmptyString) {
+    unique_ = new ::std::string;
+  }
+  return unique_;
+}
+inline ::std::string* TableProtobuf::release_unique() {
+  clear_has_unique();
+  if (unique_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = unique_;
+    unique_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void TableProtobuf::set_allocated_unique(::std::string* unique) {
+  if (unique_ != &::google::protobuf::internal::kEmptyString) {
+    delete unique_;
+  }
+  if (unique) {
+    set_has_unique();
+    unique_ = unique;
+  } else {
+    clear_has_unique();
+    unique_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   }
 }
 
