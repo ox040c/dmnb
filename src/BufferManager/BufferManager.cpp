@@ -160,7 +160,7 @@ void BufferManager::Update(FilePtr addr, const char * date)//直接将需要更�
 		page[page_id].data[offset + i] = date[i];
 }
 
-void BufferManager::creat(FilePtr addr)
+void BufferManager::Creat(FilePtr addr)
 {
 	unsigned int datalen = addr.datalen;
 	unsigned blocknum = 0;
@@ -197,13 +197,24 @@ FilePtr BufferManager::NextAddr(FilePtr addr)
 	file.close();
 
 	result.dataaddr += result.datalen;
-	vector<unsigned int>::iterator it = find(deleted.begin(), deleted.end(), result.dataaddr);
+	vector<unsigned int>::iterator it = find(deleted, result.dataaddr);
 	while (it != deleted.end())
 	{
 		result.dataaddr += result.datalen;
-		it = find(deleted.begin(), deleted.end(), result.dataaddr);
+		it = find(deleted, result.dataaddr);
 	}
 	if (result.dataaddr >= 4096 * (blocknum + 1))
 		result.dataaddr = -1;
 	return result;
+}
+
+vector<unsigned int>::iterator BufferManager::find(vector<unsigned int> deleted,unsigned int num)
+{
+	vector<unsigned int>::iterator it = deleted.begin();
+	while (it != deleted.end())
+	{
+		if (*it == num) return it;
+		it++;
+	}
+	return it;
 }
