@@ -23,16 +23,6 @@ private:
     BufferManager buff;
     map<filepoint,filepoint> father;
 
-
-//    void recursive_insert(CNode* parentNode, KeyType key, const DataType& data);
-//    void recursive_remove(CNode* parentNode, KeyType key);
-//    bool recursive_search(CNode *pNode, KeyType key)const;
-//    void changeKey(CNode *pNode, KeyType oldKey, KeyType newKey);
-//    void search(KeyType key, SelectResult& result);
-//    void recursive_search(CNode* pNode, KeyType key, SelectResult& result);
-//    void remove(KeyType key, DataType& dataValue);
-//    void recursive_remove(CNode* parentNode, KeyType key, DataType& dataValue);
-
 public:
     BtreeIndex(const BufferManager &x,finlpoint rootloc,filepoint firstloc){
         fp.filename = "index.data";
@@ -82,6 +72,10 @@ public:
         buff.Update(fp,s);
         delete[] s;
     }
+    void RemoveFile(filepoint p){
+        fp.dataaddr = p;
+        buff.Delete(fp);
+    }
 
     filepoint find(const KeyType &key){
         Tnode<KeyType> temp;
@@ -96,13 +90,13 @@ public:
             keynum = temp.getKeyNum ();
             if (keyindex==keynum){
                 nextnode = temp.getChild (keynum);
-                father.add(nextnode,tempnode)
+                father.add(make_pair(nextnode,tempnode));
                 temp = ReadFromFile (nextnode);
                 tempnode = nextnode;
             }
             else{
                 nextnode = temp.getChild (keyindex);
-                father.add(nextnode,tempnode)
+                father.add(make_pair(nextnode,tempnode));
                 temp = ReadFromFile (nextnode);
                 tempnode = nextnode;
             }
@@ -129,13 +123,13 @@ public:
                 keynum = tempnode.getKeyNum ();
                 if (keyindex==keynum){
                     nextp = tempnode.getChild (keynum);
-                    father.add(nextp,temp)
+                    father.add(make_pair(nextp,temp));
                     tempnode = ReadFromFile (nextp);
                     temp = nextp;
                 }
                 else{
                     nextp = tempnode.getChild (keyindex);
-                    father.add(nextp,temp)
+                    father.add(make_pair(nextp,temp));
                     tempnode = ReadFromFile (nextp);
                     temp = nextp;
                 }
@@ -152,6 +146,7 @@ public:
         node.insert (key,data);
         return true;
     }
+
     bool insert_in_parent(filepoint x,const KeyType &key,filepoint y){
         if (x == rootloc){
             Tnode<KeyType> newroot;
@@ -161,9 +156,25 @@ public:
             newroot.setKeyValue (0,key);
             return true;
         }else{
-            filepoint parent = father.get("")
-
+            filepoint parent = father.find(x);
+            Tnode<KeyTpe> parentnode;
+            if(parentnode.getKeyNum ()<MAXNUM_KEY){
+                int childindex = parentnode.getChildIndex (x);
+                parentnode.insert (childindex,childindex+1,key,y);
+            }else{
+                parentnode.insert (key,y);
+                Tnode<KeyType> newnode;
+                KeyType newkey = parentnode.getKeyValue (ORDER);
+                for (int i=0;i+ORDER<MAXNUM_CHILD;++i){
+                    newnode.setChild (i,parentnode.getChild (i+ORDER));
+                    newnode.setKeyValue (i,parentnode.getKeyValue (i+ORDER));
+                }
+                filepoint newp = WritetoFile (newnode);
+                insert_in_parent (parent,newkey,newp);
+            }
+            return true;
         }
+        return false;
     }
 
     bool insert(const KeyType& key, const filepoint& data){
@@ -205,122 +216,123 @@ public:
         return true;
     }
 
-    bool recursive_insert(Tnode* parentnode, KeyType key,filepoint data){
-        if (parentnode->isleaf()){
-            parentnode->insert(key,data);
-        }
-        else{
-            int keyIndex = parentnode->getKeyIndex(key);
-            int childIndex = keyIndex;
-            Tnode childnode = parentnode->getChild(childIndex);
-            if (childnode->getKeyNum()>=MAXNUM_LEAF) { // 子结点已满，需进行分裂
-                childnode->split(parentNode, childIndex);
-                if (parentNode->getKeyValue(childIndex)<=key){   // 确定目标子结点
-                    childnode = parentNode->getChild(childIndex+1);
-                }
-            }
-            recursive_insert(childnode, key, data);
-        }
-    }
-
     bool remove(KeyType key){
-        if (!haskey(key)){  //不存在
+        if (root==NULL){
             return false;
-        }
-        if (m_Root->getKeyNum()==1){//特殊情况处理
-            if (m_Root->isleaf()){
-               clear()
-               return true;
-               }
-            else{
-               Tndoe *pChild1 = root->getChild(0);
-               Tnode *pChild2 = root->getChild(1);
-               if (pChild1->getKeyNum()==MINNUM_KEY && pChild2->getKeyNum()==MINNUM_KEY){
-                   pChild1->mergeChild(root, pChild2, 0);
-                   delete m_Root;
-                   m_Root = pChild1;
-               }
-           }
-        }
-        recursive_remove(root, key);
-        return true;
-    }
-
-    void recursive_remove(CNode* parentNode, KeyType key){
-        int keyIndex = parentNode->getKeyIndex(key);
-        int childIndex= parentNode->getChildIndex(key, keyIndex); // 孩子结点指针索引
-        if (parentNode->isleaf()) {// 找到目标叶子节点
-            parentNode->removeKey(keyIndex, childIndex);  // 直接删除
-            // 如果键值在内部结点中存在，也要相应的替换内部结点
-            if (childIndex==0 && !root->isleaf() && parentNode!=m_DataHead){
-                changeKey(root, key, parentNode->getKeyValue(0));
-            }
-        }
-        else {// 内结点
-            Tnode *pChildNode = (parentNode)->getChild(childIndex); //包含key的子树根节点
-            if (pChildNode->getKeyNum()==MINNUM_KEY){                       // 包含关键字达到下限值，进行相关操作
-                CNode *pLeft = childIndex>0 ? ((CInternalNode*)parentNode)->getChild(childIndex-1) : NULL;                       //左兄弟节点
-                CNode *pRight = childIndex<parentNode->getKeyNum() ? ((CInternalNode*)parentNode)->getChild(childIndex+1) : NULL;//右兄弟节点
-                // 先考虑从兄弟结点中借
-                if (pLeft && pLeft->getKeyNum()>MINNUM_KEY){// 左兄弟结点可借
-                    pChildNode->borrowFrom(pLeft, parentNode, childIndex-1, LEFT);
-                }
-                else if (pRight && pRight->getKeyNum()>MINNUM_KEY){//右兄弟结点可借
-                    pChildNode->borrowFrom(pRight, parentNode, childIndex, RIGHT);
-                }
-                //左右兄弟节点都不可借，考虑合并
-                else if (pLeft){                    //与左兄弟合并
-                    pLeft->mergeChild(parentNode, pChildNode, childIndex-1);
-                    pChildNode = pLeft;
-                }
-                else if (pRight){                   //与右兄弟合并
-                    pChildNode->mergeChild(parentNode, pRight, childIndex);
-                }
-            }
-            recursive_remove(pChildNode, key);
-        }
-    }
-
-
-
-/* data */
-private:
-
-    int recursive_search(CNode *pNode, KeyType key)const{
-        if (pNode==NULL) {//检测节点指针是否为空，或该节点是否为叶子节点
-            return false;
-        }
-        else {
-            int keyIndex = pNode->getKeyIndex(key);
-            int childIndex = keyIndex; // 孩子结点指针索引
-            if (keyIndex >=0 && keyIndex<pNode->getKeyNum() && key==pNode->getKeyValue(keyIndex-1)){
-                return true;
-            }
-            else{
-                if (pNode->isleaf()){   //检查该节点是否为叶子节点
-                    return false;
-                }
-                else{
-                    return recursive_search(pNode->getChild(childIndex), key);
-                }
-            }
-        }
-    }
-    filepoint WritetoFile(Tnode x){
-        char* s = new char[4096];
-        x.WritetoFile(s);
-        filepoint p = buff.Insert(fp,s);
-        delete[] s;
-        return p;
-    }
-    Tnode<KeyType> ReadFromFile (filepoint p){
+        }                                                                          //空树
         Tnode<KeyType> tempnode;
-        fp.dataaddr = p;
-        char* s = new char[4096];
-        buff.Search(fp,s);
-        tempnode.ReadFromFile(s);
-        delete[] s;
-        return tempnode;
+        filepoint temp;
+        int keyindex;
+        temp = findLeaf (key);
+        tempnode = ReadFromFile (temp);
+        keyindex = tempnode.getKeyIndex (key);
+        if (keyindex>0 && key == tempnode.getKeyValue (keyindex-1)){
+            remove_entry (x,key,tempnode.getChild (keyindex-1),tempnode);
+        }
+    }
+
+    bool remove_entry(filepoint x,KeyType key,filepoint p,Tnode<KeyType> xnode){
+        xnode.remove (key,p);
+        if (x==rootloc && root->getKeyNum ()==0){
+            pt = rootloc;
+            rootloc = root->getChild (0);
+            root = new Tnode<KeyType>(ReadFromFile (rootloc));
+            RemoveFile (pt);
+        }else{
+            if (xnode.getKeyNum ()==MINNUM_KEY){
+                bool flag = false;
+                filepoint parent = father.find(x);
+                filepoint leftp,rightp;
+                KeyType tmpk;
+                Tnode<KeyType> left,right;
+                Tnode<KeyType> parentnode = ReadFromFile (parent);
+                int cid = parentnode.getChildIndex (x);
+                if (cid>0) {//左子合并
+                    leftp = parentnode.getChild (cid-1);
+                    left = ReadFromFile (leftp);
+                    tmpk = parentnode.getKeyValue (cid-1);
+                    if (left.getKeyNum ()+xnode.getKeyNum ()<MAXNUM_KEY){
+                        right = xnode;
+                        rightp = x;
+                        if (right.getLeaf ()!=1){
+                            left.insert (left.getKeyNum (),left.getKeyNum ()+1,tmk,right.getChild (0));
+                            for (int i=0;i<right.getKeyNum ();++i){
+                                left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
+                            }
+                        }
+                        else{
+                            for (int i=0;i<right.getKeyNum ();++i){
+                                left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
+                            }
+                            left.setChild (MAXNUM_CHILD-1,right.getChild (MAXNUM_CHILD-1));
+                        }
+
+                        remove_entry (parent,tmpk,rightp,parentnode);
+                        RemoveFile (rightp);
+                        flag =true;
+                    }
+                }
+                if (cid<parentnode.getKeyNum ()) {//右子合并
+                    rightp = parentnode.getChild (cid+1);
+                    right = ReadFromFile (rightp);
+                    tmpk = parentnode.getKeyValue (cid);
+                    if (right.getKeyNum ()+xnode.getKeyNum ()<MAXNUM_KEY){
+                        left = xnode;
+                        leftp = x;
+                        if (right.getLeaf ()!=1){
+                            left.insert (left.getKeyNum (),left.getKeyNum ()+1,tmk,right.getChild (0));
+                            for (int i=0;i<right.getKeyNum ();++i){
+                                left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
+                            }
+                        }
+                        else{
+                            for (int i=0;i<right.getKeyNum ();++i){
+                                left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
+                            }
+                            left.setChild (MAXNUM_CHILD-1,right.getChild (MAXNUM_CHILD-1));
+                        }
+                        remove_entry (parent,tmpk,rightp,parentnode);
+                        RemoveFile (rightp);
+                        flag =true;
+                    }
+                }
+                if (!flag){
+                    if (cid>0){//左边
+                        right = xnode;
+                        tmpk = parentnode.getKeyValue (cid-1);
+                        if (xnode.getLeaf ()!=1){
+                            int m = left.getKeyNum ();
+                            right.insert (0,0,tmpk,left.getChild (m));
+                            parentnode.setKeyValue (cid-1,left.getKeyValue (m-1));
+                            left.removeKey (m-1,m);
+                        }
+                        else{
+                            int m = left.getKeyNum ();
+                            right.insert (0,0,left.getKeyValue (m-1),left.getChild (m-1));
+                            parentnode.setKeyValue (cid-1,left.getKeyValue (m-1));
+                            left.removeKey (m-1,m-1);
+                        }
+                    }else{
+                        if(cid<parentnode.getKeyNum ()){//右边
+                            left = xnode;
+                            tmpk = parentnode.getKeyValue (cid);
+                            if (xnode.getLeaf ()!=1){
+                                int m = left.getKeyNum ();
+                                left.insert (m,m+1,tmk,right.getChild (0));
+                                parentnode.setKeyValue (cid,right.getKeyValue (0));
+                                left.removeKey (0,0);
+                            }
+                            else{
+                                int m = left.getKeyNum ();
+                                left.insert (m,m,right.getKeyValue (0),right.getChild (0));
+                                parentnode.setKeyValue (cid,right.getKeyValue (0));
+                                left.removeKey (0,0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 };
 #endif

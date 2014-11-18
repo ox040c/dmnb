@@ -106,6 +106,13 @@ public:
         return left;
     }
 
+    int getChildIndex(filepoint p)const{
+        for (int i=0;i<keynum+1;i++){
+            if (p==childpoint[i]) return i;
+        }
+        return -1;
+    }
+
     filepoint getChild(int i) const{
         if (!leaf) return childpoint[i];
     }
