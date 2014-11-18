@@ -79,13 +79,13 @@ Wrapper RecordManager::get_wrapper(const std::list<Wrapper>::const_iterator it,c
 	case utls::INT:
 		int k;
 		k = *(int *)temp;
-        cout <<"int:"<< k <<endl;
+        //cout <<"int:"<< k <<endl;
 		return Wrapper(utls::INT, k,it->name);
 		break;
 	case utls::FLOAT:
 		float kk;
 		kk = *(float *)temp;
-        cout <<"float"<< kk <<endl;
+        //cout <<"float"<< kk <<endl;
 		return Wrapper(utls::FLOAT, kk,it->name);
 		break;
 	case utls::CHAR:
@@ -95,7 +95,7 @@ Wrapper RecordManager::get_wrapper(const std::list<Wrapper>::const_iterator it,c
             ch[i] = temp[i];
         ch[it->intv] = 0;
         string s(ch);
-        cout <<"string"<< s <<endl;
+        //cout <<"string"<< s <<endl;
         delete[] ch;
         return Wrapper(utls::CHAR, s,it->name,it->intv);
         break;
@@ -121,23 +121,25 @@ FilePtr RecordManager::get_fileptr(
 	return addr;
 }
 //get the next address
-unsigned int  RecordManager::getNext(const  std::string &tableName, bool reset)
+unsigned int  RecordManager::getNext(const  std::string &tableName, bool reset ,unsigned int pos)
 {
-    cout << "[RM] getNext called!" << endl;
-
+    //cout << "[RM] getNext called!" << endl;
 	FilePtr addr;
 	addr.datalen = get_datalen(tableName);
-
+    addr.dataaddr = pos;
 	if (reset)
 	{
         addr = get_fileptr(tableName, (unsigned int)4096 - addr.datalen, addr.datalen);
-	}
+    }else
+    {
+        addr = get_fileptr(tableName, addr.dataaddr, addr.datalen);
+    }
 
-    cout << "[RM] before call buffer.nextAddr: " << addr.dataaddr << ":" << addr.datalen << endl;
+    //cout << "[RM] before call buffer.nextAddr: " << addr.dataaddr << ":" << addr.datalen << endl;
 
 	addr = buffer.nextAddr(addr);
 
-    cout << "[RM] gotta: " << addr.dataaddr << ":" << addr.datalen << endl;
+    //cout << "[RM] gotta: " << addr.dataaddr << ":" << addr.datalen << endl;
 
 	return addr.dataaddr;
 }
@@ -164,13 +166,15 @@ Entry &  RecordManager::getValue(
 	unsigned int datalen = get_datalen(tableName);
 	value = new char[datalen];
 	addr = get_fileptr(tableName, pos, datalen);
-    cout << "RM" << addr.dataaddr <<endl;
+
 	buffer.search(addr, value);
-    cout << value <<endl;
+
 	EntryResult.clear();
 	list<Wrapper>::const_iterator it = entry.begin();
 	while (it != entry.end())
 	{
+        temp = value + offset;
+        EntryResult.push_back(get_wrapper(it, temp));
 		switch (it->type)
 		{
 		case utls::INT:
@@ -188,8 +192,6 @@ Entry &  RecordManager::getValue(
 //			abort();
 			break;
 		}
-		temp = value + offset;
-		EntryResult.push_back(get_wrapper(it, temp));
 		it++;
 	}
 	return EntryResult;
@@ -265,6 +267,8 @@ int RecordManager::deleteEntry(const std::string &tableName)
 	buffer.drop(addr);
 	buffer.create(addr);
 
+    cout<<"delete"<<endl;
+
     return total;
 }
 
@@ -317,8 +321,9 @@ unsigned int  RecordManager::insertEntry(
 		case utls::INT:
 			for (int i = 0; i < sizeof (int); i++)
 			{
-				temp[i] = *(char *)(&(it->intv)+i);
+                temp[i] = *((char *)&(it->intv)+i);
 			}
+            //cout << *(int *)(temp) <<endl;
             offset += sizeof(int);
             break;
 		case utls::FLOAT:
@@ -334,6 +339,7 @@ unsigned int  RecordManager::insertEntry(
 				temp[i] = it->strv[i];
 			}
 			temp[it->strv.length()] = 0;
+
             offset += (it->intv) * sizeof(char);
             break;
 		default:
@@ -348,7 +354,9 @@ unsigned int  RecordManager::insertEntry(
 
     //cout << "[recordManager] before buffer.insert" << endl;
 
-	buffer.insert(addr, insertvalue);
+    addr = buffer.insert(addr, insertvalue);
+    cout << addr.dataaddr << endl;
+    return addr.dataaddr;
 
     //cout << "[recordManager] after buffer.insert" << endl;
 }

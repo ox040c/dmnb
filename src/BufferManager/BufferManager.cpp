@@ -95,16 +95,18 @@ void writedeleted(string name, vector <unsigned int> deleted)
 
 vector<unsigned int> readdeleted(string name)
 {
-	ifstream infile;
+    fstream infile;
 	unsigned int  key;
 	vector<unsigned int> result;
 	string filename = "del_" + name + ".txt";
-	infile.open(filename.c_str(), ios::in);
+    infile.open(filename.c_str(), ios::in | ios::out);
+    if(!infile) cout << "can't open" <<endl;
 	while (infile >> key)
 	{
 		result.push_back(key);
 	}
 	infile.close();
+
 	return result;
 }
 
@@ -231,7 +233,7 @@ FilePtr BufferManager::nextAddr(const FilePtr &addr)
 	file.close();
 
 	result.dataaddr += result.datalen;
-     cout << result.dataaddr <<endl;
+     //cout << result.dataaddr <<endl;
     vector<unsigned int>::const_iterator it = find(deleted, result.dataaddr);
 	while (it != deleted.end())
 	{
@@ -241,7 +243,7 @@ FilePtr BufferManager::nextAddr(const FilePtr &addr)
 
 	if (result.dataaddr >= 4096 * (blocknum + 1))
         result.dataaddr = 0;
-
+    //writedeleted(result.filename,deleted);
 	return result;
 }
 
