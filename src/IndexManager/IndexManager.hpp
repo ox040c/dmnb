@@ -27,7 +27,7 @@ public:
 // 在 tableName 的 colName 上建立索引 indexName, 这个 colName 的类型是 type
 	int search(int tid,int attrid,int key,int condition_info);
 	int search(int tid,int attrid,float key,int condition_info);
-	int search(int tid,int attrid,string key,int condition_info);
+    int search(tr);
 	int insert(int tid,int eid,int attrid,std::vector<char> v);
 // FIXME: void insert(const std::string indexName,
 //                    const int &pos,
