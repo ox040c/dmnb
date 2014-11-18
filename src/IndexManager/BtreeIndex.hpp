@@ -1,8 +1,16 @@
 #ifndef BtreeIndex
 #define BtreeIndex
 #include "Tnode.hpp"
+#include "BufferManager.hpp"
 #include <vector>
-typedef int filepoint;
+typedef unsigned int filepoint;
+const int ORDER = 10;                   // B+树的阶（非根内结点的最小子树个数）
+const int MINNUM_KEY = ORDER-1;        // 最小键值个数
+const int MAXNUM_KEY = 2*ORDER-1;      // 最大键值个数
+const int MINNUM_CHILD = MINNUM_KEY+1; // 最小子树个数
+const int MAXNUM_CHILD = MAXNUM_KEY+1; // 最大子树个数
+const int MINNUM_LEAF = MINNUM_KEY;    // 最小叶子结点键值个数
+const int MAXNUM_LEAF = MAXNUM_KEY;    // 最大叶子结点键值个数
 template <type KeyType>
 class BtreeIndex {
 private:
@@ -10,6 +18,8 @@ private:
     Tnode<KeyType> first;
     filepoint rootloc;
     filepoint firstloc;
+    struct DataAddr fp;
+
 
     void recursive_insert(CNode* parentNode, KeyType key, const DataType& data);
     void recursive_remove(CNode* parentNode, KeyType key);
@@ -19,11 +29,33 @@ private:
     void recursive_search(CNode* pNode, KeyType key, SelectResult& result);
     void remove(KeyType key, DataType& dataValue);
     void recursive_remove(CNode* parentNode, KeyType key, DataType& dataValue);
+
 public:
     BtreeIndex(filepoint r,filepoint f){
-        rootloc =r;
+        char* s = (char*)malloc(4096);
+        fp.filename = "index.data";
+        fp.datalen = 4096;
+
+        readFrom()
         firstloc =f;
     }
+
+    filepoint WritetoFile(Tnode x){
+        char* s = (char*)malloc(4096);
+        x.WritetoFile(s);
+        filepoint p = buff.insert(fp,s);
+        return p;
+    }
+
+    Tnode ReadFromFile (filepoint p){
+        Tnode tempnode;
+        fp.dataaddr = p;
+        char* s =(char*)malloc(4096);
+        buff.Search(fp,s);
+        tempnode.ReadFromFile(s);
+        return tempnode;
+    }
+
 	~BtreeIndex();
 
     bool haskey(KeyType key){
