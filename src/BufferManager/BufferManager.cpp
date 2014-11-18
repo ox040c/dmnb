@@ -1,4 +1,4 @@
-﻿#include "BufferManager.hpp"
+﻿ #include "BufferManager.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>

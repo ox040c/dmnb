@@ -1,7 +1,7 @@
-#ifndef BUFFER_MANAGER_h
+ï»¿#ifndef BUFFER_MANAGER_h
 #define BUFFER_MANAGER_H
 #include "Utility.hpp"
-#include "Page.hpp" 
+#include "Page.hpp"  
 #include <string>
 #include <fstream>
 #include <map>
@@ -10,16 +10,16 @@ class BufferManager{
 private:
 	Page page[100];
 	int min_call();
-	int get_pageid(FilePtr);//ÕÒµ½ÓĞÒªÑ°ÕÒµÄpage£¬Èô²»´æÔÚÕâ½«block¶ÁÈëµ½page£¬·µ»ØpageID
+	int get_pageid(FilePtr);//æ‰¾åˆ°æœ‰è¦å¯»æ‰¾çš„pageï¼Œè‹¥ä¸å­˜åœ¨è¿™å°†blockè¯»å…¥åˆ°pageï¼Œè¿”å›pageID
 	void read_from_file(int,FilePtr);
 public:
 	BufferManager();
 	~BufferManager();
-	FilePtr NextAddr(FilePtr addr);//Èç¹ûÊÇ×îºóÒ»¸öµÄ»°·µ»ØµÄdataaddr=-1;
-	void creat(FilePtr addr);//½¨Á¢Ò»¸ö±íµ¥£¬µÚÒ»¿éblock´æ´¢±í¸ñÖĞÊı¾İµÄblockµÄÊıÄ¿ºÍÊı¾İµÄ³¤¶È
-	FilePtr Insert(FilePtr addr, const char * data); //Í¨¹ıDataAddr¾ö¶¨²åÈëµÄÎÄ¼ş
-	void Search(FilePtr addr, char * ReturnDate);//Êı¾İÍ¨¹ıReturnDate ·µ»Ø
-	void Delete(FilePtr addr); //Ö±½ÓÉ¾³ıÖ¸¶¨µØµãµÄÖ¸¶¨³¤¶È£¬Í¨¹ıÀÁÉ¾³ıÊµÏÖ,¼ÇÂ¼ÔÚdel_filename.txtÖĞ
-	void Update(FilePtr addr, const char * date);//°ÑĞèÒªĞŞ¸ÄµÄÊı¾İ´«½øÀ´
+	FilePtr NextAddr(FilePtr addr);//å¦‚æœæ˜¯æœ€åä¸€ä¸ªçš„è¯è¿”å›çš„dataaddr=-1;
+	void creat(FilePtr addr);//å»ºç«‹ä¸€ä¸ªè¡¨å•ï¼Œç¬¬ä¸€å—blockå­˜å‚¨è¡¨æ ¼ä¸­æ•°æ®çš„blockçš„æ•°ç›®å’Œæ•°æ®çš„é•¿åº¦
+	FilePtr Insert(FilePtr addr, const char * data); //é€šè¿‡DataAddrå†³å®šæ’å…¥çš„æ–‡ä»¶
+	void Search(FilePtr addr, char * ReturnDate);//æ•°æ®é€šè¿‡ReturnDate è¿”å›
+	void Delete(FilePtr addr); //ç›´æ¥åˆ é™¤æŒ‡å®šåœ°ç‚¹çš„æŒ‡å®šé•¿åº¦ï¼Œé€šè¿‡æ‡’åˆ é™¤å®ç°,è®°å½•åœ¨del_filename.txtä¸­
+	void Update(FilePtr addr, const char * date);//æŠŠéœ€è¦ä¿®æ”¹çš„æ•°æ®ä¼ è¿›æ¥
 };
 #endif
