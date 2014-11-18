@@ -1,16 +1,17 @@
-#ifndef BtreeIndex
-#define BtreeIndex
+#ifndef BtreeIndex_H_
+#define BtreeIndex_H_
 #include "Tnode.hpp"
 #include "BufferManager.hpp"
 #include <vector>
+#include <map>
 typedef unsigned int filepoint;
-const int ORDER = 10;                   // B+树的阶（非根内结点的最小子树个数）
-const int MINNUM_KEY = ORDER-1;        // 最小键值个数
-const int MAXNUM_KEY = 2*ORDER-1;      // 最大键值个数
-const int MINNUM_CHILD = MINNUM_KEY+1; // 最小子树个数
-const int MAXNUM_CHILD = MAXNUM_KEY+1; // 最大子树个数
-const int MINNUM_LEAF = MINNUM_KEY;    // 最小叶子结点键值个数
-const int MAXNUM_LEAF = MAXNUM_KEY;    // 最大叶子结点键值个数
+extern const int ORDER;                   // B+树的阶（非根内结点的最小子树个数）
+extern const int MINNUM_KEY;        // 最小键值个数
+extern const int MAXNUM_KEY;      // 最大键值个数
+extern const int MINNUM_CHILD; // 最小子树个数
+extern const int MAXNUM_CHILD; // 最大子树个数
+extern const int MINNUM_LEAF;    // 最小叶子结点键值个数
+extern const int MAXNUM_LEAF;    // 最大叶子结点键值个数
 
 template <class KeyType>
 class BtreeIndex {
@@ -21,10 +22,14 @@ private:
     filepoint firstloc;
     struct DataAddr fp;
     BufferManager buff;
-    map<filepoint,filepoint> father;
+    std::map<filepoint,filepoint> father;
 
 public:
-    BtreeIndex(const BufferManager &x,finlpoint rootloc,filepoint firstloc){
+    BtreeIndex(){
+
+    }
+
+    BtreeIndex(const BufferManager &x,filepoint rootloc,filepoint firstloc){
         fp.filename = "index.data";
         fp.datalen = 4096;
         root = new Tnode<KeyType>(ReadFromFile (rootloc));
@@ -41,31 +46,33 @@ public:
     }
 
     ~BtreeIndex(){
-
+        fp.filename = "index.data";
+        fp.datalen = 4096;
     }
     void clear();             // 清空
     void print()const;        // 打印树关键字
     void printData()const;    // 打印数据
 
-    filepoint WritetoFile(Tnode x){
-        char* s = new char[4096]
+    filepoint WritetoFile(Tnode<KeyType> x){
+        char* s = new char[4096];
         x.WritetoFile(s);
         delete[] s;
-        filepoint p = buff.insert(fp,s);
-        return p;
+        struct DataAddr fp1;
+        fp1 = buff.Insert (fp,s);
+        return fp1.dataaddr;
     }
 
-    Tnode ReadFromFile (filepoint p){
-        Tnode tempnode;
+    Tnode<KeyType> ReadFromFile (filepoint p){
+        Tnode<KeyType> tempnode;
         fp.dataaddr = p;
-        char* s = new char[4096]
+        char* s = new char[4096];
         buff.Search(fp,s);
         tempnode.ReadFromFile(s);
         delete[] s;
         return tempnode;
     }
 
-    void UpdateFile(filepoint p,Tnode x){
+    void UpdateFile(filepoint p,Tnode<KeyType> x){
         char* s = new char[4096];
         x.WritetoFile (s);
         fp.dataaddr = p;
@@ -90,13 +97,13 @@ public:
             keynum = temp.getKeyNum ();
             if (keyindex==keynum){
                 nextnode = temp.getChild (keynum);
-                father.add(make_pair(nextnode,tempnode));
+                father.insert (std::pair<filepoint,filepoint>(nextnode,tempnode));
                 temp = ReadFromFile (nextnode);
                 tempnode = nextnode;
             }
             else{
                 nextnode = temp.getChild (keyindex);
-                father.add(make_pair(nextnode,tempnode));
+                father.insert (std::pair<filepoint,filepoint>(nextnode,tempnode));
                 temp = ReadFromFile (nextnode);
                 tempnode = nextnode;
             }
@@ -123,24 +130,24 @@ public:
                 keynum = tempnode.getKeyNum ();
                 if (keyindex==keynum){
                     nextp = tempnode.getChild (keynum);
-                    father.add(make_pair(nextp,temp));
+                    father.insert(std::pair<filepoint,filepoint>(nextp,temp));
                     tempnode = ReadFromFile (nextp);
                     temp = nextp;
                 }
                 else{
                     nextp = tempnode.getChild (keyindex);
-                    father.add(make_pair(nextp,temp));
+                    father.insert(std::pair<filepoint,filepoint>(nextp,temp));
                     tempnode = ReadFromFile (nextp);
                     temp = nextp;
                 }
             }
             return temp;
-        }else std::cout<<"error in index findleaf"<<endl;
+        }else std::cout<<"error in index findleaf"<<std::endl;
     }
 
-    vector<filepoint> select(KeyType compareKey, int compareOpeartor){    // 范围查询，BETWEEN
+//    vector<filepoint> select(KeyType compareKey, int compareOpeartor){    // 范围查询，BETWEEN
 
-    }
+//    }
 
     bool insert_in_leaf(Tnode<KeyType> &node,const KeyType &key,const filepoint& data){
         node.insert (key,data);
@@ -156,8 +163,8 @@ public:
             newroot.setKeyValue (0,key);
             return true;
         }else{
-            filepoint parent = father.find(x);
-            Tnode<KeyTpe> parentnode;
+            filepoint parent = father[x];
+            Tnode<KeyType> parentnode;
             if(parentnode.getKeyNum ()<MAXNUM_KEY){
                 int childindex = parentnode.getChildIndex (x);
                 parentnode.insert (childindex,childindex+1,key,y);
@@ -179,7 +186,7 @@ public:
 
     bool insert(const KeyType& key, const filepoint& data){
         if (root==NULL){
-            root = new Tnode();
+            root = new Tnode<KeyType>();
             first = root;
             root->insert (key,data);
             firstloc = WritetoFile (*first);
@@ -195,11 +202,11 @@ public:
         if (keyindex>0 && key == tempnode.getKeyValue (keyindex-1)){
             return false;
         }                                                                       //已经在树中
-        if (tempnode.getKeyNum ()<MAXMUN_KEY){
-            insert_in_leaf();
+        if (tempnode.getKeyNum ()<MAXNUM_KEY){
+            insert_in_leaf(tempnode,key,data);
             UpdateFile (temp,tempnode);
         }else{
-            Tnode<KetType> newnode;
+            Tnode<KeyType> newnode;
             insert_in_leaf(tempnode,key,data);
             for (int i=0;(i+ORDER)<MAXNUM_KEY+1;++i){
                 newnode.setKeyValue (i,tempnode.getKeyValue (i+ORDER));
@@ -227,14 +234,14 @@ public:
         tempnode = ReadFromFile (temp);
         keyindex = tempnode.getKeyIndex (key);
         if (keyindex>0 && key == tempnode.getKeyValue (keyindex-1)){
-            remove_entry (x,key,tempnode.getChild (keyindex-1),tempnode);
+            remove_entry (temp,key,tempnode.getChild (keyindex-1),tempnode);
         }
     }
 
     bool remove_entry(filepoint x,KeyType key,filepoint p,Tnode<KeyType> xnode){
         xnode.remove (key,p);
         if (x==rootloc && root->getKeyNum ()==0){
-            pt = rootloc;
+            filepoint pt = rootloc;
             rootloc = root->getChild (0);
             root = new Tnode<KeyType>(ReadFromFile (rootloc));
             RemoveFile (pt);
@@ -255,7 +262,7 @@ public:
                         right = xnode;
                         rightp = x;
                         if (right.getLeaf ()!=1){
-                            left.insert (left.getKeyNum (),left.getKeyNum ()+1,tmk,right.getChild (0));
+                            left.insert (left.getKeyNum (),left.getKeyNum ()+1,tmpk,right.getChild (0));
                             for (int i=0;i<right.getKeyNum ();++i){
                                 left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
                             }
@@ -280,7 +287,7 @@ public:
                         left = xnode;
                         leftp = x;
                         if (right.getLeaf ()!=1){
-                            left.insert (left.getKeyNum (),left.getKeyNum ()+1,tmk,right.getChild (0));
+                            left.insert (left.getKeyNum (),left.getKeyNum ()+1,tmpk,right.getChild (0));
                             for (int i=0;i<right.getKeyNum ();++i){
                                 left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
                             }
@@ -318,7 +325,7 @@ public:
                             tmpk = parentnode.getKeyValue (cid);
                             if (xnode.getLeaf ()!=1){
                                 int m = left.getKeyNum ();
-                                left.insert (m,m+1,tmk,right.getChild (0));
+                                left.insert (m,m+1,tmpk,right.getChild (0));
                                 parentnode.setKeyValue (cid,right.getKeyValue (0));
                                 left.removeKey (0,0);
                             }
