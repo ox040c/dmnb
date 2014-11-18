@@ -30,7 +30,7 @@ bool CatalogManager::isTableHasAttribute(const std::string &tableName, const std
     } catch (exception e) {
         throw e;
     }
-    for (list < Scheme >::iterator i = tables[tableName].begin(); i != tables[tableName].end(); ++i) {
+    for (TableDefinition::const_iterator i = tables[tableName].begin(); i != tables[tableName].end(); ++i) {
         if (i.getName() == attName)
             return true;
     }

@@ -3,6 +3,11 @@
 #include <cstdio>
 
 #include "Interpreter/parse.h"
+#include "API.hpp"
+#include "CatalogManager.hpp"
+#include "IndexManager.hpp"
+#include "RecordManager.hpp"
+#include "BufferManager.hpp"
 
 using namespace std;
 

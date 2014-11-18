@@ -44,6 +44,10 @@ public:
     const Entries &select(const std::string &tableName);       // overload: select with no conditions
     const Entries &select(const std::string &tableName,
                 const Conditions &conditions);      // no "or" in statement
+    void remove(const std::string &tableName);
+    void remove(const std::string &tableName,
+                const Conditions &conditions);
+
     /* TODO:
     ConstItemIterator itemsBegin();
     ConstItemIterator itemsEnd();
