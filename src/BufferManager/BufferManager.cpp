@@ -217,7 +217,12 @@ FilePtr BufferManager::nextAddr(const FilePtr &addr)
 	vector <unsigned int> deleted;
 	unsigned blocknum;
 	FilePtr result = addr;
+
+    cout << "[BM] result.filename: " << result.filename << endl;
+
 	deleted = readdeleted(result.filename);
+
+    cout << "[BM] nextAddr called! deleted.size() = " << deleted.size() << endl;
 
 	fstream file;
 	file.open(result.filename.c_str(), ios::in | ios::binary | ios::out);
@@ -226,7 +231,7 @@ FilePtr BufferManager::nextAddr(const FilePtr &addr)
 	file.close();
 
 	result.dataaddr += result.datalen;
-	vector<unsigned int>::iterator it = find(deleted, result.dataaddr);
+    vector<unsigned int>::const_iterator it = find(deleted, result.dataaddr);
 	while (it != deleted.end())
 	{
 		result.dataaddr += result.datalen;
@@ -237,9 +242,9 @@ FilePtr BufferManager::nextAddr(const FilePtr &addr)
 	return result;
 }
 
-vector<unsigned int>::iterator BufferManager::find(vector<unsigned int> deleted,unsigned int num)
+vector<unsigned int>::const_iterator BufferManager::find(const vector<unsigned int> &deleted,unsigned int num)
 {
-	vector<unsigned int>::iterator it = deleted.begin();
+    vector<unsigned int>::const_iterator it = deleted.begin();
 	while (it != deleted.end())
 	{
 		if (*it == num) return it;

@@ -11,10 +11,10 @@ create table student (
 //drop index stunameidx;
 insert into student values ('12345678','w',22,'M');
 
+select * from student;
 
 exit;
 
-select * from student;
 
 drop table student;
 

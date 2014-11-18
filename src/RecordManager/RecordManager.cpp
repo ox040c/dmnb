@@ -120,6 +120,8 @@ FilePtr RecordManager::get_fileptr(
 //get the next address
 unsigned int  RecordManager::getNext(const  std::string &tableName, bool reset)
 {
+    cout << "[RM] getNext called!" << endl;
+
 	FilePtr addr;
 	addr.datalen = get_datalen(tableName);
 
@@ -128,7 +130,12 @@ unsigned int  RecordManager::getNext(const  std::string &tableName, bool reset)
 		addr = get_fileptr(tableName, 4096 - addr.datalen, addr.datalen);
 	}
 
+    cout << "[RM] before call buffer.nextAddr: " << addr.dataaddr << ":" << addr.datalen << endl;
+
 	addr = buffer.nextAddr(addr);
+
+    cout << "[RM] gotta: " << addr.dataaddr << ":" << addr.datalen << endl;
+
 	return addr.dataaddr;
 }
 //creat schema,if exist, return false
@@ -271,6 +278,9 @@ unsigned int  RecordManager::insertEntry(
 	const std::string &tableName,
 	const Entry &entry)
 {
+    //cout << "[RecordManager] called! " << endl;
+
+
     if (totalEntries.count(tableName) == 0) totalEntries[tableName] = 1;
     else ++totalEntries[tableName];
 
@@ -278,11 +288,25 @@ unsigned int  RecordManager::insertEntry(
 	FilePtr addr;
 	char * insertvalue, * temp;
 	int offset = 0;
+
+    //cout << "[recordManager] 1" << endl;
+
 	addr = get_fileptr(tableName, 0, get_datalen(tableName));
-	insertvalue = new char[addr.dataaddr];
+
+    //cout << "[rm] 2: " << addr.dataaddr << ", " << addr.datalen << endl;
+
+    insertvalue = new char[addr.datalen];
+
+    //cout << "[rm] 3" << endl;
+
 	list<Wrapper>::const_iterator it = entry.begin();
-	while (it != entry.end());
+
+    //cout << "[rm] 4: " << entry.size() << endl;
+
+    while (it != entry.end())
 	{
+        //cout << "[rm] " << it->type << ": " << it->strv << endl;
+
 		temp = insertvalue + offset;
 		switch (it->type)
 		{
@@ -292,12 +316,14 @@ unsigned int  RecordManager::insertEntry(
 				temp[i] = *(char *)(&(it->intv)+i);
 			}
 			offset += sizeof(int);
+            break;
 		case utls::FLOAT:
 			for (int i = 0; i < sizeof (float); i++)
 			{
 				temp[i] = *((char *)&(it->floatv) + i);
 			}
 			offset += sizeof(float);
+            break;
 		case utls::CHAR:
 			for (unsigned int i = 0; i < it->strv.length(); i++)
 			{
@@ -305,6 +331,7 @@ unsigned int  RecordManager::insertEntry(
 			}
 			temp[it->strv.length()] = 0;
 			offset += (it->intv+1) * sizeof(char);
+            break;
 		default:
             throw runtime_error("insert attribute type error");
 //			cerr << "insert attribute type error" << endl;
@@ -313,5 +340,10 @@ unsigned int  RecordManager::insertEntry(
 		}
 		it++;
 	}
+
+    //cout << "[recordManager] before buffer.insert" << endl;
+
 	buffer.insert(addr, insertvalue);
+
+    //cout << "[recordManager] after buffer.insert" << endl;
 }

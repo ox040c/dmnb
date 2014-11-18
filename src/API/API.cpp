@@ -124,8 +124,16 @@ void API::insertEntry(const string &tableName, const Entry &entry) {
         if (!catalogManager.isTableExist(tableName)) {
             throw runtime_error(tableName + " does not exist");
         } else {
+            cout << "[API] insertEntry: tableName = " << tableName << endl;
+
             checkEntry(tableName, entry);
+
+            cout << "[API] pass check!" << endl;
+
             int pos = recordManager.insertEntry(tableName, entry);
+
+            cout << "[API] pos = " << pos << endl;
+
             const TableDefinition &df = catalogManager.getTableDef(tableName);
             for (TableDefinition::const_iterator i = df.begin(); i != df.end(); ++i) {
                 string indexName = indexManager.getIndexName(tableName, i->name);
@@ -218,9 +226,16 @@ const Entries &API::select(const std::string &tableName) {
     if (!catalogManager.isTableExist(tableName)) {
         throw runtime_error(tableName + " dose not exist");
     } else {
+        cout << "[API] select * called!" << endl;
+
         result.clear();
-        unsigned int ptr = recordManager.getNext(tableName, true);
+        int ptr = recordManager.getNext(tableName, true);
+
+        cout << "[API] gotta! ptr = " << ptr << endl;
+
         while (ptr != -1) {
+            cout << "[API] ptr = " << ptr << endl;
+
             result.push_back(recordManager.getValue(tableName, ptr, catalogManager.getTableDef(tableName)));
             ptr = recordManager.getNext(tableName, false);
         }
