@@ -17,8 +17,8 @@ extern "C" FILE *yyin;
 
 void yyerror(const char *s);
 
-#include "Utility.hpp"
-#include "API.hpp"
+#include "../Utility/Utility.hpp"
+#include "../API/API.hpp"
 
 extern PlanList& parse(string str);
 PlanList plist;
@@ -42,8 +42,8 @@ std::string tname;
 
 // define the "terminal symbol" token types I'm going to use (in CAPS
 // by convention), and associate each with a field of the union:
-%token <ival> INT
-%token <fval> FLOAT
+%token <ival> INT_v
+%token <fval> FLOAT_v
 %token <sval> STRING
 %token <comp_sign> OP
 
@@ -114,7 +114,7 @@ attr_list:
     ;
 
 attr:
-      STRING CHAR '(' INT ')' {
+      STRING CHAR '(' INT_v ')' {
         apnd(Wrapper(string($1), utls::CHAR, $4));
     }
     | STRING INT_type {
@@ -161,10 +161,10 @@ expr:
       STRING OP STRING { apnd(Wrapper(string($1),
         (op_t) $2, string($3)));
     }
-    | STRING OP INT { apnd(Wrapper(string($1),
+    | STRING OP INT_v { apnd(Wrapper(string($1),
         (op_t) $2, $3));
     }
-    | STRING OP FLOAT { apnd(Wrapper(string($1),
+    | STRING OP FLOAT_v { apnd(Wrapper(string($1),
         (utls::Operator) $2, $3));
     }
     ;
@@ -181,8 +181,8 @@ insert_stmt:
 
 var:
       STRING { apnd(Wrapper(utls::CHAR, string($1))); }
-    | FLOAT { apnd(Wrapper(utls::FLOAT, $1)); }
-    | INT { apnd(Wrapper(utls::INT, $1)); }
+    | FLOAT_v { apnd(Wrapper(utls::FLOAT, $1)); }
+    | INT_v { apnd(Wrapper(utls::INT, $1)); }
     ;
 
 var_list:

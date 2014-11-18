@@ -165,7 +165,4 @@ typedef std::list < Entry > Entries;
 typedef utls::DataType dt_t;
 typedef utls::Operator op_t;
 
-utls::DataType getDataType(
-        const TableDefinition& td, const std::string attName);
-
 #endif

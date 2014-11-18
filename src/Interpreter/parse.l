@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <iostream>
 
-#include "Utility.hpp"
+#include "../Utility/Utility.hpp"
 
 using namespace std;
 #define YY_DECL extern "C" int yylex()
@@ -16,8 +16,8 @@ using namespace std;
 %}
 %%
 [ \t\n\r] /* whitespace */
-[0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT; }
-[0-9]+            { yylval.ival = atoi(yytext); return INT; }
+[0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT_v; }
+[0-9]+            { yylval.ival = atoi(yytext); return INT_v; }
 
 add|ADD { return ADD; }
 and|AND { return AND; }
