@@ -125,7 +125,7 @@ attr:
     | STRING FLOAT_type {
         apnd(Wrapper(string($1), utls::FLOAT));
     }
-    | attr UNIQUE { wlist.end()->isUnique = true; }
+    | attr UNIQUE { wlist.back().isUnique = true; }
     | PRIMARY KEY '(' STRING ')' {
         int keyCount = 0;
         for ( list<Wrapper>::iterator i = wlist.begin();

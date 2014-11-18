@@ -100,7 +100,7 @@ vector<unsigned int> readdeleted(string name)
 	vector<unsigned int> result;
 	string filename = "del_" + name + ".txt";
     infile.open(filename.c_str(), ios::in | ios::out);
-    if(!infile) cout << "can't open" <<endl;
+    //if(!infile) cout << "can't open" <<endl;
 	while (infile >> key)
 	{
 		result.push_back(key);
@@ -220,11 +220,11 @@ FilePtr BufferManager::nextAddr(const FilePtr &addr)
     unsigned int blocknum;
 	FilePtr result = addr;
 
-    cout << "[BM] result.filename: " << result.filename << endl;
+    //cout << "[BM] result.filename: " << result.filename << endl;
 
 	deleted = readdeleted(result.filename);
 
-    cout << "[BM] nextAddr called! deleted.size() = " << deleted.size() << endl;
+    //cout << "[BM] nextAddr called! deleted.size() = " << deleted.size() << endl;
 
 	fstream file;
 	file.open(result.filename.c_str(), ios::in | ios::binary | ios::out);

@@ -117,7 +117,11 @@ void CatalogManager::createTable(const std::string &tableName, TableDefinition &
         sstrm << i->intv;
 	    string temp;
 	    sstrm>> temp;
+
+        //cout << "[CM] " << i->name << "Unique: " << i->isUnique << endl;
+
             if (type == CHAR) names += "|" + temp + "|";
+            if (i->isUnique) i->isIndex = true;
             if (i->isIndex) primaryKey += i->name + "|";
             if (i->isUnique) uniqueKey += i->name + "|";
         }

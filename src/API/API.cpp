@@ -39,6 +39,14 @@ void API::createTable(const std::string &tableName, TableDefinition &data) {
         catalogManager.createTable(tableName, data);
         // FIXME: recordManager.createTable(tableName, data);
         recordManager.creatSchema(tableName, data);
+
+        for (TableDefinition::iterator i = data.begin(); i != data.end(); ++i)
+            if (i->isIndex) {
+
+                cout << "[API] creat index: " << tableName <<" " << i->name << endl;
+
+                indexManager.createIndex(tableName, i->name, tableName+"_"+i->name, i->type);
+            }
     }
 #endif
 }
@@ -124,7 +132,7 @@ void API::insertEntry(const string &tableName, Entry &entry) {
         if (!catalogManager.isTableExist(tableName)) {
             throw runtime_error(tableName + " does not exist");
         } else {
-            //cout << "[API] insertEntry: tableName = " << tableName << endl;
+            cout << "[API] insertEntry: tableName = " << tableName << endl;
 
             checkEntry(tableName, entry);
 
@@ -148,12 +156,18 @@ void API::insertEntry(const string &tableName, Entry &entry) {
             const TableDefinition &df = catalogManager.getTableDef(tableName);
             for (TableDefinition::const_iterator i = df.begin(); i != df.end(); ++i) {
                 string indexName = indexManager.getIndexName(tableName, i->name);
+
+                //cout << "[API] after got indexName:" << indexName << endl;
+
                 if (!indexName.empty()) {
+                    cout << "[API] add index: " << indexName << endl;
                     indexManager.insert(indexName, pos,
                                         recordManager.getAttValue(tableName, pos, i->name, df));
                 }
 
             }
+
+            cout << "[API] insertEntry finished!" << endl;
         }
     } catch (exception &e) {
         throw e;
@@ -243,10 +257,10 @@ const Entries &API::select(const std::string &tableName) {
         result.clear();
         unsigned int ptr = recordManager.getNext(tableName, true,0);
 
-        cout << "[API] gotta! ptr = " << ptr << endl;
+        //cout << "[API] gotta! ptr = " << ptr << endl;
 
         while (ptr != 0) {
-            cout << "[API] ptr = " << ptr << endl;
+            //cout << "[API] ptr = " << ptr << endl;
 
             result.push_back(recordManager.getValue(tableName, ptr, catalogManager.getTableDef(tableName)));
             ptr = recordManager.getNext(tableName, false,ptr);

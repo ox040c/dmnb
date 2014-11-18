@@ -152,7 +152,7 @@ public:
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
-                std::cout<<"wrong in findless"<<std::endl;
+                //std::cout<<"wrong in findless"<<std::endl;
                 return ans;
             }
             int kid = tempnode.getKeyIndex (key);
@@ -189,7 +189,7 @@ public:
             }
             return temp;
         }
-        else std::cout<<"error in index findleaf"<<std::endl;
+        //else std::cout<<"error in index findleaf"<<std::endl;
         return 0;
     }
     std::list<filepoint> findbigeq(const string &key){
@@ -200,7 +200,7 @@ public:
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
-                std::cout<<"wrong in findless"<<std::endl;
+                //std::cout<<"wrong in findless"<<std::endl;
                 return ans;
             }
             int kid = tempnode.getKeyIndex (key);
@@ -220,7 +220,7 @@ public:
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
-                std::cout<<"wrong in findless"<<std::endl;
+                //std::cout<<"wrong in findless"<<std::endl;
                 return ans;
             }
             int kid = tempnode.getKeyIndex (key);
@@ -237,7 +237,7 @@ public:
         temp = findLeaf (key);
         tempnode = readFromFile (temp);
         if (tempnode.getLeaf ()==0) {
-            std::cout<<"wrong in findless"<<std::endl;
+            //std::cout<<"wrong in findless"<<std::endl;
             return ans;
         }
         int kid = tempnode.getKeyIndex (key);

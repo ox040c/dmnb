@@ -1385,7 +1385,7 @@ throw logic_error("par_quit"); }
 
   case 19:
 #line 128 "parse.y" /* yacc.c:1646  */
-    { wlist.end()->isUnique = true; }
+    { wlist.back().isUnique = true; }
 #line 1390 "parse.tab.c" /* yacc.c:1646  */
     break;
 
