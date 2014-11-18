@@ -2,7 +2,7 @@
 #include <string>
 #include <cstdio>
 
-#include "Interpreter/parse.h"
+#include "parse.h"
 
 #include "API.hpp"
 #include "CatalogManager.hpp"

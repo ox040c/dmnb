@@ -17,8 +17,8 @@ extern "C" FILE *yyin;
 
 void yyerror(const char *s);
 
-#include "../Utility/Utility.hpp"
-#include "../API/API.hpp"
+#include "Utility.hpp"
+#include "API.hpp"
 
 extern PlanList& parse(string str);
 PlanList plist;

@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <iostream>
 
-#include "../Utility/Utility.hpp"
+#include "Utility.hpp"
 
 using namespace std;
 #define YY_DECL extern "C" int yylex()
