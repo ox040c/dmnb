@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <fstream>
 #include <sstream>
+#include <exception>
+#include <stdexcept>
 
 using namespace std;
 
@@ -18,7 +20,7 @@ string parseNames(string &names) {
 
 bool CatalogManager::isTableExist(const std::string &tableName) {
     if (tables.count(tableName) != 0) return true;
-    fstream input(tableName + ".def", ios::in | ios::binary);
+    fstream input((tableName + ".def").c_str(), ios::in | ios::binary);
     if (input.good()) return true;
     return false;
 }
@@ -42,7 +44,7 @@ void CatalogManager::readTable(const std::string &tableName) {
     } else {
         if (tables.count(tableName) != 0) return;
 
-        fstream input(tableName + ".def", ios::in | ios::binary);
+        fstream input((tableName + ".def").c_str(), ios::in | ios::binary);
         TableProtobuf tablePb;
 
         if (!tablePb.ParseFromIstream(&input)) {
@@ -96,7 +98,7 @@ void CatalogManager::createTable(const std::string &tableName, const TableDefini
     if (isTableExist(tableName)) {
         throw runtime_error(tableName + " has existed");
     } else {
-        fstream output(tableName+".def", ios::out | ios::binary);
+        fstream output((tableName+".def").c_str(), ios::out | ios::binary);
         // int total = 0;
         DataType type;
         string names;
@@ -110,7 +112,11 @@ void CatalogManager::createTable(const std::string &tableName, const TableDefini
                 case FLOAT: names += "FLOAT|"; break;
                 case CHAR: names += "CHAR";
             }
-            if (type == CHAR) names += "|" + to_string(i->intv) + "|";
+	    stringstream sstrm;
+	    sstrm << i->intv;
+	    string temp;
+	    sstrm>> temp;
+            if (type == CHAR) names += "|" + temp + "|";
             if (i->isIndex) primaryKey += i->name + "|";
             if (i->isUnique) uniqueKey += i->name + "|";
         }

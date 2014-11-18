@@ -11,8 +11,8 @@ class RecordManager {
 private:
     
 public:
-    RecordManager();
-    ~RecordManager();
+    RecordManager() {};
+    ~RecordManager() {};
     
 // TODO:
     int getNext(const std::string tableName); 
