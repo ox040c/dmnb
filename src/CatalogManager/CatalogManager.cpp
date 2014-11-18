@@ -51,23 +51,45 @@ void CatalogManager::readTable(const std::string &tableName) {
         } else {
             int total = 0;
             string names = tablePb.names();
+            string primaryKey = tablePb.primary();
+            string uniqueKey = tablePb.unique();
+
             TableDefinition table;
-            for (DataType type = INT; type < TOTAL_TYPE; ++type) {
-                for (int i = 0; i < tablePb.totalint(); ++i) {
-                    table.push_back(new TableDefinition());
-                    table.back().setName(parseNames(names));
-                    if (type == CHAR) {
-                        int charLength;
-                        stringstream(parseNames(names)) >> charLength;
-                        table.back().setCharLength(charLength);
-                    }
-                    table.back().setDataType(type);
-                }
+            map <string, bool> primaryMap;
+            map <string, bool> uniqueMap;
+
+            while (primaryKey.length() > 0) {
+                primaryMap[parseNames(primaryKey)] = true;
+            }
+            while (uniqueKey.length() > 0) {
+                uniqueMap[parseNames(uniqueKey)] = true;
             }
 
+            while (names.length() > 0) {
+                string name = parseNames(names);
+                string typeString = parseNames(names);
+                enum DataType type;
+                int charLength = 0;
+                bool isPrimary = false, isUnique = false;
+
+                if (typeString == "INT") type = INT;
+                if (typeString == "FLOAT") type = FLOAT;
+                if (typeString == "CHAR") {
+                    type = CHAR;
+                    stringstream(parseNames(names)) >> charLength;
+                }
+
+                if (primaryMap.count(name) > 0) isPrimary = true;
+                if (uniqueMap.count(name) > 0) isUnique = true;
+
+                table.push_back(new Scheme(name,
+                                           type,
+                                           charLength,
+                                           isPrimary,
+                                           isUnique));
+            }
         }
     }
-
 }
 
 void CatalogManager::createTable(const std::string &tableName, const std::TableDefinition &table) {
@@ -75,25 +97,27 @@ void CatalogManager::createTable(const std::string &tableName, const std::TableD
         throw runtime_error(tableName + " has existed");
     } else {
         fstream output(tableName+".def", ios::out | ios::binary);
-        int total = 0;
-        DataType type = INT;
+        // int total = 0;
+        DataType type;
         string names;
+        string primaryKey, uniqueKey;
         TableProtobuf tablePb;
-        for (vetor < Scheme >::iterator i = table.begin(); i != table.end(); ++i) {
-            if (i.getDataType() != type) {
-                switch (type) {
-                    case INT: tablePb.set_totalint(total); break;
-                    case FLOAT: tablePb.set_totalfloat(total); break;
-                    case CHAR: tablePb.set_totalchar(total);
-                }
-                type = i.getDataType();
-                total = 0;
+        for (TableDefinition::const_iterator i = table.begin(); i != table.end(); ++i) {
+            names += i.name + "|";
+            type = i.type;
+            switch (type) {
+                case INT: names += "INT|"; break;
+                case FLOAT: names += "FLOAT|"; break;
+                case CHAR: names += "CHAR";
             }
-            ++total;
-            names += i.getName() + "|";
-            if (type == CHAR) names += "|" + to_string(i.getCharLength());
+            if (type == CHAR) names += "|" + to_string(i.getCharLength()) + "|";
+            if (i.isPrimary) primaryKey += i.name + "|";
+            if (i.isUnique) uniqueKey += i.name + "|";
         }
-        if (!table.SerializeToOstream(&output)) {
+        tablePb.set_names(names.c_str());
+        tablePb.set_primary(primaryKey.c_str());
+        tablePb.set_unique(uniqueKey.c_str());
+        if (!tablePb.SerializeToOstream(&output)) {
             throw runtime_error("failed to write " + tableName + ".def");
         }
 
@@ -113,4 +137,3 @@ void CatalogManager::dropTable(const std::string &tableName) {
         if (tables.count(tableName) != 0) tables.erase(tableName);
     }
 }
-

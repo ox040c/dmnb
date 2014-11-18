@@ -9,10 +9,10 @@ using namespace std;
 #define DEBUG
 
 void API::createTable(const std::string &tableName, const TableDefinition &data) {
-    #ifdef DEBUG
+#ifdef DEBUG
 
     return;
-    #else
+#else
     if (catalogManager.isTableExist(tableName)) {
         throw runtime_error(tableName + " has existed");
     } else {
@@ -23,7 +23,7 @@ void API::createTable(const std::string &tableName, const TableDefinition &data)
 }
 
 void API::dropTable(const std::string &tableName) {
-    #ifdef DEBUG
+#ifdef DEBUG
 
     return;
 #else
@@ -40,10 +40,10 @@ void API::dropTable(const std::string &tableName) {
 void API::createIndex(const string &tableName,
                       const string &colName,
                       const string &indexName) {
-    #ifdef DEBUG
+#ifdef DEBUG
 
     return;
-    #else
+#else
     try {
         if (indexManager.hasIndex(indexName)) {
             throw runtime_error(indexName + " has existed");
@@ -62,10 +62,10 @@ void API::createIndex(const string &tableName,
 }
 
 void API::dropIndex(const std::string &indexName) {
-    #ifdef DEBUG
+#ifdef DEBUG
 
     return;
-    #else
+#else
     try {
         if (!indexManager.hasIndex(indexName)) {
             throw runtime_error(indexName + " does not exist");
@@ -79,10 +79,10 @@ void API::dropIndex(const std::string &indexName) {
 }
 
 void API::insertEntry(const string &tableName, const Entry &entry) {
-    #ifdef DEBUG
+#ifdef DEBUG
 
     return;
-    #else
+#else
     try {
         if (!catalogManager.isTableExist(tableName)) {
             throw runtime_error(tableName + " does not exist");
@@ -104,10 +104,10 @@ void API::insertEntry(const string &tableName, const Entry &entry) {
 }
 
 const Entries &API::select(const std::string &tableName) {
-    #ifdef DEBUG
+#ifdef DEBUG
 
     //return Entries();
-    #else
+#else
     if (!catalogManager.isTableExist(tableName)) {
         throw runtime_error(tableName + " dose not exist");
     } else {
@@ -117,9 +117,9 @@ const Entries &API::select(const std::string &tableName) {
 }
 
 const Entries &API::select(const std::string &tableName, const Conditions &conditions) {
-    #ifdef DEBUG
+#ifdef DEBUG
 
     //return Entries();
-    #endif
+#endif
 
 }

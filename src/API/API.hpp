@@ -6,30 +6,29 @@
 #define API_HPP
 
 #include <list>
-//#include "RecordManager.hpp"
-//#include "IndexManager.hpp"
-//#include "CatalogManager.hpp"
-#include "../Utility/Utility.hpp"
+#include "RecordManager.hpp"
+#include "IndexManager.hpp"
+#include "CatalogManager.hpp"
+#include "Utility.hpp"
 
 //using namespace utls;
 
 class API {
-    /*
+
 private:
     RecordManager &recordManager;
     IndexManager &indexManager;
     CatalogManger &catalogManager;
-    */
+
 
 public:
-    /*
+
     API(const CatalogManager &cat,
         const RecordManager &rec,
     const IndexManager &ind
         ): catalogManager(cat), recordManager(rec), indexManager(ind) {}
 
     ~API() {}
-    */
 
     void createTable(const std::string &tableName,
                      const TableDefinition &data);
