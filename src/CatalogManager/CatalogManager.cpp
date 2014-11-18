@@ -78,6 +78,7 @@ void CatalogManager::readTable(const std::string &tableName) {
                 if (typeString == "CHAR") {
                     type = CHAR;
                     stringstream(parseNames(names)) >> charLength;
+                    ++charLength;
                 }
 
                 if (primaryMap.count(name) > 0) isPrimary = true;

@@ -59,7 +59,7 @@ public:
                      const std::string &indexName);
     void dropIndex(const std::string &indexName);
     void insertEntry(const std::string &tableName,
-                     const Entry &entry);
+                     Entry &entry);
     const Entries &select(const std::string &tableName);       // overload: select with no conditions
     const Entries &select(const std::string &tableName,
                 const Conditions &conditions);      // no "or" in statement

@@ -66,16 +66,16 @@ int main() {
             if (str == "exit;" || str == "exit") break;
             if (str == "") continue;
 
-            const PlanList& plist = parse(str);
+            PlanList& plist = parse(str);
 
             // call api according to plist
-            for (PlanList::const_iterator plan = plist.begin();
+            for (PlanList::iterator plan = plist.begin();
                     plan != plist.end(); ++plan) {
 
                 std::string tname = plan->tname;
                 // seperate function call accoring to acti
                 Action acti = plan->acti;
-                const WrapperList &wlist = plan->wlist;
+                WrapperList &wlist = plan->wlist;
 
                 try {
                     switch(acti) {

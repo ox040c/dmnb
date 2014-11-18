@@ -22,7 +22,7 @@ unsigned int RecordManager::get_datalen(const Entry &entry)
 			datalen += sizeof(float);
 			break;
 		case utls::CHAR:
-			datalen += (it->intv+1) * sizeof(char);
+            datalen += (it->intv) * sizeof(char);
 			break;
 		default:
 			break;
@@ -79,20 +79,23 @@ Wrapper RecordManager::get_wrapper(const std::list<Wrapper>::const_iterator it,c
 	case utls::INT:
 		int k;
 		k = *(int *)temp;
+        cout <<"int:"<< k <<endl;
 		return Wrapper(utls::INT, k,it->name);
 		break;
 	case utls::FLOAT:
 		float kk;
 		kk = *(float *)temp;
+        cout <<"float"<< kk <<endl;
 		return Wrapper(utls::FLOAT, kk,it->name);
 		break;
 	case utls::CHAR:
 	{
-        char *ch = new char[it->intv+1];
+        char *ch = new char[it->intv];
         for (int i = 0; i < it->intv; i++)
             ch[i] = temp[i];
         ch[it->intv] = 0;
         string s(ch);
+        cout <<"string"<< s <<endl;
         delete[] ch;
         return Wrapper(utls::CHAR, s,it->name,it->intv);
         break;
@@ -127,7 +130,7 @@ unsigned int  RecordManager::getNext(const  std::string &tableName, bool reset)
 
 	if (reset)
 	{
-		addr = get_fileptr(tableName, 4096 - addr.datalen, addr.datalen);
+        addr = get_fileptr(tableName, (unsigned int)4096 - addr.datalen, addr.datalen);
 	}
 
     cout << "[RM] before call buffer.nextAddr: " << addr.dataaddr << ":" << addr.datalen << endl;
@@ -161,8 +164,9 @@ Entry &  RecordManager::getValue(
 	unsigned int datalen = get_datalen(tableName);
 	value = new char[datalen];
 	addr = get_fileptr(tableName, pos, datalen);
+    cout << "RM" << addr.dataaddr <<endl;
 	buffer.search(addr, value);
-
+    cout << value <<endl;
 	EntryResult.clear();
 	list<Wrapper>::const_iterator it = entry.begin();
 	while (it != entry.end())
@@ -176,7 +180,7 @@ Entry &  RecordManager::getValue(
 			offset += sizeof(float);
 			break;
 		case utls::CHAR:
-			offset += (it->intv+1) * sizeof(char);
+            offset += (it->intv) * sizeof(char);
 			break;
 		default:
             throw runtime_error("type erreor");
@@ -220,7 +224,7 @@ Wrapper  RecordManager::getAttValue(
 				offset += sizeof(float);
 				break;
 			case utls::CHAR:
-				offset += (it->intv+1) * sizeof(char);
+                offset += (it->intv) * sizeof(char);
 				break;
 			default:
 				break;
@@ -315,22 +319,22 @@ unsigned int  RecordManager::insertEntry(
 			{
 				temp[i] = *(char *)(&(it->intv)+i);
 			}
-			offset += sizeof(int);
+            offset += sizeof(int);
             break;
 		case utls::FLOAT:
 			for (int i = 0; i < sizeof (float); i++)
 			{
 				temp[i] = *((char *)&(it->floatv) + i);
 			}
-			offset += sizeof(float);
+            offset += sizeof(float);
             break;
 		case utls::CHAR:
-			for (unsigned int i = 0; i < it->strv.length(); i++)
+            for (unsigned int i = 0; i < it->strv.length(); i++)
 			{
 				temp[i] = it->strv[i];
 			}
 			temp[it->strv.length()] = 0;
-			offset += (it->intv+1) * sizeof(char);
+            offset += (it->intv) * sizeof(char);
             break;
 		default:
             throw runtime_error("insert attribute type error");
@@ -338,6 +342,7 @@ unsigned int  RecordManager::insertEntry(
 //			abort();
 			break;
 		}
+
 		it++;
 	}
 

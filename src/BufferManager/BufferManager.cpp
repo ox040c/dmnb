@@ -215,7 +215,7 @@ void BufferManager::create(const FilePtr &addr)
 FilePtr BufferManager::nextAddr(const FilePtr &addr)
 {
 	vector <unsigned int> deleted;
-	unsigned blocknum;
+    unsigned int blocknum;
 	FilePtr result = addr;
 
     cout << "[BM] result.filename: " << result.filename << endl;
@@ -231,14 +231,17 @@ FilePtr BufferManager::nextAddr(const FilePtr &addr)
 	file.close();
 
 	result.dataaddr += result.datalen;
+     cout << result.dataaddr <<endl;
     vector<unsigned int>::const_iterator it = find(deleted, result.dataaddr);
 	while (it != deleted.end())
 	{
 		result.dataaddr += result.datalen;
 		it = find(deleted, result.dataaddr);
 	}
+
 	if (result.dataaddr >= 4096 * (blocknum + 1))
-		result.dataaddr = -1;
+        result.dataaddr = 0;
+
 	return result;
 }
 

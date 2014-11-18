@@ -115,7 +115,7 @@ void API::dropIndex(const std::string &indexName) {
 #endif
 }
 
-void API::insertEntry(const string &tableName, const Entry &entry) {
+void API::insertEntry(const string &tableName, Entry &entry) {
 #ifdef DEBUG
 
     return;
@@ -130,6 +130,17 @@ void API::insertEntry(const string &tableName, const Entry &entry) {
 
             cout << "[API] pass check!" << endl;
 
+
+            int j = 0;
+            for (Entry::iterator i = entry.begin(); i != entry.end(); ++i, ++j) {
+                if (i->type == utls::CHAR) {
+                    i->intv = catalogManager.getAtt(tableName, j).intv;
+
+                    cout << "[API]: " << i->strv << ": " << i->intv << endl;
+
+                }
+            }
+
             int pos = recordManager.insertEntry(tableName, entry);
 
             cout << "[API] pos = " << pos << endl;
@@ -141,6 +152,7 @@ void API::insertEntry(const string &tableName, const Entry &entry) {
                     indexManager.insert(indexName, pos,
                                         recordManager.getAttValue(tableName, pos, i->name, df));
                 }
+
             }
         }
     } catch (exception &e) {
@@ -233,7 +245,7 @@ const Entries &API::select(const std::string &tableName) {
 
         cout << "[API] gotta! ptr = " << ptr << endl;
 
-        while (ptr != -1) {
+        while (ptr != 0) {
             cout << "[API] ptr = " << ptr << endl;
 
             result.push_back(recordManager.getValue(tableName, ptr, catalogManager.getTableDef(tableName)));
