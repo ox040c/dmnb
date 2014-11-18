@@ -1,16 +1,20 @@
-#ifndef BtreeIndex
-#define BtreeIndex
+#ifndef B_TREE_INDEX_HPP
+#define B_TREE_INDEX_HPP
+
 #include "Tnode.hpp"
+#include "BufferManager.hpp"
 #include <vector>
-typedef int filepoint;
-template <type KeyType>
+typedef unsigned int filepoint;
+template <class KeyType>
 class BtreeIndex {
 private:
     Tnode<KeyType> root;
     Tnode<KeyType> first;
     filepoint rootloc;
     filepoint firstloc;
+    struct DataAddr fp;
 
+/*
     void recursive_insert(CNode* parentNode, KeyType key, const DataType& data);
     void recursive_remove(CNode* parentNode, KeyType key);
     bool recursive_search(CNode *pNode, KeyType key)const;
@@ -19,11 +23,33 @@ private:
     void recursive_search(CNode* pNode, KeyType key, SelectResult& result);
     void remove(KeyType key, DataType& dataValue);
     void recursive_remove(CNode* parentNode, KeyType key, DataType& dataValue);
+
 public:
     BtreeIndex(filepoint r,filepoint f){
-        rootloc =r;
+        char* s = (char*)malloc(4096);
+        fp.filename = "index.data";
+        fp.datalen = 4096;
+
+        readFrom();
         firstloc =f;
     }
+
+    filepoint WritetoFile(Tnode x){
+        char* s = (char*)malloc(4096);
+        x.WritetoFile(s);
+        filepoint p = buff.insert(fp,s);
+        return p;
+    }
+
+    Tnode ReadFromFile (filepoint p){
+        Tnode tempnode;
+        fp.dataaddr = p;
+        char* s =(char*)malloc(4096);
+        buff.Search(fp,s);
+        tempnode.ReadFromFile(s);
+        return tempnode;
+    }
+
 	~BtreeIndex();
 
     bool haskey(KeyType key){
@@ -95,7 +121,7 @@ public:
         }
         if (m_Root->getKeyNum()==1){//特殊情况处理
             if (m_Root->isleaf()){
-               clear()
+               clear();
                return true;
                }
             else{

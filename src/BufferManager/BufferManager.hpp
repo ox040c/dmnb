@@ -1,11 +1,13 @@
-#ifndef BUFFER_MANAGER_h
-#define BUFFER_MANAGER_H
+#ifndef BUFFER_MANAGER_HPP
+#define BUFFER_MANAGER_HPP
+
 #include "Utility.hpp"
 #include "Page.hpp"
 #include <string>
 #include <fstream>
 #include <map>
 #include <vector>
+
 class BufferManager{
 private:
 	Page page[100];
@@ -16,9 +18,11 @@ public:
 	BufferManager();
 	~BufferManager();
 	void creat(std::string name);//建立一个表单，第一块block存储表格中数据的block 的数目
-	FilePtr Insert(FilePtr addr, const char * data); //通过DataAddr决定插入的文件
+    FilePtr Insert(FilePtr addr, const char * data); //通过DataAddr决定插入的文件
 	void Search(FilePtr addr, char * ReturnDate);//数据通过ReturnDate 返回
 	void Delete(FilePtr addr); //直接删除指定地点的指定长度，通过懒删除实现,记录在del_filename.txt中
 	void Update(FilePtr addr, const char * date);//把需要修改的数据传进来
+
 };
+
 #endif

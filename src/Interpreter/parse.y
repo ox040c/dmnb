@@ -7,22 +7,29 @@
 using namespace std;
 
 #include "parse.tab.h"  // to get the token types that we return
+#include "parse.h" // own header file
 
 // stuff from flex that bison needs to know about:
 extern "C" int yylex();
 //extern "C" int yyparse();
 extern "C" FILE *yyin;
 
-extern int parse(string str);
 
 void yyerror(const char *s);
 
 #include "../Utility/Utility.hpp"
+#include "../API/API.hpp"
+
+extern PlanList& parse(string str);
+PlanList plist;
 void clear();
+void exec();
 void apnd(const Wrapper& a);
 // global vars
 WrapperList wlist;
 
+Action acti = TOTAL_ACTION;
+std::string tname;
 
 %}
 
@@ -76,8 +83,8 @@ WrapperList wlist;
 // parsing rules
 
 list:
-      statement ';' { clear(); cout << "fst_stmt" << endl; }
-    | list statement ';' { clear(); cout << "stmt" << endl; }
+      statement ';' { exec(); }
+    | list statement ';' { exec(); }
     ;
 
 // TODO: this is a nasty implementaion, needs improvement
@@ -95,9 +102,10 @@ statement:
 
 create_stmt:
       TABLE STRING '(' attr_list ')'
-        { cout << "create table" << endl; }
+        { acti = CTBL; tname = $2; }
     | INDEX STRING ON STRING '(' STRING ')'
-        { cout << "craete index" << $2 << $4 << $6; }
+        { acti = CIDX; tname = $4;
+        apnd(Wrapper(string($6), utls::CHAR, 0, string($2))); }
     ;
 
 attr_list:
@@ -115,20 +123,33 @@ attr:
     | STRING FLOAT_type {
         apnd(Wrapper(string($1), utls::FLOAT));
     }
-    // TODO: pending
-    | attr UNIQUE { cout << "uniq "; }
-    // TODO: pending
-    | PRIMARY KEY '(' STRING ')' { cout << "key " << $4 << endl; }
+    | attr UNIQUE { wlist.end()->isUnique = true; }
+    | PRIMARY KEY '(' STRING ')' {
+        int keyCount = 0;
+        for ( list<Wrapper>::iterator i = wlist.begin();
+             i != wlist.end(); i++ ) {
+            if ( i->name == string($4) ) {
+                i->isIndex = true;
+                keyCount++;
+            }
+        }
+        if (keyCount != 1) {
+            yyerror("primary key: specified attr not found,"
+                    " key must be defined at the end of the attr list."
+                    " Or more than 2 keys defined");
+        }
+    }
     ;
 
 select_stmt:
-      '*' FROM STRING
-    | '*' FROM STRING WHERE condition_list
+      '*' FROM STRING { acti = SELV; tname = $3; }
+    | '*' FROM STRING WHERE condition_list { acti = SELV; tname = $3; }
     ;
 
 delete_stmt:
-      FROM STRING
-    | FROM STRING WHERE condition_list
+      FROM STRING { acti = DELV; tname = $2; }
+    | FROM STRING WHERE condition_list { acti = DELV; tname = $2; }
+
     ;
 
 condition_list:
@@ -149,13 +170,13 @@ expr:
     ;
 
 drop_stmt:
-      TABLE STRING { cout << "drop tbl" << $2; }
-    | INDEX STRING { cout << "drop idx" << $2; }
+      TABLE STRING { acti = DTBL; tname = $2; }
+    | INDEX STRING { acti = DIDX; tname = $2; }
     ;
 
 insert_stmt:
       INTO STRING VALUES '(' var_list ')'
-        { cout << "insert "; }
+        { acti = INSV; tname = $2; }
     ;
 
 var:
@@ -171,7 +192,7 @@ var_list:
 
 %%
 
-int parse(string str) {
+PlanList& parse(string str) {
 
     // put the input string into a temporary file
     // where the parser to read from
@@ -189,21 +210,24 @@ int parse(string str) {
 
     }
 
-	// open a file handle to a particular file:
-	FILE *myfile = fopen("_temp.sql", "r");
-	// make sure it is valid:
-	if (!myfile) {
-		cout << "I can't open temp.sql file!" << endl;
-		return -1;
-	}
-	// set flex to read from it instead of defaulting to STDIN:
-	yyin = myfile;
-	// parse through the input until there is no more:
-	do {
+    // open a file handle to a particular file:
+    FILE *myfile = fopen("_temp.sql", "r");
+    // make sure it is valid:
+    if (!myfile) {
+        cout << "I can't open temp.sql file!" << endl;
+        plist.clear();
+        return plist;
+    }
+    // set flex to read from it instead of defaulting to STDIN:
+    yyin = myfile;
+    plist.clear();
+    // parse through the input until there is no more:
+    do {
         clear();
-		yyparse();
-	} while (!feof(yyin));
+        yyparse();
+    } while (!feof(yyin));
 
+    return plist;
 }
 
 void clear() {
@@ -219,7 +243,23 @@ void apnd(const Wrapper& a) {
 }
 
 void yyerror(const char *s) {
-	cout << "EEK, parse error!  Message: " << s << endl;
-	// might as well halt now:
-	exit(-1);
+    cerr << "Eek, parse error! Message: " << s << endl;
+    // might as well halt now:
+    exit(-1);
+}
+
+void exec() {
+
+    if ( acti == TOTAL_ACTION ) {
+        cerr << "Eek, parser internal error: non-act\n";
+        exit(-1);
+    }
+            
+    cout << acti << endl;
+    plist.push_back(Plan(wlist, tname, acti));
+    
+
+    acti = TOTAL_ACTION;
+    clear();
+
 }

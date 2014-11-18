@@ -58,6 +58,18 @@ bool check_in_page(Page page, FilePtr dataaddr)
 	return result;
 }
 
+void writedeleted(string name,vector <unsigned int> deleted)
+{
+    ofstream outfile;
+    outfile.open(name.c_str(), ios::trunc);
+    vector<unsigned int>::iterator it;
+    for (it = deleted.begin(); it != deleted.end(); it++)
+    {
+        outfile << *it;
+    }
+    outfile.close();
+}
+
 int BufferManager::min_call()
 {
 	int result, min = 1000000;
@@ -76,7 +88,7 @@ int BufferManager::min_call()
 int BufferManager::get_pageid(FilePtr addr)
 {
 	int page_id = -1;
-	//¼ì²éÊÇ·ñhit
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½hit
 	for (int i = 0; i < 100; i++)
 	{
 		if (check_in_page(page[i], addr))
@@ -84,7 +96,7 @@ int BufferManager::get_pageid(FilePtr addr)
 			return i;
 		}
 	}
-	//¼ì²éÊÇ·ñÓÐ¿ÕµÄpage
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ð¿Õµï¿½page
 	for (int i = 0; i < 100; i++)
 	if (page[i].call_time == -1)
 	{
@@ -93,7 +105,7 @@ int BufferManager::get_pageid(FilePtr addr)
 		return page_id;
 	}
 
-	//²åÈëµ½·ÃÎÊ´ÎÊý×îÐ¡µÄpageÖÐ
+	//ï¿½ï¿½ï¿½ëµ½ï¿½ï¿½ï¿½Ê´ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½pageï¿½ï¿½
 	page_id = min_call();
 	page[page_id].write_to_file();
 	read_from_file(page_id, addr);
@@ -107,7 +119,7 @@ void BufferManager::read_from_file(int page_id, FilePtr addr)
 	page[page_id].read_from_file();
 }
 
-FilePtr BufferManager::Insert(FilePtr addr, const char * data) //Í¨¹ýDataAddr¾ö¶¨²åÈëµÄÎÄ¼þ
+FilePtr BufferManager::Insert(FilePtr addr, const char * data) //Í¨ï¿½ï¿½DataAddrï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 {
 	FilePtr result=addr;
 	ifstream infile;
@@ -122,19 +134,19 @@ FilePtr BufferManager::Insert(FilePtr addr, const char * data) //Í¨¹ýDataAddr¾ö¶
 		deleted.push_back(key);
 	}
 	infile.close();
-	//±í¸ñÖÐÓÐ¿Õ¼ä¿ÉÒÔ×ö²åÈë£¬Ö±½Ó²åÈëËù¶ÔÓ¦µÄÎ»ÖÃ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬Ö±ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Î»ï¿½ï¿½
 	if (deleted.size() != 0)
 	{
 		result.dataaddr = deleted[0];
-		deleted.erase(deleted.begin());//°Ñ±íÖÐµÄÊý¾ÝÔÙÐ´»ØÎÄ¼þÖÐ
+		deleted.erase(deleted.begin());//ï¿½Ñ±ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
 		writedeleted(filename, deleted);
 		
 		Update(result,data);
-	}//±í¸ñÖÐÃ»ÓÐ¿Õ¼ä×ö²åÈë£¬ÐèÒªÏòfileÖÐÔö¼ÓÒ»¸öblock
+	}//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð¿Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½Òªï¿½ï¿½fileï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½block
 	fstream file;
 	file.open(addr.filename.c_str(), ios::in | ios::binary | ios::out | ios::app);
 	file.seekg(0, ios::beg);
-	//½«±í¸ñÖÐµÄÐÅÏ¢¿éÊý¾Ý¸üÐÂ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½
 	file.read((char *)&blocknum, 4096);
 	blocknum++;
 	file.write((char *)&blocknum, 4096);
@@ -142,24 +154,14 @@ FilePtr BufferManager::Insert(FilePtr addr, const char * data) //Í¨¹ýDataAddr¾ö¶
 
 	result.dataaddr = 4096 * blocknum;
 	Update(result, data);
-	//ÐÂ½¨ÁËÒ»¸ö±í¸ñÖ®ºó
+	//ï¿½Â½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½
 	for (int i = 1; i*result.datalen < 4096; i++)
 		deleted.push_back(result.dataaddr + i*result.datalen);
 	writedeleted(filename, deleted);
 	return result;
 }
-void writedeleted(string name,vector <unsigned int> deleted)
-{
-	ofstream outfile;
-	outfile.open(name.c_str(), ios::trunc);
-	vector<unsigned int>::iterator it;
-	for (it = deleted.begin(); it != deleted.end(); it++)
-	{
-		outfile << *it;
-	}
-	outfile.close();
-}
-void BufferManager::Search(FilePtr addr, char * ReturnDate)//Êý¾ÝÍ¨¹ýReturnDate ·µ»Ø
+
+void BufferManager::Search(FilePtr addr, char * ReturnDate)//ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ReturnDate ï¿½ï¿½ï¿½ï¿½
 {
 	int page_id = -1;
 	unsigned int offset;
@@ -171,7 +173,7 @@ void BufferManager::Search(FilePtr addr, char * ReturnDate)//Êý¾ÝÍ¨¹ýReturnDate 
 	for (unsigned int i = 0; i < addr.datalen; i++)
 		ReturnDate[i] = page[page_id].data[offset + i];
 }
-void BufferManager::Delete(FilePtr addr) //Ö±½ÓÉ¾³ýÖ¸¶¨µØµãµÄÖ¸¶¨³¤¶È£¬Í¨¹ýÀÁÉ¾³ýÊµÏÖ,¼ÇÂ¼ÔÚdel_filename.txtÖÐ
+void BufferManager::Delete(FilePtr addr) //Ö±ï¿½ï¿½É¾ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½Í¨ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½Êµï¿½ï¿½,ï¿½ï¿½Â¼ï¿½ï¿½del_filename.txtï¿½ï¿½
 {
 	ofstream outfile;
 	string filename = "del_" + addr.filename + ".txt";
@@ -179,7 +181,7 @@ void BufferManager::Delete(FilePtr addr) //Ö±½ÓÉ¾³ýÖ¸¶¨µØµãµÄÖ¸¶¨³¤¶È£¬Í¨¹ýÀÁÉ¾³
 	outfile << addr.dataaddr;
 	outfile.close();
 }
-void BufferManager::Update(FilePtr addr, const char * date)//Ö±½Ó½«ÐèÒª¸üÐÂµÄµØÖ·ËÍ¸ø
+void BufferManager::Update(FilePtr addr, const char * date)//Ö±ï¿½Ó½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ÂµÄµï¿½Ö·ï¿½Í¸ï¿½
 {
 	int page_id = -1;
 	int offset;

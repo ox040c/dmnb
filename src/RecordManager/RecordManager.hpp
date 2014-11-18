@@ -2,6 +2,11 @@
 **
 Created by gaotao*/
 
+#ifndef RECORD_MANAGER_HPP
+#define RECORD_MANAGER_HPP
+
+#include "Utility.hpp"
+
 class RecordManager {
 private:
     
@@ -23,3 +28,5 @@ public:
     // 给定表名，一条待插入的数据，插入后返回硬盘位置
     
 };
+
+#endif

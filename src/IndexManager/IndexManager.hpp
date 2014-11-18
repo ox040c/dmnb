@@ -1,13 +1,14 @@
 #ifndef IndexManager_HPP
 #define IndexManager_HPP
-#include ""
+
+#include "Utility.hpp"
 #include <list>
 #include <map>
 #include <set>
 #include <string>
 #include "BtreeIndex.hpp"
 
-class IndexManager{
+class IndexManager{/*
 private:
 	int indexcount;
     std::map<std::string,std::string> indexList;//表+属性--索引名
@@ -42,5 +43,6 @@ public:
     std::string getIndexName(const std::string tableName,
                              const std::string colName);
 // 返回表 tableName 建立在 colName 上的索引名，没有建立索引返回空串
+*/
 };
 #endif

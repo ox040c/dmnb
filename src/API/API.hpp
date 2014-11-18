@@ -18,15 +18,17 @@ class API {
 private:
     RecordManager &recordManager;
     IndexManager &indexManager;
-    CatalogManger &catalogManager;
+    CatalogManager &catalogManager;
 
 
 public:
 
-    API(const CatalogManager &cat,
-        const RecordManager &rec,
-    const IndexManager &ind
-        ): catalogManager(cat), recordManager(rec), indexManager(ind) {}
+    API(CatalogManager &cat,
+        RecordManager &rec,
+        IndexManager &ind
+        ): catalogManager(cat), recordManager(rec), indexManager(ind)  {
+
+    }
 
     ~API() {}
 
