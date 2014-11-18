@@ -9,7 +9,7 @@ void Page::read_from_file()
 	infile.read(data, 4096);
 	call_time = 0;
 	infile.close();
-}
+} 
 
 void Page::write_to_file()
 {

@@ -5,7 +5,7 @@ struct pagedata{
 	unsigned offset;
 	unsigned datalen;
 	char *data;
-};
+}; 
 class Page{
 public:
 	char data[4096];//page µÄ4KÊı¾İ
