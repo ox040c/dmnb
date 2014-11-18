@@ -1,49 +1,9 @@
-#include "BufferManager.hpp"
+ï»¿#include "BufferManager.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
 
 using namespace std;
-
-struct kk{
-	int k;
-	char name[30];
-};
-
-int masin()
-{
-	char page[4096];
-	char *temp;
-	cout << sizeof(char) << endl;
-	kk kkk[3] = { 1, "a", 2, "b", 3, "c" };
-	ofstream outfile("kk.dat", ios::binary);
-	if (!outfile)
-	{
-		cout << "out open error" << endl;
-	}
-	outfile.seekp(1000, ios::beg);
-	for (int i = 0; i < 3; i++)
-	{
-		temp = (char *)&kkk[i];
-		outfile.write(temp, sizeof(kkk[0]));
-	}
-	outfile.close();
-	fstream infile("kk.dat", ios::in | ios::binary);
-	if (!infile)
-	{
-		cout << "in open error" << endl;
-	}
-	kk *out;
-	int *a;
-	infile.seekg(0, ios::beg);
-	infile.read((char *)&page, 4096);
-	out = (kk *)page;
-	a = (int *)page;
-	cout << hex << *a << endl;
-	infile.seekg(0, ios::beg);
-	infile.close();
-	return 0;
-}
 
 BufferManager::BufferManager(){}
 BufferManager::~BufferManager(){}
@@ -72,11 +32,10 @@ int BufferManager::min_call()
 	return result;
 }
 
-
 int BufferManager::get_pageid(FilePtr addr)
 {
 	int page_id = -1;
-	//¼ì²éÊÇ·ñhit
+	//æ£€æŸ¥æ˜¯å¦hit
 	for (int i = 0; i < 100; i++)
 	{
 		if (check_in_page(page[i], addr))
@@ -84,7 +43,7 @@ int BufferManager::get_pageid(FilePtr addr)
 			return i;
 		}
 	}
-	//¼ì²éÊÇ·ñÓĞ¿ÕµÄpage
+	//æ£€æŸ¥æ˜¯å¦æœ‰ç©ºçš„page
 	for (int i = 0; i < 100; i++)
 	if (page[i].call_time == -1)
 	{
@@ -93,7 +52,7 @@ int BufferManager::get_pageid(FilePtr addr)
 		return page_id;
 	}
 
-	//²åÈëµ½·ÃÎÊ´ÎÊı×îĞ¡µÄpageÖĞ
+	//æ’å…¥åˆ°è®¿é—®æ¬¡æ•°æœ€å°çš„pageä¸­
 	page_id = min_call();
 	page[page_id].write_to_file();
 	read_from_file(page_id, addr);
@@ -107,51 +66,11 @@ void BufferManager::read_from_file(int page_id, FilePtr addr)
 	page[page_id].read_from_file();
 }
 
-FilePtr BufferManager::Insert(FilePtr addr, const char * data) //Í¨¹ıDataAddr¾ö¶¨²åÈëµÄÎÄ¼ş
-{
-	FilePtr result=addr;
-	ifstream infile;
-	unsigned int blocknum;
-	unsigned int key;
-	int page_id;
-	vector<unsigned int> deleted;
-	string filename = "del_" + addr.filename + ".txt";
-	infile.open(filename.c_str(), ios::in);
-	while (infile >> key)
-	{
-		deleted.push_back(key);
-	}
-	infile.close();
-	//±í¸ñÖĞÓĞ¿Õ¼ä¿ÉÒÔ×ö²åÈë£¬Ö±½Ó²åÈëËù¶ÔÓ¦µÄÎ»ÖÃ
-	if (deleted.size() != 0)
-	{
-		result.dataaddr = deleted[0];
-		deleted.erase(deleted.begin());//°Ñ±íÖĞµÄÊı¾İÔÙĞ´»ØÎÄ¼şÖĞ
-		writedeleted(filename, deleted);
-		
-		Update(result,data);
-	}//±í¸ñÖĞÃ»ÓĞ¿Õ¼ä×ö²åÈë£¬ĞèÒªÏòfileÖĞÔö¼ÓÒ»¸öblock
-	fstream file;
-	file.open(addr.filename.c_str(), ios::in | ios::binary | ios::out | ios::app);
-	file.seekg(0, ios::beg);
-	//½«±í¸ñÖĞµÄĞÅÏ¢¿éÊı¾İ¸üĞÂ
-	file.read((char *)&blocknum, 4096);
-	blocknum++;
-	file.write((char *)&blocknum, 4096);
-	file.close();
-
-	result.dataaddr = 4096 * blocknum;
-	Update(result, data);
-	//ĞÂ½¨ÁËÒ»¸ö±í¸ñÖ®ºó
-	for (int i = 1; i*result.datalen < 4096; i++)
-		deleted.push_back(result.dataaddr + i*result.datalen);
-	writedeleted(filename, deleted);
-	return result;
-}
-void writedeleted(string name,vector <unsigned int> deleted)
+void writedeleted(string name, vector <unsigned int> deleted)
 {
 	ofstream outfile;
-	outfile.open(name.c_str(), ios::trunc);
+	string filename = "del_" + name + ".txt";
+	outfile.open(filename.c_str(), ios::trunc);
 	vector<unsigned int>::iterator it;
 	for (it = deleted.begin(); it != deleted.end(); it++)
 	{
@@ -159,7 +78,56 @@ void writedeleted(string name,vector <unsigned int> deleted)
 	}
 	outfile.close();
 }
-void BufferManager::Search(FilePtr addr, char * ReturnDate)//Êı¾İÍ¨¹ıReturnDate ·µ»Ø
+
+vector<unsigned int> readdeleted(string name)
+{
+	ifstream infile;
+	unsigned int  key;
+	vector<unsigned int> result;
+	string filename = "del_" + name + ".txt";
+	infile.open(filename.c_str(), ios::in);
+	while (infile >> key)
+	{
+		result.push_back(key);
+	}
+	infile.close();
+	return result;
+}
+
+FilePtr BufferManager::Insert(FilePtr addr, const char * data) //é€šè¿‡DataAddrå†³å®šæ’å…¥çš„æ–‡ä»¶
+{
+	FilePtr result = addr;
+	unsigned int blocknum;
+	vector<unsigned int> deleted;
+
+	deleted = readdeleted(addr.filename);
+	//è¡¨æ ¼ä¸­æœ‰ç©ºé—´å¯ä»¥åšæ’å…¥ï¼Œç›´æ¥æ’å…¥æ‰€å¯¹åº”çš„ä½ç½®
+	if (deleted.size() != 0)
+	{
+		result.dataaddr = deleted[0];
+		deleted.erase(deleted.begin());//æŠŠè¡¨ä¸­çš„æ•°æ®å†å†™å›æ–‡ä»¶ä¸­
+		writedeleted(addr.filename, deleted);
+
+		Update(result, data);
+	}//è¡¨æ ¼ä¸­æ²¡æœ‰ç©ºé—´åšæ’å…¥ï¼Œéœ€è¦å‘fileä¸­å¢åŠ ä¸€ä¸ªblock
+	fstream file;
+	file.open(addr.filename.c_str(), ios::in | ios::binary | ios::out | ios::app);
+	file.seekg(0, ios::beg);
+	//å°†è¡¨æ ¼ä¸­çš„ä¿¡æ¯å—æ•°æ®æ›´æ–°
+	file.read((char *)&blocknum, 4096);
+	blocknum++;
+	file.write((char *)&blocknum, 4096);
+	file.close();
+
+	result.dataaddr = 4096 * blocknum;
+	Update(result, data);
+	//æ–°å»ºäº†ä¸€ä¸ªè¡¨æ ¼ä¹‹å
+	for (int i = 1; i*result.datalen < 4096; i++)
+		deleted.push_back(result.dataaddr + i*result.datalen);
+	writedeleted(addr.filename, deleted);
+	return result;
+}
+void BufferManager::Search(FilePtr addr, char * ReturnDate)//æ•°æ®é€šè¿‡ReturnDate è¿”å›
 {
 	int page_id = -1;
 	unsigned int offset;
@@ -171,7 +139,7 @@ void BufferManager::Search(FilePtr addr, char * ReturnDate)//Êı¾İÍ¨¹ıReturnDate 
 	for (unsigned int i = 0; i < addr.datalen; i++)
 		ReturnDate[i] = page[page_id].data[offset + i];
 }
-void BufferManager::Delete(FilePtr addr) //Ö±½ÓÉ¾³ıÖ¸¶¨µØµãµÄÖ¸¶¨³¤¶È£¬Í¨¹ıÀÁÉ¾³ıÊµÏÖ,¼ÇÂ¼ÔÚdel_filename.txtÖĞ
+void BufferManager::Delete(FilePtr addr) //ç›´æ¥åˆ é™¤æŒ‡å®šåœ°ç‚¹çš„æŒ‡å®šé•¿åº¦ï¼Œé€šè¿‡æ‡’åˆ é™¤å®ç°,è®°å½•åœ¨del_filename.txtä¸­
 {
 	ofstream outfile;
 	string filename = "del_" + addr.filename + ".txt";
@@ -179,7 +147,7 @@ void BufferManager::Delete(FilePtr addr) //Ö±½ÓÉ¾³ıÖ¸¶¨µØµãµÄÖ¸¶¨³¤¶È£¬Í¨¹ıÀÁÉ¾³
 	outfile << addr.dataaddr;
 	outfile.close();
 }
-void BufferManager::Update(FilePtr addr, const char * date)//Ö±½Ó½«ĞèÒª¸üĞÂµÄµØÖ·ËÍ¸ø
+void BufferManager::Update(FilePtr addr, const char * date)//ç›´æ¥å°†éœ€è¦æ›´æ–°çš„åœ°å€é€ç»™
 {
 	int page_id = -1;
 	int offset;
@@ -187,13 +155,21 @@ void BufferManager::Update(FilePtr addr, const char * date)//Ö±½Ó½«ĞèÒª¸üĞÂµÄµØÖ
 	page_id = get_pageid(addr);
 	offset = addr.dataaddr - page[page_id].pages_addr;
 
+	page[page_id].call_time++;
 	for (unsigned int i = 0; i < addr.datalen; i++)
 		page[page_id].data[offset + i] = date[i];
 }
 
-void BufferManager::creat(string name)
+void BufferManager::creat(FilePtr addr)
 {
-	fstream file(name.c_str());
+	unsigned int datalen = addr.datalen;
+	unsigned blocknum = 0;
+	char * ch,*temp;
+	ch = new char[4096];
+	ch = (char *)&blocknum;
+	temp = ch + sizeof(unsigned int);
+	temp = (char *)&datalen;
+	fstream file(addr.filename.c_str());
 	if (file)
 	{
 		cerr << "exist error!" << endl;
@@ -201,7 +177,33 @@ void BufferManager::creat(string name)
 	}
 	else
 	{
-		ofstream file(name.c_str(), ios::binary);
-		file << (unsigned int)0;
+		ofstream file(addr.filename.c_str(), ios::binary);
+		file.write(ch, 4096);
 	}
+	delete[] ch;
+}
+
+FilePtr BufferManager::NextAddr(FilePtr addr)
+{
+	vector <unsigned int> deleted;
+	unsigned blocknum;
+	FilePtr result = addr;
+	deleted = readdeleted(result.filename);
+
+	fstream file;
+	file.open(result.filename.c_str(), ios::in | ios::binary | ios::out | ios::app);
+	file.seekg(0, ios::beg);
+	file.read((char *)&blocknum, 4096);
+	file.close();
+
+	result.dataaddr += result.datalen;
+	vector<unsigned int>::iterator it = find(deleted.begin(), deleted.end(), result.dataaddr);
+	while (it != deleted.end())
+	{
+		result.dataaddr += result.datalen;
+		it = find(deleted.begin(), deleted.end(), result.dataaddr);
+	}
+	if (result.dataaddr >= 4096 * (blocknum + 1))
+		result.dataaddr = -1;
+	return result;
 }

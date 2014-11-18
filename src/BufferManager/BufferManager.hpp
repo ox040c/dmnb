@@ -15,7 +15,8 @@ private:
 public:
 	BufferManager();
 	~BufferManager();
-	void creat(std::string name);//建立一个表单，第一块block存储表格中数据的block 的数目
+	FilePtr NextAddr(FilePtr addr);//如果是最后一个的话返回的dataaddr=-1;
+	void creat(FilePtr addr);//建立一个表单，第一块block存储表格中数据的block的数目和数据的长度
 	FilePtr Insert(FilePtr addr, const char * data); //通过DataAddr决定插入的文件
 	void Search(FilePtr addr, char * ReturnDate);//数据通过ReturnDate 返回
 	void Delete(FilePtr addr); //直接删除指定地点的指定长度，通过懒删除实现,记录在del_filename.txt中
