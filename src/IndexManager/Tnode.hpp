@@ -20,8 +20,8 @@ class Tnode{
 private:
     int leaf;
     int keynum;
-    KeyType keyvalues[MAXNUM_KEY];
-    filepoint childpoint[MAXNUM_CHILD];
+    KeyType keyvalues[MAXNUM_KEY+1];
+    filepoint childpoint[MAXNUM_CHILD+1];
 
 public:
     Tnode(){

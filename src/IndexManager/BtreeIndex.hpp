@@ -15,12 +15,13 @@ const int MAXNUM_LEAF = MAXNUM_KEY;    // 最大叶子结点键值个数
 template <class KeyType>
 class BtreeIndex {
 private:
-    Tnode<KeyType> root;
-    Tnode<KeyType> first;
+    Tnode<KeyType> *root;
+    Tnode<KeyType> *first;
     filepoint rootloc;
     filepoint firstloc;
     struct DataAddr fp;
     BufferManager buff;
+    map<filepoint,filepoint> father;
 
 
 //    void recursive_insert(CNode* parentNode, KeyType key, const DataType& data);
@@ -33,11 +34,19 @@ private:
 //    void recursive_remove(CNode* parentNode, KeyType key, DataType& dataValue);
 
 public:
+    BtreeIndex(const BufferManager &x,finlpoint rootloc,filepoint firstloc){
+        fp.filename = "index.data";
+        fp.datalen = 4096;
+        root = new Tnode<KeyType>(ReadFromFile (rootloc));
+        firstloc = new Tnode<KeyType>(ReadFromFile (firstloc));
+        buff = &x;
+    }
+
     BtreeIndex(const BufferManager &x){
         fp.filename = "index.data";
         fp.datalen = 4096;
-        root = ReadFromFile (rootloc);
-        firstloc = ReadFromFile (firstloc);
+        root = NULL;
+        firstloc = NULL;
         buff = &x;
     }
 
@@ -48,48 +57,151 @@ public:
     void print()const;        // 打印树关键字
     void printData()const;    // 打印数据
 
-    int find(KeyType key){
+    filepoint WritetoFile(Tnode x){
+        char* s = new char[4096]
+        x.WritetoFile(s);
+        delete[] s;
+        filepoint p = buff.insert(fp,s);
+        return p;
+    }
+
+    Tnode ReadFromFile (filepoint p){
+        Tnode tempnode;
+        fp.dataaddr = p;
+        char* s = new char[4096]
+        buff.Search(fp,s);
+        tempnode.ReadFromFile(s);
+        delete[] s;
+        return tempnode;
+    }
+
+    void UpdateFile(filepoint p,Tnode x){
+        char* s = new char[4096];
+        x.WritetoFile (s);
+        fp.dataaddr = p;
+        buff.Update(fp,s);
+        delete[] s;
+    }
+
+    filepoint find(const KeyType &key){
         Tnode<KeyType> temp;
-        filepoint nextnode;
+        filepoint nextnode,tempnode;
         int keyindex;
         int keynum;
-        temp = root;
+        if (root == NULL) return -1;
+        temp = *root;
+        tempnode = rootloc;
         while (temp.getLeaf ()==0){
             keyindex = temp.getKeyIndex (key);
             keynum = temp.getKeyNum ();
             if (keyindex==keynum){
                 nextnode = temp.getChild (keynum);
+                father.add(nextnode,tempnode)
                 temp = ReadFromFile (nextnode);
+                tempnode = nextnode;
             }
             else{
                 nextnode = temp.getChild (keyindex);
+                father.add(nextnode,tempnode)
                 temp = ReadFromFile (nextnode);
+                tempnode = nextnode;
+            }
+            keyindex = temp.getKeyIndex (key);
+            if (keyindex>0 && key == temp.getKeyValue (keyindex-1)){
+                return temp.getChild (keyindex);
+            }
+            else{
+                return -1;
             }
         }
+    }
 
-
+    filepoint findLeaf(const KeyType &key){
+        Tnode<KeyType> tempnode;
+        filepoint nextp,temp;
+        int keyindex;
+        int keynum;
+        if (root != NULL){
+            tempnode = *root;
+            temp = rootloc;
+            while (tempnode.getLeaf ()==0){
+                keyindex = tempnode.getKeyIndex (key);
+                keynum = tempnode.getKeyNum ();
+                if (keyindex==keynum){
+                    nextp = tempnode.getChild (keynum);
+                    father.add(nextp,temp)
+                    tempnode = ReadFromFile (nextp);
+                    temp = nextp;
+                }
+                else{
+                    nextp = tempnode.getChild (keyindex);
+                    father.add(nextp,temp)
+                    tempnode = ReadFromFile (nextp);
+                    temp = nextp;
+                }
+            }
+            return temp;
+        }else std::cout<<"error in index findleaf"<<endl;
     }
 
     vector<filepoint> select(KeyType compareKey, int compareOpeartor){    // 范围查询，BETWEEN
 
     }
-    bool insert(KeyType key, const filepoint& data){
-        if (haskey(root,key)){
-            return false;
+
+    bool insert_in_leaf(Tnode<KeyType> &node,const KeyType &key,const filepoint& data){
+        node.insert (key,data);
+        return true;
+    }
+    bool insert_in_parent(filepoint x,const KeyType &key,filepoint y){
+        if (x == rootloc){
+            Tnode<KeyType> newroot;
+            newroot.setKeyNum (1);
+            newroot.setChild (0,x);
+            newroot.setChild (1,y);
+            newroot.setKeyValue (0,key);
+            return true;
+        }else{
+            filepoint parent = father.get("")
+
         }
+    }
+
+    bool insert(const KeyType& key, const filepoint& data){
         if (root==NULL){
             root = new Tnode();
             first = root;
+            root->insert (key,data);
+            firstloc = WritetoFile (*first);
+            rootloc = firstloc;
+            return true;
+        }                                                                          //空树
+        Tnode<KeyType> tempnode;
+        filepoint temp;
+        int keyindex;
+        temp = findLeaf (key);
+        tempnode = ReadFromFile (temp);
+        keyindex = tempnode.getKeyIndex (key);
+        if (keyindex>0 && key == tempnode.getKeyValue (keyindex-1)){
+            return false;
+        }                                                                       //已经在树中
+        if (tempnode.getKeyNum ()<MAXMUN_KEY){
+            insert_in_leaf();
+            UpdateFile (temp,tempnode);
+        }else{
+            Tnode<KetType> newnode;
+            insert_in_leaf(tempnode,key,data);
+            for (int i=0;(i+ORDER)<MAXNUM_KEY+1;++i){
+                newnode.setKeyValue (i,tempnode.getKeyValue (i+ORDER));
+                newnode.setChild (i,tempnode.getChild (i+ORDER));
+            }
+            newnode.setChild (MAXNUM_CHILD-1,tempnode.getChild (MAXNUM_CHILD-1));
+            tempnode.setKeyNum (ORDER);
+            tempnode.removeKey (ORDER,ORDER+1);
+            filepoint newp = WritetoFile (newnode);
+            tempnode.setChild (MAXNUM_CHILD-1,newp);
+            KeyType newkey = newnode.getChild (0);
+            insert_in_parent(temp,newkey,newp);
         }
-        if (root->getKeyNum()>=MAXMUN_KEY){
-            Tnode<KeyType>* newnode = new Tnode<>();
-            filepoint p = root->getself();
-            newnode->setChild(0,p);
-            root->split(newnode,0);
-            root = newnode;
-            rootloc =newnode->getself();
-        }
-        recursive_insert(root,key,data);
         return true;
     }
 
