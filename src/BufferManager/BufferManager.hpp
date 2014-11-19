@@ -13,6 +13,7 @@ private:
 	int get_pageid(FilePtr);//找到有要寻找的page，若不存在这将block读入到page，返回pageID
 	void read_from_file(int,FilePtr);
 	std::vector<unsigned int>::iterator find(std::vector<unsigned int> deleted, unsigned int num);
+	void addblock(FilePtr addr);
 public:
 	BufferManager();
 	~BufferManager();

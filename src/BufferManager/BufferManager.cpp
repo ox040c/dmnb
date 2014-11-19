@@ -114,12 +114,18 @@ FilePtr BufferManager::Insert(FilePtr addr, const char * data) //通过DataAddr�
 	file.open(addr.filename.c_str(), ios::in | ios::binary | ios::out | ios::app);
 	file.seekg(0, ios::beg);
 	//将表格中的信息块数据更新
-	file.read((char *)&blocknum, 4096);
+	file.read((char *)&blocknum, sizeof(unsigned int));
 	blocknum++;
-	file.write((char *)&blocknum, 4096);
+	file.write((char *)&blocknum, sizeof(unsigned int));
 	file.close();
 
 	result.dataaddr = 4096 * blocknum;
+	//addblock(addr);
+	ofstream outfile(addr.filename.c_str(), ios::out | ios::app | ios::binary);
+	outfile.seekp(addr.dataaddr, ios::beg);
+	char * ch = new char[4096];
+	outfile.write(ch, 4096);
+	outfile.close();
 	Update(result, data);
 	//新建了一个表格之后
 	for (int i = 1; i*result.datalen < 4096; i++)
@@ -163,12 +169,16 @@ void BufferManager::Update(FilePtr addr, const char * date)//直接将需要更�
 void BufferManager::Creat(FilePtr addr)
 {
 	unsigned int datalen = addr.datalen;
-	unsigned blocknum = 0;
+	unsigned int blocknum = 0;
 	char * ch,*temp;
 	ch = new char[4096];
-	ch = (char *)&blocknum;
 	temp = ch + sizeof(unsigned int);
-	temp = (char *)&datalen;
+
+	for (int i = 0; i < sizeof(unsigned int); i++)
+	{
+		ch[i] = *((char *)&blocknum + i);
+		temp[i] = *((char *)&datalen+i);
+	}
 	fstream file(addr.filename.c_str());
 	if (file)
 	{
@@ -193,7 +203,7 @@ FilePtr BufferManager::NextAddr(FilePtr addr)
 	fstream file;
 	file.open(result.filename.c_str(), ios::in | ios::binary | ios::out | ios::app);
 	file.seekg(0, ios::beg);
-	file.read((char *)&blocknum, 4096);
+	file.read((char *)&blocknum, sizeof(unsigned int));
 	file.close();
 
 	result.dataaddr += result.datalen;
@@ -217,4 +227,13 @@ vector<unsigned int>::iterator BufferManager::find(vector<unsigned int> deleted,
 		it++;
 	}
 	return it;
+}
+
+void BufferManager::addblock(FilePtr addr)
+{
+	ofstream outfile(addr.filename.c_str(), ios::out | ios::binary | ios::app);
+	outfile.seekp(addr.dataaddr, ios::beg);
+	char * ch = new char[4096];
+	outfile.write(ch, 4096);
+	outfile.close();
 }
