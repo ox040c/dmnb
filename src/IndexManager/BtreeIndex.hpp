@@ -2,7 +2,7 @@
 #define BtreeIndex_H_
 #include "Tnode.hpp"
 #include "utility.hpp"
-//#include "BufferManager.hpp"
+#include "BufferManager.hpp"
 #include <vector>
 #include <map>
 #include <list>
@@ -23,14 +23,19 @@ private:
     filepoint rootloc;
     filepoint firstloc;
     struct DataAddr fp;
-//    BufferManager buff;
+    BufferManager buff;
     std::map<filepoint,filepoint> father;
-    Tnode<KeyType> rem[300];
     int top;
+    Tnode<KeyType> rem[400];
+
 
 public:
     BtreeIndex(){
-        top=0;
+        rootloc = 0;
+        firstloc = 0;
+        fp.filename = "index.txt";
+        fp.datalen = 4096;
+        top = 0;
     }
 
 //    BtreeIndex(const BufferManager &x,filepoint rootloc,filepoint firstloc){
@@ -50,8 +55,8 @@ public:
 //    }
 
     ~BtreeIndex(){
-        fp.filename = "index.data";
-        fp.datalen = 4096;
+        rootloc = 0;
+        firstloc = 0;
     }
     filepoint getRoot(){
         return rootloc;
@@ -60,7 +65,12 @@ public:
         return firstloc;
     }
 
-    void clear();             // 清空
+    void clear(){
+        firstloc = 0;
+        rootloc = 0;
+        father.clear ();
+    }
+        // 清空
     void print(){        // 打印树关键字
         std::cout<<"============BtreeIndex=========="<<std::endl;
         if (rootloc!=0)
@@ -86,12 +96,12 @@ public:
         }
     }
 
-    filepoint WritetoFile(const Tnode<KeyType> &x){
-//        char* s = new char[4096];
+    filepoint WritetoFile(Tnode<KeyType> &x){
+//        char* s = new char[fp.datalen];
 //        x.WritetoFile(s);
-//        delete[] s;
 //        struct DataAddr fp1;
 //        fp1 = buff.Insert (fp,s);
+//        delete[] s;
 //        return fp1.dataaddr;
         top++;
         rem[top] = x;
@@ -101,21 +111,18 @@ public:
     Tnode<KeyType> ReadFromFile (filepoint p){
         Tnode<KeyType> tempnode;
 //        fp.dataaddr = p;
-//        char* s = new char[4096];
+//        char* s = new char[fp.datalen];
 //        buff.Search(fp,s);
 //        tempnode.ReadFromFile(s);
 //        delete[] s;
 //        return tempnode;
-//        Tnode<KeyType> tempnode;
-//        tempnode.insert (20,20);
-//        tempnode.setLeaf (1);
         tempnode = rem[p];
         return tempnode;
     }
 
     void UpdateFile(filepoint p,Tnode<KeyType> x){
         rem[p] = x;
-//        char* s = new char[4096];
+//        char* s = new char[fp.datalen];
 //        x.WritetoFile (s);
 //        fp.dataaddr = p;
 //        buff.Update(fp,s);
@@ -124,6 +131,7 @@ public:
     void RemoveFile(filepoint p){
 //        fp.dataaddr = p;
 //        buff.Delete(fp);
+//        delete rem[p];
     }
 
     std::list<filepoint> findless(const KeyType &key){
@@ -191,18 +199,17 @@ public:
             while (tempnode.getLeaf ()==0){
                 keyindex = tempnode.getKeyIndex (key);
                 keynum = tempnode.getKeyNum ();
-                if (keyindex==keynum){
-                    nextp = tempnode.getChild (keynum);
-                    father[nextp]=temp;
-                    tempnode = ReadFromFile (nextp);
-                    temp = nextp;
-                }
-                else{
+//                if (keyindex==keynum){
+//                    nextp = tempnode.getChild (keynum);
+//                    father[nextp]=temp;
+//                    tempnode = ReadFromFile (nextp);
+//                    temp = nextp;
+//                }
+//                else{
                     nextp = tempnode.getChild (keyindex);
                     father[nextp]=temp;
                     tempnode = ReadFromFile (nextp);
                     temp = nextp;
-                }
             }
             return temp;
         }else std::cout<<"error in index findleaf"<<std::endl;
@@ -278,12 +285,12 @@ public:
             newroot.setChild (1,y);
             newroot.setKeyValue (0,key);            
             rootloc = WritetoFile (newroot);
-            delete root;
-            root = new Tnode<KeyType>(ReadFromFile(rootloc));
+//            delete root;
+//            root = new Tnode<KeyType>(ReadFromFile(rootloc));
             return true;
         }else{
             filepoint parent = father[x];
-            std::cout<<"fid: "<<parent<<std::endl;
+//            std::cout<<"fid: "<<parent<<std::endl;
             Tnode<KeyType> parentnode=ReadFromFile (parent);
             if(parentnode.getKeyNum ()<MAXNUM_KEY){
                 int childindex = parentnode.getChildIndex (x);
@@ -291,11 +298,11 @@ public:
                 UpdateFile (parent,parentnode);
             }else{
                 int kid = parentnode.getKeyIndex (key);
-                std::cout<<"key="<<key<<std::endl;
-                std::cout<<"kid="<<kid<<std::endl;
-                parentnode.printData ();
+//                std::cout<<"key="<<key<<std::endl;
+//                std::cout<<"kid="<<kid<<std::endl;
+//                parentnode.printData ();
                 parentnode.insert (kid,kid+1,key,y);
-                parentnode.printData ();
+//                parentnode.printData ();
                 Tnode<KeyType> newnode;
                 for (int i=0;i<ORDER;++i){
                     newnode.insert (i,i,parentnode.getKeyValue (ORDER),parentnode.getChild (ORDER));
@@ -306,14 +313,14 @@ public:
                 KeyType newkey = parentnode.getKeyValue (ORDER-1);
                 parentnode.removeKey (ORDER-1,ORDER);
                 UpdateFile (parent,parentnode);
-                std::cout<<"    left:>>>>"<<std::endl;
-                parentnode.printData ();
-                std::cout<<"    right:>>>>"<<std::endl;
-                newnode.printData ();
+//                std::cout<<"    left:>>>>"<<std::endl;
+//                parentnode.printData ();
+//                std::cout<<"    right:>>>>"<<std::endl;
+//                newnode.printData ();
                 filepoint fid = father[parent];
                 Tnode<KeyType> fnode = ReadFromFile (fid);
-                std::cout<<"    father:>>>>"<<std::endl;
-                fnode.printData ();
+//                std::cout<<"    father:>>>>"<<std::endl;
+//                fnode.printData ();
                 insert_in_parent (parent,newkey,newp);
             }
             return true;
@@ -324,6 +331,7 @@ public:
     bool insert(const KeyType& key, const filepoint& data){
 //        std::cout<<"-----ok in-----"<<std::endl;
         if (root==NULL){
+//            std::cout<<"-----root NULL-----"<<std::endl;
             root = new Tnode<KeyType>;
             first = root;
             root->insert (key,data);
@@ -346,11 +354,11 @@ public:
             return false;
         }                                                                       //已经在树中
         if (tempnode.getKeyNum ()<MAXNUM_KEY){   //不分裂插入
-            std::cout<<"notspl::"<<std::endl;
+//            std::cout<<"notspl::"<<std::endl;
             insert_in_leaf(tempnode,key,data);
             UpdateFile (temp,tempnode);
         }else{                                  //裂开点
-            std::cout<<"splite::"<<std::endl;
+//            std::cout<<"splite::"<<std::endl;
             Tnode<KeyType> newnode;
             insert_in_leaf(tempnode,key,data);
             newnode.setLeaf (1);
@@ -366,14 +374,14 @@ public:
             tempnode.setChild (ORDER-1,newp);
             UpdateFile (temp,tempnode);
             KeyType newkey = newnode.getChild (0);
-            std::cout<<"left:>>>>"<<std::endl;
-            tempnode.printData ();
-            std::cout<<"right:>>>>"<<std::endl;
-            newnode.printData ();
-            filepoint fid = father[temp];
-            Tnode<KeyType> fnode = ReadFromFile (fid);
-            std::cout<<"father:>>>>"<<std::endl;
-            fnode.printData ();
+//            std::cout<<"left:>>>>"<<std::endl;
+//            tempnode.printData ();
+//            std::cout<<"right:>>>>"<<std::endl;
+//            newnode.printData ();
+//            filepoint fid = father[temp];
+//            Tnode<KeyType> fnode = ReadFromFile (fid);
+//            std::cout<<"father:>>>>"<<std::endl;
+//            fnode.printData ();
             insert_in_parent(temp,newkey,newp);
         }
         return true;
@@ -396,106 +404,174 @@ public:
 
     bool remove_entry(filepoint x,KeyType key,filepoint p,Tnode<KeyType> xnode){
         xnode.remove (key,p);
+//        std::cout<<"remove"<<"key="<<key<<"point:"<<p<<std::endl;
+//        xnode.printData ();
+        UpdateFile (x,xnode);
+        //到根节点了就1孩子
         if (x==rootloc && root->getKeyNum ()==0){
             filepoint pt = rootloc;
             rootloc = root->getChild (0);
-            root = new Tnode<KeyType>(ReadFromFile (rootloc));
             RemoveFile (pt);
-        }else{
-            if (xnode.getKeyNum ()==MINNUM_KEY){
-                bool flag = false;
-                filepoint parent = father.find(x);
-                filepoint leftp,rightp;
-                KeyType tmpk;
-                Tnode<KeyType> left,right;
-                Tnode<KeyType> parentnode = ReadFromFile (parent);
-                int cid = parentnode.getChildIndex (x);
-                if (cid>0) {//左子合并
-                    leftp = parentnode.getChild (cid-1);
-                    left = ReadFromFile (leftp);
-                    tmpk = parentnode.getKeyValue (cid-1);
-                    if (left.getKeyNum ()+xnode.getKeyNum ()<MAXNUM_KEY){
-                        right = xnode;
-                        rightp = x;
-                        if (right.getLeaf ()!=1){
-                            left.insert (left.getKeyNum (),left.getKeyNum ()+1,tmpk,right.getChild (0));
-                            for (int i=0;i<right.getKeyNum ();++i){
-                                left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
-                            }
-                        }
-                        else{
-                            for (int i=0;i<right.getKeyNum ();++i){
-                                left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
-                            }
-                            left.setChild (MAXNUM_CHILD-1,right.getChild (MAXNUM_CHILD-1));
-                        }
+//            delete root;
+//            root = new Tnode<KeyType>(ReadFromFile (rootloc));
+            return true;
+        }
+        //孩子太少了
+        if (x!=rootloc && xnode.getKeyNum ()<MINNUM_KEY){
+            filepoint parent = father[x];
+            Tnode<KeyType> parentnode = ReadFromFile (parent);
+//            std::cout<<"<parent>"<<std::endl;
+//            parentnode.printData ();
+            filepoint leftp,rightp;
+            KeyType tmpk;
+            Tnode<KeyType> left,right;
+            int cid = parentnode.getChildIndex (x);
+//            std::cout<<"<cid> "<<cid<<std::endl;
+            //向左边借点
+            if (cid>0) {
+                rightp = x;
+                right = xnode;
+                leftp = parentnode.getChild (cid-1);
+                left = ReadFromFile (leftp);
+                tmpk = parentnode.getKeyValue (cid-1);
+//                left.printData ();
+//                right.printData ();
+                if (left.getKeyNum ()>MINNUM_KEY){
+//                    std::cout<<"------borrow left"<<std::endl;
 
-                        remove_entry (parent,tmpk,rightp,parentnode);
-                        RemoveFile (rightp);
-                        flag =true;
+                    if (xnode.getLeaf ()!=1){
+                        int m = left.getKeyNum ();
+                        right.insert (0,0,tmpk,left.getChild (m));
+                        parentnode.setKeyValue (cid-1,left.getKeyValue (m-1));
+                        left.removeKey (m-1,m);
+
                     }
-                }
-                if (cid<parentnode.getKeyNum ()) {//右子合并
-                    rightp = parentnode.getChild (cid+1);
-                    right = ReadFromFile (rightp);
-                    tmpk = parentnode.getKeyValue (cid);
-                    if (right.getKeyNum ()+xnode.getKeyNum ()<MAXNUM_KEY){
-                        left = xnode;
-                        leftp = x;
-                        if (right.getLeaf ()!=1){
-                            left.insert (left.getKeyNum (),left.getKeyNum ()+1,tmpk,right.getChild (0));
-                            for (int i=0;i<right.getKeyNum ();++i){
-                                left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
-                            }
-                        }
-                        else{
-                            for (int i=0;i<right.getKeyNum ();++i){
-                                left.insert (left.getKeyNum (),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
-                            }
-                            left.setChild (MAXNUM_CHILD-1,right.getChild (MAXNUM_CHILD-1));
-                        }
-                        remove_entry (parent,tmpk,rightp,parentnode);
-                        RemoveFile (rightp);
-                        flag =true;
+                    else{
+                        int m = left.getKeyNum ();
+                        right.insert (0,0,left.getKeyValue (m-1),left.getChild (m-1));
+                        parentnode.setKeyValue (cid-1,left.getKeyValue (m-1));
+                        left.removeKey (m-1,m-1);
                     }
-                }
-                if (!flag){
-                    if (cid>0){//左边
-                        right = xnode;
-                        tmpk = parentnode.getKeyValue (cid-1);
-                        if (xnode.getLeaf ()!=1){
-                            int m = left.getKeyNum ();
-                            right.insert (0,0,tmpk,left.getChild (m));
-                            parentnode.setKeyValue (cid-1,left.getKeyValue (m-1));
-                            left.removeKey (m-1,m);
-                        }
-                        else{
-                            int m = left.getKeyNum ();
-                            right.insert (0,0,left.getKeyValue (m-1),left.getChild (m-1));
-                            parentnode.setKeyValue (cid-1,left.getKeyValue (m-1));
-                            left.removeKey (m-1,m-1);
-                        }
-                    }else{
-                        if(cid<parentnode.getKeyNum ()){//右边
-                            left = xnode;
-                            tmpk = parentnode.getKeyValue (cid);
-                            if (xnode.getLeaf ()!=1){
-                                int m = left.getKeyNum ();
-                                left.insert (m,m+1,tmpk,right.getChild (0));
-                                parentnode.setKeyValue (cid,right.getKeyValue (0));
-                                left.removeKey (0,0);
-                            }
-                            else{
-                                int m = left.getKeyNum ();
-                                left.insert (m,m,right.getKeyValue (0),right.getChild (0));
-                                parentnode.setKeyValue (cid,right.getKeyValue (0));
-                                left.removeKey (0,0);
-                            }
-                        }
-                    }
+                    UpdateFile (leftp,left);
+                    UpdateFile (rightp,right);
+                    UpdateFile (parent,parentnode);
+                    return true;
                 }
             }
-        }
+            //向右边借点
+            if(cid<parentnode.getKeyNum ()){
+                rightp = parentnode.getChild (cid+1);
+                right = ReadFromFile (rightp);
+                tmpk = parentnode.getKeyValue (cid);
+                left = xnode;
+                leftp = x;
+                if (right.getKeyNum ()>MINNUM_KEY){
+//                    std::cout<<"------borrow right"<<std::endl;
+                    left = xnode;
+                    tmpk = parentnode.getKeyValue (cid);
+                    if (xnode.getLeaf ()!=1){
+                        int m = left.getKeyNum ();
+                        left.insert (m,m+1,tmpk,right.getChild (0));
+                        parentnode.setKeyValue (cid,right.getKeyValue (0));
+                        right.removeKey (0,0);
+                    }
+                    else{
+                        int m = left.getKeyNum ();
+                        left.insert (m,m,right.getKeyValue (0),right.getChild (0));
+                        right.removeKey (0,0);
+                        parentnode.setKeyValue (cid,right.getKeyValue (0));
+                    }
+                    UpdateFile (leftp,left);
+                    UpdateFile (rightp,right);
+                    UpdateFile (parent,parentnode);
+                    return true;
+                }
+            }
+            //向左边合
+            if (cid>0) {
+//                std::cout<<"------com left"<<std::endl;
+                leftp = parentnode.getChild (cid-1);
+                left = ReadFromFile (leftp);
+                tmpk = parentnode.getKeyValue (cid-1);
+                right = xnode;
+                rightp = x;
+//                //======================================
+//                std::cout<<">0>left>>"<<std::endl;
+//                left.printData ();
+//                std::cout<<">0>this_right>>"<<std::endl;
+//                right.printData ();
+//                std::cout<<">0>parent"<<std::endl;
+//                parentnode.printData ();
+//                //======================================
+                if (right.getLeaf ()!=1){
+                    left.insert (left.getKeyNum (),left.getKeyNum()+1,tmpk,right.getChild (0));
+                    for (int i=0;i<right.getKeyNum ();++i){
+                        left.insert (left.getKeyNum(),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
+                    }
+                    UpdateFile (leftp,left);
+                }
+                else{
+                    for (int i=0;i<right.getKeyNum ();++i){
+                        left.insert (left.getKeyNum(),left.getKeyNum (),right.getKeyValue (i),right.getChild (i));
+                    }
+                    left.setChild (left.getKeyNum (),right.getChild(right.getKeyNum ()));
+                    UpdateFile (leftp,left);
+                }
+                remove_entry (parent,tmpk,rightp,parentnode);
+//                //======================================
+//                std::cout<<">1>left>>"<<std::endl;
+//                left.printData ();
+//                std::cout<<">1>this_right"<<std::endl;
+//                right.printData ();
+//                std::cout<<">1>parent"<<std::endl;
+//                parentnode.printData ();
+//                //======================================
+                RemoveFile (rightp);
+                return true;
+            }
+            //右子合并
+            if (cid<parentnode.getKeyNum ()) {
+//                std::cout<<"------com right"<<std::endl;
+                rightp = parentnode.getChild (cid+1);
+                right = ReadFromFile (rightp);
+                tmpk = parentnode.getKeyValue (cid);
+                left = xnode;
+                leftp = x;
+//                //======================================
+//                std::cout<<"left>>"<<std::endl;
+//                left.printData ();
+//                std::cout<<"this_right"<<std::endl;
+//                right.printData ();
+//                std::cout<<"parent"<<std::endl;
+//                parentnode.printData ();
+//                //======================================
+                if (right.getLeaf ()!=1){
+                    left.insert (left.getKeyNum (),left.getKeyNum()+1,tmpk,right.getChild (0));
+                    for (int i=0;i<right.getKeyNum ();++i){
+                        left.insert (left.getKeyNum(),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
+                    }
+                    UpdateFile (leftp,left);
+                }
+                else{
+                    for (int i=0;i<right.getKeyNum ();++i){
+                        left.insert (left.getKeyNum(),left.getKeyNum ()+1,right.getKeyValue (i),right.getChild (i+1));
+                    }
+                    left.setChild (MAXNUM_CHILD-1,right.getChild(MAXNUM_CHILD-1));
+                    UpdateFile (leftp,left);
+                }
+                remove_entry (parent,tmpk,rightp,parentnode);
+//                //======================================
+//                std::cout<<"left>>"<<std::endl;
+//                left.printData ();
+//                std::cout<<"this_right"<<std::endl;
+//                right.printData ();
+//                std::cout<<"parent"<<std::endl;
+//                parentnode.printData ();
+//                //======================================
+                RemoveFile (rightp);
+                return true;
+            }
+        }//孩子太少
     }
 };
 #endif
