@@ -102,15 +102,11 @@ public:
 
 
     int getKeyIndex(KeyType key)const{        // 找到键值在结点中存储的下标
-        int left = 0;
-        int right = keynum;
         if (keynum ==0) return 0;
-        if (keyvalues[right-1] < key) return keynum;
-        if (keyvalues[left] > key) return left;
-        int mid = (left+right)/2;
         for (int i=0;i<keynum;i++){
-            if (key==keyvalues[i]) return i;
+            if (key<keyvalues[i]) return i;
         }
+        return keynum;
     }
 
     int getChildIndex(filepoint p)const{
@@ -146,7 +142,6 @@ public:
 
     void insert(int keyIndex, int childIndex,const KeyType &key,const filepoint &p){
         int i;
-        keynum++;
         for (i=keynum;i>keyIndex;--i){
             keyvalues[i] = keyvalues[i-1];
         }
@@ -155,6 +150,7 @@ public:
             childpoint[i] = childpoint[i-1];
         }
         childpoint[childIndex] = p;
+        keynum++;
     }
 
     void insert(KeyType key, const filepoint& data)//在叶子节点插入数据
