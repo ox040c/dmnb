@@ -27,12 +27,10 @@ SET(src_main
 
 link_directories(
     "/usr/local/lib"
-    "/usr/local/Cellar/protobuf/2.5.0/lib"
 )
 
 include_directories(
   "/usr/local/include"
-  "/usr/local/Cellar/protobuf/2.5.0/include"
   
   "./API"
   "./BufferManager"
