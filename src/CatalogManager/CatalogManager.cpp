@@ -143,3 +143,4 @@ void CatalogManager::dropTable(const std::string &tableName) {
         if (tables.count(tableName) != 0) tables.erase(tableName);
     }
 }
+

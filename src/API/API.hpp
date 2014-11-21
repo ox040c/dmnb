@@ -20,6 +20,8 @@ private:
     IndexManager &indexManager;
     CatalogManager &catalogManager;
 
+    void checkEntry(const std::string &tableName,
+                    const Entry &entry);
 
 public:
 

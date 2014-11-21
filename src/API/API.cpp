@@ -10,6 +10,23 @@ using namespace std;
 
 #define DEBUG
 
+void API::checkEntry(const std::string &tableName, const Entry &entry) {
+    int j=0;
+    if (entry.size() != catalogManager.getTableDef(tableName).size())
+        throw runtime_error("Number of attributes not match");
+    for (Entry::const_iterator i = entry.begin(); i != entry.end(); ++i, ++j) {
+        Scheme att = catalogManager.getAtt(tableName, j);
+        if (i->type != att.type)
+            throw runtime_error("Type of attribute not match");
+        if (catalogManager.isAttUnique(tableName, j)) {
+            Condition con = att;
+            con.op = EQUAL;
+            if (indexManager.select(tableName, con).size() > 0) // FIXME
+                throw runtime_error("Key value confilt");
+        }
+    }
+}
+
 void API::createTable(const std::string &tableName, const TableDefinition &data) {
 #ifdef DEBUG
     cout << "create" << data.size() << "attrs\n--\n";
@@ -89,6 +106,8 @@ void API::insertEntry(const string &tableName, const Entry &entry) {
         if (!catalogManager.isTableExist(tableName)) {
             throw runtime_error(tableName + " does not exist");
         } else {
+            checkEntry(tableName, entry);
+
             int pos = recordManager.insert(tableName, entry);
             TableDefinition &df = catalogManager.getTableDef(tableName);
             for (TableDefinition::const_iterator &i = df.begin(); i != df.end(); ++i) {
