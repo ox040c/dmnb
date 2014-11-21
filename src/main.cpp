@@ -61,30 +61,42 @@ int main() {
             cout << "dMNb> ";
             getline(cin, str);
             const PlanList& plist = parse(str);
-            
-            for (PlanList::const_iterator i = plist.begin();
-            i != plist.end(); ++i) {
-                for (WrapperList::const_iterator j = i->wlist.begin();
-                j != i->wlist.end(); j++)
-                j->debug();
-            }
-            int acti = 0;
-            try {
-                switch(acti) {
-                   case DELV:  break;
-                   case SELV:
-                   case CTBL:
-                   case DTBL:
-                   case CIDX:
-                   case DIDX:
-                   case LEAVE: break;
-                }
-            }
-            catch (...) {
-                
-            }
-            //cout << str << endl;
 
+            // call api according to plist
+            for (PlanList::const_iterator plan = plist.begin();
+                    plan != plist.end(); ++plan) {
+
+                std::string tname = plan->tname;
+                // seperate function call accoring to acti
+                Action acti = plan->acti;
+                const WrapperList &wlist = plan->wlist;
+                try {
+                    switch(acti) {
+                        case DELV: api.dropTable(tname); break;
+                        case SELV: if ( !wlist.size() ) {
+                                       api.select(tname);
+                                   }
+                                   else {
+                                       api.select(tname, wlist);
+                                   }
+                                   break;
+                        case CTBL: api.createTable(tname, wlist); break;
+                        case DTBL: api.dropTable(tname); break;
+                        case CIDX: api.createIndex(tname, wlist.begin()->name,
+                                           wlist.begin()->strv); break;
+                        case DIDX: api.dropIndex(tname); break;
+                        case LEAVE: break;
+                    }
+                }
+                catch (...) {
+
+                }
+                //cout << str << endl;
+
+                for (WrapperList::const_iterator j = plan->wlist.begin();
+                        j != plan->wlist.end(); j++)
+                    j->debug();
+            }
 
         } while (str.length());
 
@@ -95,7 +107,7 @@ int main() {
         return(-1);
 
     }
-    
+
     return 0;
 }
 

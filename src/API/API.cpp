@@ -1,4 +1,6 @@
 #include "API.hpp"
+#include <iostream>
+#include <string>
 
 /// TODO...
 ///
@@ -10,7 +12,7 @@ using namespace std;
 
 void API::createTable(const std::string &tableName, const TableDefinition &data) {
 #ifdef DEBUG
-
+    cout << "create" << data.size() << "attrs\n--\n";
     return;
 #else
     if (catalogManager.isTableExist(tableName)) {
@@ -105,7 +107,7 @@ void API::insertEntry(const string &tableName, const Entry &entry) {
 
 const Entries &API::select(const std::string &tableName) {
 #ifdef DEBUG
-
+    cout << "select all\n--\n";
     //return Entries();
 #else
     if (!catalogManager.isTableExist(tableName)) {
@@ -118,7 +120,7 @@ const Entries &API::select(const std::string &tableName) {
 
 const Entries &API::select(const std::string &tableName, const Conditions &conditions) {
 #ifdef DEBUG
-
+    cout << "select condi" << conditions.size() << "\n--\n";
     //return Entries();
 #endif
 
