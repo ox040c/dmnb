@@ -154,7 +154,18 @@ class Wrapper {
 typedef Wrapper Condition;
 typedef Wrapper Scheme;
 
-typedef std::list < Wrapper > WrapperList;
+// typedef std::list < Wrapper > WrapperList;
+
+class WrapperList: public std::list <Wrapper> {
+public:
+    const Wrapper &operator[](const int &idx) {
+        std::list <Wrapper>::const_iterator i = begin();
+        int j = 0;
+        for (; i != end() && j < idx; ++i, ++j);
+        return *i;
+    }
+};
+
 typedef WrapperList TableDefinition;
 typedef WrapperList Entry;
 typedef WrapperList Values;
@@ -164,8 +175,5 @@ typedef std::list < Entry > Entries;
 
 typedef utls::DataType dt_t;
 typedef utls::Operator op_t;
-
-utls::DataType getDataType(
-        const TableDefinition& td, const std::string attName);
 
 #endif

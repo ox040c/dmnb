@@ -35,8 +35,9 @@ unsigned int RecordManager::get_datalen(const Entry &entry)
 	}
 	else
 	{
-		cerr << "too large entry" << endl;
-		abort();
+        throw runtime_error("too large entry");
+//		cerr << "too large entry" << endl;
+//		abort();
 	}
 	return datalen;
 }
@@ -93,8 +94,9 @@ Wrapper RecordManager::get_wrapper(const std::list<Wrapper>::const_iterator it,c
 					   break;
 	}
 	default:
-		cerr << "getAttValue error" << endl;
-		abort();
+        throw runtime_error("getAttValue error");
+//		cerr << "getAttValue error" << endl;
+//		abort();
 		break;
 	}
 }
@@ -122,7 +124,7 @@ unsigned int  RecordManager::getNext(const  std::string &tableName, bool reset)
 		addr = get_fileptr(tableName, 4096 - addr.datalen, addr.datalen);
 	}
 
-	addr = buffer.NextAddr(addr);
+	addr = buffer.nextAddr(addr);
 	return addr.dataaddr;
 }
 //creat schema,if exist, return false
@@ -134,7 +136,7 @@ void  RecordManager::creatSchema(
 	unsigned int datalen;
 	datalen = get_datalen(entry);
 	addr = get_fileptr(tableName, 0, datalen);
-	buffer.Creat(addr);
+	buffer.create(addr);
 }
 //build a fileptr,then return the Entry
 Entry &  RecordManager::getValue(
@@ -166,8 +168,9 @@ Entry &  RecordManager::getValue(
 			offset += it->intv * sizeof(char);
 			break;
 		default:
-			cerr << "Type errpr" << endl;
-			abort();
+            throw runtime_error("type erreor");
+//			cerr << "Type error" << endl;
+//			abort();
 			break;
 		}
 		temp = value + offset;
@@ -218,8 +221,9 @@ Wrapper  RecordManager::getAttValue(
 	}
 	if (it == entry.end())
 	{
-		cerr << "there is no attribute " + colName << endl;
-		abort();
+        throw runtime_error("there is no attribute");
+//		cerr << "there is no attribute " + colName << endl;
+//		abort();
 	}
 	temp = value + offset;
 	return get_wrapper(it, temp);
@@ -231,19 +235,28 @@ void  RecordManager::deleteEntry(
 {
 	FilePtr addr;
 	addr = get_fileptr(tableName, pos, get_datalen(tableName));
-	buffer.Delete(addr);
+    buffer.remove(addr);
+
+    --totalEntries[tableName];
 }
 
 void RecordManager::deleteEntry(const std::string &tableName)
 {
+    int total = totalEntries[tableName];
+    totalEntries[tableName] = 0;
+
 	FilePtr addr;
 	addr = get_fileptr(tableName, 0, get_datalen(tableName));
 	buffer.Drop(addr);
-	buffer.Creat(addr);
+	buffer.create(addr);
+
+    return total;
 }
 
 bool RecordManager::dropSchema(const std::string &tableName)
 {
+    totalEntries.erase(tableName);
+
 	FilePtr addr;
 	addr = get_fileptr(tableName, 0, 0);
 	buffer.Drop(addr);
@@ -254,6 +267,10 @@ unsigned int  RecordManager::insertEntry(
 	const std::string &tableName,
 	const Entry &entry)
 {
+    if (totalEntries.count(tableName) == 0) totalEntries[tableName] = 1;
+    else ++totalEntries[tableName];
+
+
 	FilePtr addr;
 	char * insertvalue, * temp;
 	int offset = 0;
@@ -285,8 +302,9 @@ unsigned int  RecordManager::insertEntry(
 			temp[it->strv.length()] = 0;
 			temp += it->intv * sizeof(char);
 		default:
-			cerr << "insert attrivute type error" << endl;
-			abort();
+            throw runtime_error("insert attribute type error");
+//			cerr << "insert attribute type error" << endl;
+//			abort();
 			break;
 		}
 		it++;

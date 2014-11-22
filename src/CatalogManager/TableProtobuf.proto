@@ -1,8 +1,8 @@
 message TableProtobuf
 {
-    required int32 totalInt = 1;
-    required int32 totalFloat = 2;
-    required int32 totalChar = 3;
-    required string names = 4;      // example: no|age|name|25|title|127|
-}
+    required string names = 1;      
+    // example: no|INT|age|INT|name|CHAR|25|title|CHAR|127|
 
+    required string primary = 2;
+    required string unique = 3;
+}

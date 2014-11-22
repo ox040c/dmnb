@@ -10,20 +10,20 @@
 #include "BtreeIndex.hpp"
 using namespace utls;
 class IndexManager{
+typedef std::map<std::string,unsigned int> NodeList;
 private:
     std::map<std::string,std::string> indexList;//表+属性--索引名
     std::map<std::string,std::string> tableList;
-    std::map<std::string,unsigned int> rootList;//表名根节点地址
-    std::map<std::string,unsigned int> headList;//表名头节点地址
+    NodeList rootList;//表名根节点地址
+    NodeList headList;//表名头节点地址
     std::map<std::string,DataType> dataTypeList;//每个表key种类
-    BufferManager *buffer;
+    BufferManager &buffer;
     //    std::map<std::string,int> dataLength;//每个表一个节点的长度
 	
 public:
-    IndexManager(const BufferManager &x){
-        buffer = &x;
+    IndexManager(BufferManager &x): buffer(x){
         std::ifstream ifile("IndexManager.txt");
-        string indexname,tablename;
+        std::string indexname,tablename;
         DataType dtype;
         unsigned int root,first;
         if (ifile){
@@ -43,12 +43,11 @@ public:
             dataTypeList.clear ();
         }
     }
-
     ~IndexManager(){
         std::ofstream ofile("IndexManager.txt");
-        string indexname;
-        std::map<std::string,int>::iterator  it=rootList.begin();
-        for(;it!=c_map.end();it++){
+        std::string indexname;
+        NodeList::const_iterator  it=rootList.begin();
+        for(;it!=rootList.end();it++){
             indexname = it->first;
             ofile<<indexname<<" "<<tableList[indexname]<<" "<<
                    " "<<rootList[indexname]<<" "<<
@@ -73,21 +72,21 @@ public:
             return "";
     }
 
-    bool drop_index(const std::string indexName){
+    bool dropIndex(const std::string indexName){
         if (tableList.count (indexName) == 0){
             std::cout<<"no index exit to drop!"<<std::endl;
             return false;
         }
-        DataType dtype = dataTypeList[indexname];
-        filepoint root = rootList[indexname];
-        filepoint first = headList[indexname];
+        DataType dtype = dataTypeList[indexName];
+        filepoint root = rootList[indexName];
+        filepoint first = headList[indexName];
         switch (dtype){
             case INT:
-                BtreeIndex<int> btree0(*buffer,indexname,root,first);
+                BtreeIndex<int> btree0(buffer,indexName,root,first);
                 btree0.drop ();
                 break;
             case FLOAT:
-                BtreeIndex<float> btree1(*buffer,indexname,root,first);
+                BtreeIndex<float> btree1(buffer,indexName,root,first);
                 btree1.drop ();
                 break;
         }
@@ -97,7 +96,7 @@ public:
         dataTypeList.erase (dataTypeList.find (indexName),dataTypeList.find (indexName));
     }
 
-    void create_index(const std::string tableName,
+    void createIndex(const std::string tableName,
                       const std::string colName,
                       const std::string indexName,
                       DataType type){
@@ -117,14 +116,14 @@ public:
         switch (dtype){
             case INT:
                 int key0 = *((int*)dataPtr);
-                BtreeIndex<int> btree0(*buffer,indexname,root,first);
+                BtreeIndex<int> btree0(buffer,indexname,root,first);
                 btree0.insert (key0,pos);
                 rootList[indexname] = btree0.getRoot ();
                 headList[indexname] = btree0.getFirst ();
                 break;
             case FLOAT:
                 float key1 = *((float*)dataPtr);
-                BtreeIndex<float> btree1(*buffer,indexname,root,first);
+                BtreeIndex<float> btree1(buffer,indexname,root,first);
                 btree1.insert (key1,pos);
                 rootList[indexname] = btree1.getRoot ();
                 headList[indexname] = btree1.getFirst ();
@@ -133,13 +132,13 @@ public:
     }
 
 // 在 tableName 的 colName 上建立索引 indexName, 这个 colName 的类型是 type
-    std::List select(const std::string &indexname,const Condition &condition_info){
+    std::list <unsigned int> select(const std::string &indexname,const Condition &condition_info){
         DataType dtype = dataTypeList[indexname];
         filepoint root = rootList[indexname];
         filepoint first = headList[indexname];
         switch (dtype){
             case INT:
-                BtreeIndex<int> btree0(*buffer,root,first);
+                BtreeIndex<int> btree0(buffer,indexname,root,first);
                 int key0 = condition_info.intv;
 
                 switch (condition_info.op) {
@@ -166,7 +165,7 @@ public:
                 }
                 break;
             case FLOAT:
-                BtreeIndex<float> btree1(*buffer,root,first);
+                BtreeIndex<float> btree1(buffer,root,first);
                 int key1 = condition_info.floatv;
                 switch (condition_info.op) {
                 case EQUAL:
@@ -201,12 +200,12 @@ public:
         switch (dtype){
             case INT:
                 int key0 = *((int*)dataPtr);
-                BtreeIndex<int> btree0(*buffer,root,first);
+                BtreeIndex<int> btree0(buffer,root,first);
                 btree0.remove (key0);
                 break;
             case FLOAT:
                 float key1 = *((float*)dataPtr);
-                BtreeIndex<float> btree1(*buffer,root,first);
+                BtreeIndex<float> btree1(buffer,root,first);
                 btree1.remove (key1);
                 break;
         }
@@ -222,11 +221,11 @@ public:
         filepoint first = headList[indexname];
         switch (dtype){
             case INT:
-                BtreeIndex<int> btree0(*buffer,indexname,root,first);
+                BtreeIndex<int> btree0(buffer,indexname,root,first);
                 btree0.clear ();
                 break;
             case FLOAT:
-                BtreeIndex<float> btree1(*buffer,indexname,root,first);
+                BtreeIndex<float> btree1(buffer,indexname,root,first);
                 btree1.clear ();
                 break;
         }

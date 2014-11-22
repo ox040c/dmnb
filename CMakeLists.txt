@@ -11,7 +11,8 @@
 # ----------------------------------------------------------------------
 # Base CMake setup
 cmake_minimum_required (VERSION 2.6)
-
+#set(CMAKE_C_COMPILER "gcc-4.9")
+#set(CMAKE_CXX_COMPILER "g++-4.9")
 project(dmnb)
 
 add_subdirectory(src ./build/bin)
