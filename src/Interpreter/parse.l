@@ -47,7 +47,14 @@ where|WHERE { return WHERE; }
 quit|QUIT { return QUIT; }
 
 '(\\.|''|[^'\n])*' |
-\"(\\.|\"\"|[^"\n])*\" { yylval.sval = strdup(yytext); return STRING; }
+\"(\\.|\"\"|[^"\n])*\" {
+char temp[257]; 
+if (strlen(yytext) > 256) cout << "warn: too long a string, truncated\n";
+strcpy(temp, yytext + 1);
+temp[strlen(temp) - 1 > 255? 255: strlen(temp) - 1] = 0;
+yylval.sval = strdup(temp); 
+return STRING;
+}
 '(\\.|[^'\n])*$ { printf("Unterminated string %s", yytext); }
 \"(\\.|[^"\n])*$ { printf("Unterminated string %s", yytext); }
 
