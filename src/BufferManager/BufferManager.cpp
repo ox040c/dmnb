@@ -12,7 +12,7 @@ bool check_in_page(Page page, FilePtr dataaddr)
 	bool result = false;
 	if (page.call_time > 0 && page.filename == dataaddr.filename)
 	{
-		if (page.pages_addr <= dataaddr.dataaddr && page.pages_addr + 4096 >= dataaddr.dataaddr)
+		if (page.pages_addr <= dataaddr.dataaddr && page.pages_addr + 4096 > dataaddr.dataaddr)
 			result = true;
 	}
 	return result;
@@ -70,13 +70,14 @@ void writedeleted(string name, vector <unsigned int> deleted)
 {
 	ofstream outfile;
 	string filename = "del_" + name + ".txt";
-	outfile.open(filename.c_str(), ios::trunc);
+	outfile.open(filename.c_str());
 	vector<unsigned int>::iterator it;
 	for (it = deleted.begin(); it != deleted.end(); it++)
 	{
-		outfile << *it;
+		outfile << *it << " ";
 	}
 	outfile.close();
+	outfile.clear();
 }
 
 vector<unsigned int> readdeleted(string name)
@@ -100,37 +101,40 @@ FilePtr BufferManager::Insert(FilePtr addr, const char * data) //通过DataAddr�
 	unsigned int blocknum;
 	vector<unsigned int> deleted;
 
-	deleted = readdeleted(addr.filename);
+	deleted = readdeleted(result.filename);
 	//表格中有空间可以做插入，直接插入所对应的位置
 	if (deleted.size() != 0)
 	{
 		result.dataaddr = deleted[0];
 		deleted.erase(deleted.begin());//把表中的数据再写回文件中
-		writedeleted(addr.filename, deleted);
-
+		writedeleted(result.filename, deleted);
 		Update(result, data);
+		return result;
 	}//表格中没有空间做插入，需要向file中增加一个block
 	fstream file;
-	file.open(addr.filename.c_str(), ios::in | ios::binary | ios::out | ios::app);
-	file.seekg(0, ios::beg);
+	file.open(result.filename.c_str(), ios::in | ios::out | ios::binary );
+	file.seekg(0,ios::beg);
 	//将表格中的信息块数据更新
 	file.read((char *)&blocknum, sizeof(unsigned int));
 	blocknum++;
+	file.seekp(0,ios::beg);
 	file.write((char *)&blocknum, sizeof(unsigned int));
 	file.close();
-
 	result.dataaddr = 4096 * blocknum;
+
 	//addblock(addr);
-	ofstream outfile(addr.filename.c_str(), ios::out | ios::app | ios::binary);
-	outfile.seekp(addr.dataaddr, ios::beg);
+	fstream outfile(result.filename.c_str(), ios::in | ios::out | ios::binary);
+	outfile.seekp(result.dataaddr, ios::beg);
 	char * ch = new char[4096];
 	outfile.write(ch, 4096);
 	outfile.close();
 	Update(result, data);
 	//新建了一个表格之后
-	for (int i = 1; i*result.datalen < 4096; i++)
+	for (unsigned int i = 1; i*result.datalen < 4096; i++)
+	{
 		deleted.push_back(result.dataaddr + i*result.datalen);
-	writedeleted(addr.filename, deleted);
+	}
+	writedeleted(result.filename, deleted);
 	return result;
 }
 void BufferManager::Search(FilePtr addr, char * ReturnDate)//数据通过ReturnDate 返回
@@ -150,7 +154,7 @@ void BufferManager::Delete(FilePtr addr) //直接删除指定地点的指定长�
 	ofstream outfile;
 	string filename = "del_" + addr.filename + ".txt";
 	outfile.open(filename.c_str(), ios::out | ios::app);
-	outfile << addr.dataaddr;
+	outfile << addr.dataaddr<< " ";
 	outfile.close();
 }
 void BufferManager::Update(FilePtr addr, const char * date)//直接将需要更新的地址送给
@@ -160,7 +164,6 @@ void BufferManager::Update(FilePtr addr, const char * date)//直接将需要更�
 
 	page_id = get_pageid(addr);
 	offset = addr.dataaddr - page[page_id].pages_addr;
-
 	page[page_id].call_time++;
 	for (unsigned int i = 0; i < addr.datalen; i++)
 		page[page_id].data[offset + i] = date[i];
@@ -201,7 +204,7 @@ FilePtr BufferManager::NextAddr(FilePtr addr)
 	deleted = readdeleted(result.filename);
 
 	fstream file;
-	file.open(result.filename.c_str(), ios::in | ios::binary | ios::out | ios::app);
+	file.open(result.filename.c_str(), ios::in | ios::binary | ios::out);
 	file.seekg(0, ios::beg);
 	file.read((char *)&blocknum, sizeof(unsigned int));
 	file.close();
@@ -227,13 +230,4 @@ vector<unsigned int>::iterator BufferManager::find(vector<unsigned int> deleted,
 		it++;
 	}
 	return it;
-}
-
-void BufferManager::addblock(FilePtr addr)
-{
-	ofstream outfile(addr.filename.c_str(), ios::out | ios::binary | ios::app);
-	outfile.seekp(addr.dataaddr, ios::beg);
-	char * ch = new char[4096];
-	outfile.write(ch, 4096);
-	outfile.close();
 }

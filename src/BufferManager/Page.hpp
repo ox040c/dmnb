@@ -23,7 +23,7 @@ public:
 		filename = "";
 		pages_addr = 0;
 	}
-	~Page(){}
+	~Page();
 };
 
 #endif
