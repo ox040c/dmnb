@@ -6,7 +6,7 @@ create table student (
     sgender char (1)
     
 );
-
+exit;
 create index stunameidx on student ( sname  );
 
 select * from student;

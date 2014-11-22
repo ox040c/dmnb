@@ -89,7 +89,8 @@ list:
     ;
 
 // TODO: this is a nasty implementaion, needs improvement
-quit: QUIT { clear(); cout << "I quit\n"; exit(0); }
+quit: QUIT | EXIT { clear(); //cout << "I quit\n"; 
+throw logic_error("par_quit"); }
 
 statement:
       CREATE create_stmt
@@ -225,10 +226,16 @@ PlanList& parse(string str) {
     yyin = myfile;
     plist.clear();
     // parse through the input until there is no more:
-    do {
-        clear();
-        yyparse();
-    } while (!feof(yyin));
+    
+    try {
+        do {
+            clear();
+            yyparse();
+        } while (!feof(yyin));
+    }
+    catch (logic_error const &e) {
+        cerr << "exit in sql, exec stmt before exit\n";
+    }
 
     return plist;
 }

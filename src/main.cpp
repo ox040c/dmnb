@@ -59,8 +59,13 @@ int main() {
         do {
 
             str.clear();
+            if (!cin) { cout << endl; break; } // check if ^D
             cout << "dMNb> ";
             getline(cin, str);
+
+            if (str == "exit;" || str == "exit") break;
+            if (str == "") continue;
+
             const PlanList& plist = parse(str);
 
             // call api according to plist
@@ -71,6 +76,7 @@ int main() {
                 // seperate function call accoring to acti
                 Action acti = plan->acti;
                 const WrapperList &wlist = plan->wlist;
+
                 try {
                     switch(acti) {
                         case DELV: api.dropTable(tname); break;
@@ -99,7 +105,7 @@ int main() {
                     j->debug();
             }
 
-        } while (str.length());
+        } while (1);
 
     }
     catch (exception const& e) {
