@@ -1,11 +1,7 @@
 ﻿#ifndef PAGE_H
 #define PAGE_H
 #include <string>
-struct pagedata{
-	unsigned offset;
-	unsigned datalen;
-	char *data;
-};  
+
 class Page{
 public:
 	char data[4096];//page 的4K数据
@@ -15,8 +11,8 @@ public:
 
 	void write_to_file();
 	void read_from_file();
-	void write_page(const pagedata info);//info.date的长度必须与info.len相等
-	void read_page(pagedata & info); //info.date事先开好空间。
+	//void write_page(const pagedata info);//info.date的长度必须与info.len相等
+	//void read_page(pagedata & info); //info.date事先开好空间。
 	Page()
 	{
 		call_time = -1;
