@@ -1,4 +1,4 @@
-﻿#ifndef BUFFER_MANAGER_h
+#ifndef BUFFER_MANAGER_H
 #define BUFFER_MANAGER_H
 #include "Utility.hpp"
 #include "Page.hpp"  
@@ -6,6 +6,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
+typedef struct DataAddr FilePtr;
 class BufferManager{
 private:
 	Page page[100];

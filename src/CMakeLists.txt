@@ -26,7 +26,7 @@ SET(src_main
 # Setup link && include directories
 
 include_directories(
-  "/usr/local/lib"
+  "/usr/local/include"
   "/usr/lib64"
   
   "./API"

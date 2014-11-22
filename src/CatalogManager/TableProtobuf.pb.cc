@@ -108,6 +108,7 @@ const int TableProtobuf::kNamesFieldNumber;
 TableProtobuf::TableProtobuf()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:TableProtobuf)
 }
 
 void TableProtobuf::InitAsDefaultInstance() {
@@ -117,23 +118,26 @@ TableProtobuf::TableProtobuf(const TableProtobuf& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:TableProtobuf)
 }
 
 void TableProtobuf::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   totalint_ = 0;
   totalfloat_ = 0;
   totalchar_ = 0;
-  names_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  names_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 TableProtobuf::~TableProtobuf() {
+  // @@protoc_insertion_point(destructor:TableProtobuf)
   SharedDtor();
 }
 
 void TableProtobuf::SharedDtor() {
-  if (names_ != &::google::protobuf::internal::kEmptyString) {
+  if (names_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete names_;
   }
   if (this != default_instance_) {
@@ -162,36 +166,52 @@ TableProtobuf* TableProtobuf::New() const {
 }
 
 void TableProtobuf::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    totalint_ = 0;
-    totalfloat_ = 0;
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<TableProtobuf*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  if (_has_bits_[0 / 32] & 15) {
+    ZR_(totalint_, totalfloat_);
     totalchar_ = 0;
     if (has_names()) {
-      if (names_ != &::google::protobuf::internal::kEmptyString) {
+      if (names_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         names_->clear();
       }
     }
   }
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool TableProtobuf::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:TableProtobuf)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required int32 totalInt = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &totalint_)));
           set_has_totalint();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(16)) goto parse_totalFloat;
         break;
@@ -199,15 +219,14 @@ bool TableProtobuf::MergePartialFromCodedStream(
 
       // required int32 totalFloat = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 16) {
          parse_totalFloat:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &totalfloat_)));
           set_has_totalfloat();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(24)) goto parse_totalChar;
         break;
@@ -215,15 +234,14 @@ bool TableProtobuf::MergePartialFromCodedStream(
 
       // required int32 totalChar = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 24) {
          parse_totalChar:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &totalchar_)));
           set_has_totalchar();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(34)) goto parse_names;
         break;
@@ -231,26 +249,27 @@ bool TableProtobuf::MergePartialFromCodedStream(
 
       // required string names = 4;
       case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 34) {
          parse_names:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_names()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->names().data(), this->names().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "names");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -258,12 +277,18 @@ bool TableProtobuf::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:TableProtobuf)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:TableProtobuf)
+  return false;
 #undef DO_
 }
 
 void TableProtobuf::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:TableProtobuf)
   // required int32 totalInt = 1;
   if (has_totalint()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->totalint(), output);
@@ -281,10 +306,11 @@ void TableProtobuf::SerializeWithCachedSizes(
 
   // required string names = 4;
   if (has_names()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->names().data(), this->names().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "names");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       4, this->names(), output);
   }
 
@@ -292,10 +318,12 @@ void TableProtobuf::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:TableProtobuf)
 }
 
 ::google::protobuf::uint8* TableProtobuf::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:TableProtobuf)
   // required int32 totalInt = 1;
   if (has_totalint()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->totalint(), target);
@@ -313,9 +341,10 @@ void TableProtobuf::SerializeWithCachedSizes(
 
   // required string names = 4;
   if (has_names()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->names().data(), this->names().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "names");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         4, this->names(), target);
@@ -325,6 +354,7 @@ void TableProtobuf::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:TableProtobuf)
   return target;
 }
 
