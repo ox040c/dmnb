@@ -35,8 +35,9 @@ unsigned int RecordManager::get_datalen(const Entry &entry)
 	}
 	else
 	{
-		cerr << "too large entry" << endl;
-		abort();
+        throw runtime_error("too large entry");
+//		cerr << "too large entry" << endl;
+//		abort();
 	}
 	return datalen;
 }
@@ -93,8 +94,9 @@ Wrapper RecordManager::get_wrapper(const std::list<Wrapper>::const_iterator it,c
 					   break;
 	}
 	default:
-		cerr << "getAttValue error" << endl;
-		abort();
+        throw runtime_error("getAttValue error");
+//		cerr << "getAttValue error" << endl;
+//		abort();
 		break;
 	}
 }
@@ -166,8 +168,9 @@ Entry &  RecordManager::getValue(
 			offset += it->intv * sizeof(char);
 			break;
 		default:
-			cerr << "Type errpr" << endl;
-			abort();
+            throw runtime_error("type erreor");
+//			cerr << "Type error" << endl;
+//			abort();
 			break;
 		}
 		temp = value + offset;
@@ -218,8 +221,9 @@ Wrapper  RecordManager::getAttValue(
 	}
 	if (it == entry.end())
 	{
-		cerr << "there is no attribute " + colName << endl;
-		abort();
+        throw runtime_error("there is no attribute");
+//		cerr << "there is no attribute " + colName << endl;
+//		abort();
 	}
 	temp = value + offset;
 	return get_wrapper(it, temp);
@@ -236,7 +240,7 @@ void  RecordManager::deleteEntry(
     --totalEntries[tableName];
 }
 
-int RecordManager::deleteEntry(const std::string &tableName)
+void RecordManager::deleteEntry(const std::string &tableName)
 {
     int total = totalEntries[tableName];
     totalEntries[tableName] = 0;
@@ -298,8 +302,9 @@ unsigned int  RecordManager::insertEntry(
 			temp[it->strv.length()] = 0;
 			temp += it->intv * sizeof(char);
 		default:
-			cerr << "insert attrivute type error" << endl;
-			abort();
+            throw runtime_error("insert attribute type error");
+//			cerr << "insert attribute type error" << endl;
+//			abort();
 			break;
 		}
 		it++;

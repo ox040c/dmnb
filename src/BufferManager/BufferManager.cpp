@@ -198,8 +198,9 @@ void BufferManager::create(const FilePtr &addr)
 	fstream file(addr.filename.c_str());
 	if (file)
 	{
-		cerr << "exist error!" << endl;
-		abort();
+        throw runtime_error("exist error!");
+//		cerr << "exist error!" << endl;
+//		abort();
 	}
 	else
 	{
