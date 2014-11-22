@@ -1,29 +1,29 @@
-#ifndef PAGE_H
+ï»¿#ifndef PAGE_H
 #define PAGE_H
 #include <string>
 struct pagedata{
 	unsigned offset;
 	unsigned datalen;
 	char *data;
-};
+};  
 class Page{
 public:
-	char data[4096];//page µÄ4KÊı¾İ
-	std::string filename;//pageµÄ´¢´æµÄ±íµ¥µÄÃû³Æ
-	int call_time; //±íÊ¾Õâ¿épage±»·ÃÎÊµÄ´ÎÊı£¬-1±íÊ¾Ã»ÓĞĞ´½øÈÎºÎÊı¾İµÄpage
-	unsigned int pages_addr;//pageµÄÊ×µØÖ·
+	char data[4096];//page çš„4Kæ•°æ®
+	std::string filename;//pageçš„å‚¨å­˜çš„è¡¨å•çš„åç§°
+	int call_time; //è¡¨ç¤ºè¿™å—pageè¢«è®¿é—®çš„æ¬¡æ•°ï¼Œ-1è¡¨ç¤ºæ²¡æœ‰å†™è¿›ä»»ä½•æ•°æ®çš„page
+	unsigned int pages_addr;//pageçš„é¦–åœ°å€
 
 	void write_to_file();
 	void read_from_file();
-	void write_page(const pagedata info);//info.dateµÄ³¤¶È±ØĞëÓëinfo.lenÏàµÈ
-	void read_page(pagedata & info); //info.dateÊÂÏÈ¿ªºÃ¿Õ¼ä¡£
+	void write_page(const pagedata info);//info.dateçš„é•¿åº¦å¿…é¡»ä¸info.lenç›¸ç­‰
+	void read_page(pagedata & info); //info.dateäº‹å…ˆå¼€å¥½ç©ºé—´ã€‚
 	Page()
 	{
 		call_time = -1;
 		filename = "";
 		pages_addr = 0;
 	}
-	~Page(){}
+	~Page();
 };
 
 #endif

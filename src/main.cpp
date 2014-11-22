@@ -44,8 +44,9 @@ int main() {
     cout << dmnb << sepr;
 
     try {
+        BufferManager bufferManager;
         CatalogManager catlogManager;
-        RecordManager recordManager;
+        RecordManager recordManager(bufferManager);
         IndexManager indexManager;
 
         API api(catlogManager,

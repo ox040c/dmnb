@@ -10,18 +10,32 @@
 #include "IndexManager.hpp"
 #include "CatalogManager.hpp"
 #include "Utility.hpp"
+#include <cmath>
 
 //using namespace utls;
 
 class API {
+typedef std::set <unsigned int> Idx;
 
 private:
     RecordManager &recordManager;
     IndexManager &indexManager;
     CatalogManager &catalogManager;
 
+    Entries result;
+    Idx idxSet, tempIdxSet;
+
+    bool check(const int &x, const Operator &op, const int &y);
+    bool check(const float &x, const Operator &op, const float &y);
+    bool check(const std::string &x, const Operator &op, const std::string &y);
     void checkEntry(const std::string &tableName,
                     const Entry &entry);
+
+    void gainIdx(const std::string &tableName,
+                 const Condition &condition,
+                 Idx &idx);
+    void selectIdx(const std::string &tableName,
+                   const Conditions &conditions);
 
 public:
 
@@ -48,9 +62,9 @@ public:
     const Entries &select(const std::string &tableName);       // overload: select with no conditions
     const Entries &select(const std::string &tableName,
                 const Conditions &conditions);      // no "or" in statement
-    void remove(const std::string &tableName);
-    void remove(const std::string &tableName,
-                const Conditions &conditions);
+    int remove(const std::string &tableName);
+    int remove(const std::string &tableName,
+               const Conditions &conditions);
 
     /* TODO:
     ConstItemIterator itemsBegin();

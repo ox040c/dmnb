@@ -1,6 +1,13 @@
-#include "Page.hpp"
+﻿#include "Page.hpp"
 #include <fstream>
 using namespace std;
+
+Page::~Page()
+{
+	if (call_time != -1)
+		write_to_file();
+}
+
 void Page::read_from_file()
 {
 	ifstream infile;
@@ -9,12 +16,12 @@ void Page::read_from_file()
 	infile.read(data, 4096);
 	call_time = 0;
 	infile.close();
-}
+}  
 
 void Page::write_to_file()
 {
-	ofstream outfile;
-	outfile.open(filename.c_str(), ios::binary | ios::out | ios::app);
+	fstream outfile;
+	outfile.open(filename.c_str(), ios::in | ios::out | ios::binary );
 	outfile.seekp(pages_addr, ios::beg);
 	outfile.write(data, 4096);
 	call_time = -1;
