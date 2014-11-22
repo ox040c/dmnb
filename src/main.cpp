@@ -102,6 +102,9 @@ int main() {
         } while (str.length());
 
     }
+    catch (exception const& e) {
+        cerr << "err: " << e.what() << endl;
+    }
     catch (...) {
 
         cout << fail << endl;

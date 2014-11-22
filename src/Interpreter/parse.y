@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -199,14 +200,16 @@ PlanList& parse(string str) {
     ofstream fout;
     try {
 
-        //fout.open("temp.sql");
-        //fout << str;
-        //fout.close();
+        fout.open("temp.sql");
+        fout << str;
+        fout.close();
+	remove("temp.sql");
 
     }
     catch (...) {
 
         cerr << ":-( sry, cannot create temp file\n";
+	throw runtime_error("par_file");
 
     }
 
@@ -244,18 +247,17 @@ void apnd(const Wrapper& a) {
 
 void yyerror(const char *s) {
     cerr << "Eek, parse error! Message: " << s << endl;
-    // might as well halt now:
-    exit(-1);
+    throw runtime_error("par_syn");
 }
 
 void exec() {
 
     if ( acti == TOTAL_ACTION ) {
         cerr << "Eek, parser internal error: non-act\n";
-        exit(-1);
+        throw runtime_error("par_int");
     }
             
-    cout << acti << endl;
+    //cout << acti << endl;
     plist.push_back(Plan(wlist, tname, acti));
     
 

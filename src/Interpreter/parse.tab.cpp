@@ -68,6 +68,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -97,7 +98,7 @@ Action acti = TOTAL_ACTION;
 std::string tname;
 
 
-#line 101 "parse.tab.c" /* yacc.c:339  */
+#line 102 "parse.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -169,14 +170,14 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 36 "parse.y" /* yacc.c:355  */
+#line 37 "parse.y" /* yacc.c:355  */
 
 	int ival;
 	float fval;
 	char *sval;
     int comp_sign;
 
-#line 180 "parse.tab.c" /* yacc.c:355  */
+#line 181 "parse.tab.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -191,7 +192,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 195 "parse.tab.c" /* yacc.c:358  */
+#line 196 "parse.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -491,10 +492,10 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    86,    86,    87,    91,    94,    95,    96,    97,    98,
-      99,   104,   106,   112,   113,   117,   120,   123,   126,   127,
-     145,   146,   150,   151,   156,   157,   161,   164,   167,   173,
-     174,   178,   183,   184,   185,   189,   190
+       0,    87,    87,    88,    92,    95,    96,    97,    98,    99,
+     100,   105,   107,   113,   114,   118,   121,   124,   127,   128,
+     146,   147,   151,   152,   157,   158,   162,   165,   168,   174,
+     175,   179,   184,   185,   186,   190,   191
 };
 #endif
 
@@ -1312,80 +1313,80 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 86 "parse.y" /* yacc.c:1646  */
+#line 87 "parse.y" /* yacc.c:1646  */
     { exec(); }
-#line 1318 "parse.tab.c" /* yacc.c:1646  */
+#line 1319 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 87 "parse.y" /* yacc.c:1646  */
+#line 88 "parse.y" /* yacc.c:1646  */
     { exec(); }
-#line 1324 "parse.tab.c" /* yacc.c:1646  */
+#line 1325 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 91 "parse.y" /* yacc.c:1646  */
+#line 92 "parse.y" /* yacc.c:1646  */
     { clear(); cout << "I quit\n"; exit(0); }
-#line 1330 "parse.tab.c" /* yacc.c:1646  */
+#line 1331 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 105 "parse.y" /* yacc.c:1646  */
+#line 106 "parse.y" /* yacc.c:1646  */
     { acti = CTBL; tname = (yyvsp[-3].sval); }
-#line 1336 "parse.tab.c" /* yacc.c:1646  */
+#line 1337 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 107 "parse.y" /* yacc.c:1646  */
+#line 108 "parse.y" /* yacc.c:1646  */
     { acti = CIDX; tname = (yyvsp[-3].sval);
         apnd(Wrapper(string((yyvsp[-1].sval)), utls::CHAR, 0, string((yyvsp[-5].sval)))); }
-#line 1343 "parse.tab.c" /* yacc.c:1646  */
+#line 1344 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 112 "parse.y" /* yacc.c:1646  */
+#line 113 "parse.y" /* yacc.c:1646  */
     { cout << ""; }
-#line 1349 "parse.tab.c" /* yacc.c:1646  */
+#line 1350 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 113 "parse.y" /* yacc.c:1646  */
+#line 114 "parse.y" /* yacc.c:1646  */
     { cout << ""; }
-#line 1355 "parse.tab.c" /* yacc.c:1646  */
+#line 1356 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 117 "parse.y" /* yacc.c:1646  */
+#line 118 "parse.y" /* yacc.c:1646  */
     {
         apnd(Wrapper(string((yyvsp[-4].sval)), utls::CHAR, (yyvsp[-1].ival)));
     }
-#line 1363 "parse.tab.c" /* yacc.c:1646  */
+#line 1364 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 120 "parse.y" /* yacc.c:1646  */
+#line 121 "parse.y" /* yacc.c:1646  */
     {
         apnd(Wrapper(string((yyvsp[-1].sval)), utls::INT));
     }
-#line 1371 "parse.tab.c" /* yacc.c:1646  */
+#line 1372 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 123 "parse.y" /* yacc.c:1646  */
+#line 124 "parse.y" /* yacc.c:1646  */
     {
         apnd(Wrapper(string((yyvsp[-1].sval)), utls::FLOAT));
     }
-#line 1379 "parse.tab.c" /* yacc.c:1646  */
+#line 1380 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 126 "parse.y" /* yacc.c:1646  */
+#line 127 "parse.y" /* yacc.c:1646  */
     { wlist.end()->isUnique = true; }
-#line 1385 "parse.tab.c" /* yacc.c:1646  */
+#line 1386 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 127 "parse.y" /* yacc.c:1646  */
+#line 128 "parse.y" /* yacc.c:1646  */
     {
         int keyCount = 0;
         for ( list<Wrapper>::iterator i = wlist.begin();
@@ -1401,107 +1402,107 @@ yyreduce:
                     " Or more than 2 keys defined");
         }
     }
-#line 1405 "parse.tab.c" /* yacc.c:1646  */
+#line 1406 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 145 "parse.y" /* yacc.c:1646  */
+#line 146 "parse.y" /* yacc.c:1646  */
     { acti = SELV; tname = (yyvsp[0].sval); }
-#line 1411 "parse.tab.c" /* yacc.c:1646  */
+#line 1412 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 146 "parse.y" /* yacc.c:1646  */
+#line 147 "parse.y" /* yacc.c:1646  */
     { acti = SELV; tname = (yyvsp[-2].sval); }
-#line 1417 "parse.tab.c" /* yacc.c:1646  */
+#line 1418 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 150 "parse.y" /* yacc.c:1646  */
+#line 151 "parse.y" /* yacc.c:1646  */
     { acti = DELV; tname = (yyvsp[0].sval); }
-#line 1423 "parse.tab.c" /* yacc.c:1646  */
+#line 1424 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 151 "parse.y" /* yacc.c:1646  */
+#line 152 "parse.y" /* yacc.c:1646  */
     { acti = DELV; tname = (yyvsp[-2].sval); }
-#line 1429 "parse.tab.c" /* yacc.c:1646  */
+#line 1430 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 156 "parse.y" /* yacc.c:1646  */
+#line 157 "parse.y" /* yacc.c:1646  */
     { cout << ""; }
-#line 1435 "parse.tab.c" /* yacc.c:1646  */
+#line 1436 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 157 "parse.y" /* yacc.c:1646  */
+#line 158 "parse.y" /* yacc.c:1646  */
     { cout << ""; }
-#line 1441 "parse.tab.c" /* yacc.c:1646  */
+#line 1442 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 161 "parse.y" /* yacc.c:1646  */
+#line 162 "parse.y" /* yacc.c:1646  */
     { apnd(Wrapper(string((yyvsp[-2].sval)),
         (op_t) (yyvsp[-1].comp_sign), string((yyvsp[0].sval))));
     }
-#line 1449 "parse.tab.c" /* yacc.c:1646  */
+#line 1450 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 164 "parse.y" /* yacc.c:1646  */
+#line 165 "parse.y" /* yacc.c:1646  */
     { apnd(Wrapper(string((yyvsp[-2].sval)),
         (op_t) (yyvsp[-1].comp_sign), (yyvsp[0].ival)));
     }
-#line 1457 "parse.tab.c" /* yacc.c:1646  */
+#line 1458 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 167 "parse.y" /* yacc.c:1646  */
+#line 168 "parse.y" /* yacc.c:1646  */
     { apnd(Wrapper(string((yyvsp[-2].sval)),
         (utls::Operator) (yyvsp[-1].comp_sign), (yyvsp[0].fval)));
     }
-#line 1465 "parse.tab.c" /* yacc.c:1646  */
+#line 1466 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 173 "parse.y" /* yacc.c:1646  */
+#line 174 "parse.y" /* yacc.c:1646  */
     { acti = DTBL; tname = (yyvsp[0].sval); }
-#line 1471 "parse.tab.c" /* yacc.c:1646  */
+#line 1472 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 174 "parse.y" /* yacc.c:1646  */
+#line 175 "parse.y" /* yacc.c:1646  */
     { acti = DIDX; tname = (yyvsp[0].sval); }
-#line 1477 "parse.tab.c" /* yacc.c:1646  */
+#line 1478 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 179 "parse.y" /* yacc.c:1646  */
+#line 180 "parse.y" /* yacc.c:1646  */
     { acti = INSV; tname = (yyvsp[-4].sval); }
-#line 1483 "parse.tab.c" /* yacc.c:1646  */
+#line 1484 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 183 "parse.y" /* yacc.c:1646  */
+#line 184 "parse.y" /* yacc.c:1646  */
     { apnd(Wrapper(utls::CHAR, string((yyvsp[0].sval)))); }
-#line 1489 "parse.tab.c" /* yacc.c:1646  */
+#line 1490 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 184 "parse.y" /* yacc.c:1646  */
+#line 185 "parse.y" /* yacc.c:1646  */
     { apnd(Wrapper(utls::FLOAT, (yyvsp[0].fval))); }
-#line 1495 "parse.tab.c" /* yacc.c:1646  */
+#line 1496 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 185 "parse.y" /* yacc.c:1646  */
+#line 186 "parse.y" /* yacc.c:1646  */
     { apnd(Wrapper(utls::INT, (yyvsp[0].ival))); }
-#line 1501 "parse.tab.c" /* yacc.c:1646  */
+#line 1502 "parse.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1505 "parse.tab.c" /* yacc.c:1646  */
+#line 1506 "parse.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1729,7 +1730,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 193 "parse.y" /* yacc.c:1906  */
+#line 194 "parse.y" /* yacc.c:1906  */
 
 
 PlanList& parse(string str) {
@@ -1739,14 +1740,16 @@ PlanList& parse(string str) {
     ofstream fout;
     try {
 
-        //fout.open("temp.sql");
-        //fout << str;
-        //fout.close();
+        fout.open("temp.sql");
+        fout << str;
+        fout.close();
+	remove("temp.sql");
 
     }
     catch (...) {
 
         cerr << ":-( sry, cannot create temp file\n";
+	throw runtime_error("par_file");
 
     }
 
@@ -1784,18 +1787,17 @@ void apnd(const Wrapper& a) {
 
 void yyerror(const char *s) {
     cerr << "Eek, parse error! Message: " << s << endl;
-    // might as well halt now:
-    exit(-1);
+    throw runtime_error("par_syn");
 }
 
 void exec() {
 
     if ( acti == TOTAL_ACTION ) {
         cerr << "Eek, parser internal error: non-act\n";
-        exit(-1);
+        throw runtime_error("par_int");
     }
             
-    cout << acti << endl;
+    //cout << acti << endl;
     plist.push_back(Plan(wlist, tname, acti));
     
 
