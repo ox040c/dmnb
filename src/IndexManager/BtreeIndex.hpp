@@ -23,7 +23,7 @@ private:
     filepoint rootloc;
     filepoint firstloc;
     struct DataAddr fp;
-    BufferManager buff;
+    BufferManager* buff;
     std::map<filepoint,filepoint> father;
     int top;
     Tnode<KeyType> rem[400];
@@ -33,30 +33,26 @@ public:
     BtreeIndex(){
         rootloc = 0;
         firstloc = 0;
-        fp.filename = "index.txt";
+        fp.filename = "indexdata";
         fp.datalen = 4096;
+
         top = 0;
+        if (!buff->has(fp)) buff->Creat (fp);
     }
 
-//    BtreeIndex(const BufferManager &x,filepoint rootloc,filepoint firstloc){
-//        fp.filename = "index.data";
-//        fp.datalen = 4096;
-//        root = new Tnode<KeyType>(ReadFromFile (rootloc));
-//        firstloc = new Tnode<KeyType>(ReadFromFile (firstloc));
-//        buff = &x;
-//    }
+    BtreeIndex(const BufferManager &x,const std::string &indexname,filepoint rootloc,filepoint firstloc){
+        fp.filename = indexname;
+        fp.datalen = 4096;
+        buff = &x;
+        if (!buff->has(fp)) buff->Creat (fp);
+        root = new Tnode<KeyType>(ReadFromFile (rootloc));
+        firstloc = new Tnode<KeyType>(ReadFromFile (firstloc));
+    }
 
-//    BtreeIndex(const BufferManager &x){
-//        fp.filename = "index.data";
-//        fp.datalen = 4096;
-//        root = NULL;
-//        firstloc = NULL;
-//        buff = &x;
-//    }
 
     ~BtreeIndex(){
-        rootloc = 0;
-        firstloc = 0;
+        delete root;
+        delete first;
     }
     filepoint getRoot(){
         return rootloc;
@@ -64,13 +60,21 @@ public:
     filepoint getFirst(){
         return firstloc;
     }
-
+     // 清空
     void clear(){
         firstloc = 0;
         rootloc = 0;
         father.clear ();
+        buff->drop(fp);
+        buff->Creat (fp);
     }
-        // 清空
+    //删除
+    void drop(){
+        firstloc = 0;
+        rootloc = 0;
+        father.clear ();
+        buff->drop(fp);
+    }
     void print(){        // 打印树关键字
         std::cout<<"============BtreeIndex=========="<<std::endl;
         if (rootloc!=0)
@@ -97,41 +101,36 @@ public:
     }
 
     filepoint WritetoFile(Tnode<KeyType> &x){
-//        char* s = new char[fp.datalen];
-//        x.WritetoFile(s);
-//        struct DataAddr fp1;
-//        fp1 = buff.Insert (fp,s);
-//        delete[] s;
-//        return fp1.dataaddr;
-        top++;
-        rem[top] = x;
-        return top;
+        char* s = new char[fp.datalen];
+        x.WritetoFile(s);
+        struct DataAddr fp1;
+        fp1 = buff->Insert (fp,s);
+        delete[] s;
+        return fp1.dataaddr;
+//        top++;
+//        rem[top] = x;
+//        return top;
     }
-
     Tnode<KeyType> ReadFromFile (filepoint p){
         Tnode<KeyType> tempnode;
-//        fp.dataaddr = p;
-//        char* s = new char[fp.datalen];
-//        buff.Search(fp,s);
-//        tempnode.ReadFromFile(s);
-//        delete[] s;
-//        return tempnode;
-        tempnode = rem[p];
+        fp.dataaddr = p;
+        char* s = new char[fp.datalen];
+        buff->Search(fp,s);
+        tempnode.ReadFromFile(s);
+        delete[] s;
         return tempnode;
     }
-
     void UpdateFile(filepoint p,Tnode<KeyType> x){
-        rem[p] = x;
-//        char* s = new char[fp.datalen];
-//        x.WritetoFile (s);
-//        fp.dataaddr = p;
-//        buff.Update(fp,s);
-//        delete[] s;
+//        rem[p] = x;
+        char* s = new char[fp.datalen];
+        x.WritetoFile (s);
+        fp.dataaddr = p;
+        buff->Update(fp,s);
+        delete[] s;
     }
     void RemoveFile(filepoint p){
-//        fp.dataaddr = p;
-//        buff.Delete(fp);
-//        delete rem[p];
+        fp.dataaddr = p;
+        buff->Delete(fp);
     }
 
     std::list<filepoint> findless(const KeyType &key){
@@ -193,27 +192,27 @@ public:
             root = new Tnode<KeyType>(ReadFromFile(rootloc));
             tempnode = *root;
             temp = rootloc;
+//            std::cout<<"this filepoint"<<temp<<std::endl;
+//            tempnode.printData ();
 //            std::cout<<"_________find______"<<std::endl;
 //            tempnode.printData ();
 //            std::cout<<"___________________"<<std::endl;
             while (tempnode.getLeaf ()==0){
+//                std::cout<<"this filepoint"<<temp<<std::endl;
+//                tempnode.printData ();
                 keyindex = tempnode.getKeyIndex (key);
                 keynum = tempnode.getKeyNum ();
-//                if (keyindex==keynum){
-//                    nextp = tempnode.getChild (keynum);
-//                    father[nextp]=temp;
-//                    tempnode = ReadFromFile (nextp);
-//                    temp = nextp;
-//                }
-//                else{
-                    nextp = tempnode.getChild (keyindex);
-                    father[nextp]=temp;
-                    tempnode = ReadFromFile (nextp);
-                    temp = nextp;
+                nextp = tempnode.getChild (keyindex);
+                father[nextp]=temp;
+                tempnode = ReadFromFile (nextp);
+                temp = nextp;
             }
             return temp;
-        }else std::cout<<"error in index findleaf"<<std::endl;
+        }
+        else std::cout<<"error in index findleaf"<<std::endl;
+        return 0;
     }
+
     std::list<filepoint> findbigeq(const KeyType &key){
         Tnode<KeyType> tempnode;
         filepoint temp;
@@ -317,8 +316,8 @@ public:
 //                parentnode.printData ();
 //                std::cout<<"    right:>>>>"<<std::endl;
 //                newnode.printData ();
-                filepoint fid = father[parent];
-                Tnode<KeyType> fnode = ReadFromFile (fid);
+//                filepoint fid = father[parent];
+//                Tnode<KeyType> fnode = ReadFromFile (fid);
 //                std::cout<<"    father:>>>>"<<std::endl;
 //                fnode.printData ();
                 insert_in_parent (parent,newkey,newp);
@@ -333,10 +332,11 @@ public:
         if (root==NULL){
 //            std::cout<<"-----root NULL-----"<<std::endl;
             root = new Tnode<KeyType>;
-            first = root;
+            first = new Tnode<KeyType>;
             root->insert (key,data);
             root->setLeaf (1);
-
+            first = root;
+            first->printData ();
             firstloc = WritetoFile (*first);
             rootloc = firstloc;
             return true;
@@ -384,6 +384,8 @@ public:
 //            fnode.printData ();
             insert_in_parent(temp,newkey,newp);
         }
+        delete root;
+        root = new Tnode<KeyType>(ReadFromFile (rootloc));
         return true;
     }
 
@@ -400,6 +402,7 @@ public:
         if (keyindex>0 && key == tempnode.getKeyValue (keyindex-1)){
             remove_entry (temp,key,tempnode.getChild (keyindex-1),tempnode);
         }
+        return true;
     }
 
     bool remove_entry(filepoint x,KeyType key,filepoint p,Tnode<KeyType> xnode){
@@ -572,6 +575,7 @@ public:
                 return true;
             }
         }//孩子太少
+        return true;
     }
 };
 #endif
