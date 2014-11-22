@@ -118,17 +118,17 @@ public:
             filepoint first = headList[it0->second];
             DataType dtype = dataTypeList[it0->second];
             switch (dtype) {
-            case INT:{
+            case utls::INT:{
                 BtreeIndex<int> btree0(buffer,indexname,root,first);
                 btree0.print ();
             }
                 break;
-            case FLOAT:{
+            case utls::FLOAT:{
                 BtreeIndex<float> btree1(buffer,indexname,root,first);
                 btree1.print ();
             }
                 break;
-            case CHAR:{
+            case utls::CHAR:{
                 BtreeIndex_s btree2(buffer,indexname,root,first);
                 btree2.print ();
             }
@@ -164,12 +164,12 @@ public:
         filepoint root = rootList[indexName];
         filepoint first = headList[indexName];
         switch (dtype){
-            case INT:{
+            case utls::INT:{
                 BtreeIndex<int> btree0(buffer,indexName,root,first);
                 btree0.drop ();
             }
                 break;
-            case FLOAT:{
+            case utls::FLOAT:{
                 BtreeIndex<float> btree1(buffer,indexName,root,first);
                 btree1.drop ();
                 break;
@@ -217,7 +217,7 @@ public:
             headList[indexname] = btree0.getFirst ();
         }
             break;
-        case FLOAT:{
+        case utls::FLOAT:{
             float key1 = condition_info.floatv;
             BtreeIndex<float> btree1(buffer,indexname,root,first);
             btree1.insert (key1,pos);
@@ -225,7 +225,7 @@ public:
             headList[indexname] = btree1.getFirst ();
         }
             break;
-        case CHAR:{
+        case utls::CHAR:{
             string key2 = condition_info.strv;
             BtreeIndex_s btree2(buffer,indexname,root,first);
             btree2.insert (key2,pos);
@@ -242,7 +242,7 @@ public:
         filepoint root = rootList[indexName];
         filepoint first = headList[indexName];
         switch (dtype){
-            case INT:{
+            case utls::INT:{
                 BtreeIndex<int> btree0(buffer,indexName,root,first);
                 int key0 = condition_info.intv;
 //                btree0.print ();
@@ -286,7 +286,7 @@ public:
                 }
         }
                 break;
-            case FLOAT:{
+            case utls::FLOAT:{
                 BtreeIndex<float> btree1(buffer,indexName,root,first);
                 int key1 = condition_info.floatv;
                 switch (condition_info.op) {
@@ -328,7 +328,7 @@ public:
                 }
         }
                 break;
-            case CHAR:{
+            case utls::CHAR:{
             BtreeIndex_s btree2(buffer,indexName,root,first);
             string key2 = condition_info.strv;
 //                btree2.print ();
@@ -379,7 +379,7 @@ public:
         filepoint root = rootList[indexName];
         filepoint first = headList[indexName];
         switch (dtype){
-            case INT:{
+            case utls::INT:{
                 int key0 = condition_info.intv;
                 BtreeIndex<int> btree0(buffer,indexName,root,first);
                 btree0.remove (key0);
@@ -387,7 +387,7 @@ public:
                 headList[indexName] = btree0.getFirst ();
             }
                 break;
-            case FLOAT:{
+            case utls::FLOAT:{
                 float key1 = condition_info.floatv;
                 BtreeIndex<float> btree1(buffer,indexName,root,first);
                 btree1.remove (key1);
@@ -395,7 +395,7 @@ public:
                 headList[indexName] = btree1.getFirst ();
             }
                 break;
-            case CHAR:{
+        case utls::CHAR:{
                 string key2 = condition_info.strv;
                 BtreeIndex_s btree2(buffer,indexName,root,first);
                 btree2.remove (key2);
