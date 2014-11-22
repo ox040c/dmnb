@@ -18,11 +18,11 @@ namespace utls {
 
 }
 
-struct DataAddr {
+typedef struct DataAddr {
     std::string filename;
     unsigned int dataaddr;
     unsigned int datalen;
-};
+} FilePtr;
 
 class Wrapper {
     public:
