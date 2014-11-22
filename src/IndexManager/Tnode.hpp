@@ -2,7 +2,7 @@
 #define TNODE_H_
 
 typedef unsigned int filepoint;
-const int ORDER = 3;                   // B+树的阶（非根内结点的最小子树个数）
+const int ORDER = 100;                   // B+树的阶（非根内结点的最小子树个数）
 const int MINNUM_KEY = ORDER-1;        // 最小键值个数
 const int MAXNUM_KEY = 2*ORDER-1;      // 最大键值个数
 const int MINNUM_CHILD = MINNUM_KEY+1; // 最小子树个数

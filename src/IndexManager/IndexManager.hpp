@@ -4,10 +4,11 @@
 #include "fstream"
 #include <list>
 #include <map>
-#include <set>
 #include <string>
 #include "Utility.hpp"
 #include "BtreeIndex.hpp"
+#include "BtreeIndex_s.hpp"
+#include <stdio.h>
 using namespace utls;
 using namespace std;
 class IndexManager{
@@ -108,6 +109,35 @@ public:
         headList.clear ();
         dataTypeList.clear ();
     }
+    void showdetail(){
+        cout<<"-----------------INDEX MANAGER------------"<<endl;
+        StringList::iterator it0;
+        for (it0 = indexList.begin ();it0!=indexList.end ();it0++){
+            string indexname = it0->second;
+            filepoint root = rootList[it0->second];
+            filepoint first = headList[it0->second];
+            DataType dtype = dataTypeList[it0->second];
+            switch (dtype) {
+            case INT:{
+                BtreeIndex<int> btree0(buffer,indexname,root,first);
+                btree0.print ();
+            }
+                break;
+            case FLOAT:{
+                BtreeIndex<float> btree1(buffer,indexname,root,first);
+                btree1.print ();
+            }
+                break;
+            case CHAR:{
+                BtreeIndex_s btree2(buffer,indexname,root,first);
+                btree2.print ();
+            }
+            default:
+                break;
+            }
+        }
+        cout<<"-----------------INDEX MANAGER------------"<<endl;
+    }
 
     bool hasIndex(const std::string tableName,const std::string colName){
         if (indexList.count(tableName+"_"+colName)>0 &&
@@ -155,14 +185,13 @@ public:
         fp.datalen = 128;
         buffer.drop (fp);
     }
-
     void createIndex(const std::string tableName,
                       const std::string colName,
                       const std::string indexName,
                       DataType type){
         struct DataAddr fp;
         fp.filename = indexName;
-        fp.datalen = 128;
+        fp.datalen = 4096;
         buffer.create (fp);
         indexList[tableName+"_"+colName] = indexName;
         dataTypeList[indexName] = type;
@@ -173,29 +202,36 @@ public:
 
     void insert(const std::string indexname,
                         const unsigned int &pos,
-                        void *dataPtr){
+                        const Condition &condition_info){
         DataType dtype = dataTypeList[indexname];
         filepoint root = rootList[indexname];
         filepoint first = headList[indexname];
         switch (dtype){
-            case INT:{
-                int key0 = *((int*)dataPtr);
-                BtreeIndex<int> btree0(buffer,indexname,root,first);
+        case INT:{
+            int key0 = condition_info.intv;
+            BtreeIndex<int> btree0(buffer,indexname,root,first);
 //                cout<<"BtreeIndex"<<key0<<pos<<" "<<root<<" "<<first<<endl;
-                btree0.insert (key0,pos);
+            btree0.insert (key0,pos);
 //                btree0.print ();
-                rootList[indexname] = btree0.getRoot ();
-                headList[indexname] = btree0.getFirst ();
-            }
-                break;
-            case FLOAT:{
-                float key1 = *((float*)dataPtr);
-                BtreeIndex<float> btree1(buffer,indexname,root,first);
-                btree1.insert (key1,pos);
-                rootList[indexname] = btree1.getRoot ();
-                headList[indexname] = btree1.getFirst ();
-            }
-                break;
+            rootList[indexname] = btree0.getRoot ();
+            headList[indexname] = btree0.getFirst ();
+        }
+            break;
+        case FLOAT:{
+            float key1 = condition_info.floatv;
+            BtreeIndex<float> btree1(buffer,indexname,root,first);
+            btree1.insert (key1,pos);
+            rootList[indexname] = btree1.getRoot ();
+            headList[indexname] = btree1.getFirst ();
+        }
+            break;
+        case CHAR:{
+            string key2 = condition_info.strv;
+            BtreeIndex_s btree2(buffer,indexname,root,first);
+            btree2.insert (key2,pos);
+            rootList[indexname] = btree2.getRoot ();
+            headList[indexname] = btree2.getFirst ();
+        }
         }
     }
 
@@ -292,16 +328,59 @@ public:
                 }
         }
                 break;
+            case CHAR:{
+            BtreeIndex_s btree2(buffer,indexName,root,first);
+            string key2 = condition_info.strv;
+//                btree2.print ();
+//                std::cout<<"key2 "<<key2<<std::endl;
+            switch (condition_info.op) {
+            case EQUAL:{
+                ans = btree2.findeq (key2);
+                return ans;
+            }
+                break;
+            case LESS:{
+                ans = btree2.findless (key2);
+                return ans;
+            }
+                break;
+            case NO_MORE:{
+                ans = btree2.findlesseq (key2);
+                return ans;
+            }
+                break;
+            case MORE:{
+                ans = btree2.findbig (key2);
+                return ans;
+            }
+                break;
+            case NO_LESS:{
+                ans = btree2.findbigeq (key2);
+                return ans;
+            }
+                break;
+            case UNEQUAL:{
+                std::list<filepoint> ans1;
+                ans = btree2.findbig (key2);
+                ans1 = btree2.findless (key2);
+                ans.merge (ans1);
+                return ans;
+            }
+                break;
+            default:{}
+                break;
+            }
+        }
+                break;
         }
    }
-
-    void remove(const std::string &indexName,void *dataPtr){
+    void remove(const std::string &indexName,const Condition &condition_info){
         DataType dtype = dataTypeList[indexName];
         filepoint root = rootList[indexName];
         filepoint first = headList[indexName];
         switch (dtype){
             case INT:{
-                int key0 = *((int*)dataPtr);
+                int key0 = condition_info.intv;
                 BtreeIndex<int> btree0(buffer,indexName,root,first);
                 btree0.remove (key0);
                 rootList[indexName] = btree0.getRoot ();
@@ -309,16 +388,23 @@ public:
             }
                 break;
             case FLOAT:{
-                float key1 = *((float*)dataPtr);
+                float key1 = condition_info.floatv;
                 BtreeIndex<float> btree1(buffer,indexName,root,first);
                 btree1.remove (key1);
                 rootList[indexName] = btree1.getRoot ();
                 headList[indexName] = btree1.getFirst ();
             }
                 break;
+            case CHAR:{
+                string key2 = condition_info.strv;
+                BtreeIndex_s btree2(buffer,indexName,root,first);
+                btree2.remove (key2);
+                rootList[indexName] = btree2.getRoot ();
+                headList[indexName] = btree2.getFirst ();
+            }
+                break;
         }
     }
-
     void remove(const std::string indexName){
         if (tableList.count (indexName) == 0){
             std::cout<<"no index exit to drop!"<<std::endl;
@@ -329,22 +415,6 @@ public:
         fp.datalen = 128;
         buffer.drop (fp);
         buffer.create (fp);
-
-//        switch (dtype){
-//            case INT:{
-//                BtreeIndex<int> btree0(buffer,indexName,root,first);
-//                btree0.clear ();
-//            }
-//                break;
-//            case FLOAT:{
-//                BtreeIndex<float> btree1(buffer,indexName,root,first);
-//                btree1.clear ();
-//            }
-//                break;
-//            case TOTAL_TYPE:{
-//            }
-//                break;
-//        }
         rootList[indexName] = 0;
         headList[indexName] = 0;
     }
