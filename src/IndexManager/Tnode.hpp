@@ -2,7 +2,7 @@
 #define TNODE_H_
 
 typedef unsigned int filepoint;
-const int ORDER = 3;                   // B+树的阶（非根内结点的最小子树个数）
+const int ORDER = 100;                   // B+树的阶（非根内结点的最小子树个数）
 const int MINNUM_KEY = ORDER-1;        // 最小键值个数
 const int MAXNUM_KEY = 2*ORDER-1;      // 最大键值个数
 const int MINNUM_CHILD = MINNUM_KEY+1; // 最小子树个数
@@ -20,9 +20,7 @@ private:
     filepoint childpoint[MAXNUM_CHILD+1];
 
 public:
-    Tnode(){
-        leaf = 0;
-        keynum = 0;
+    Tnode():keynum(0),leaf(0){
         childpoint[keynum] = 0;
     }
     void clear(){
@@ -46,7 +44,7 @@ public:
         std::cout<<std::endl;
     }
 
-    void WritetoFile(char* t){
+    void writeToFile(char* t){
         char *s = t;
         *((int*)s) = leaf;
         s=s+4;
@@ -62,7 +60,7 @@ public:
         }
     }
 
-    void ReadFromFile(const char* t){
+    void readFromFile(const char* t){
         const char* s =t;
         leaf = *(int*)s;s=s+4;
         keynum = *(int*)s;s=s+4;

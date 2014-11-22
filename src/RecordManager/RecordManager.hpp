@@ -14,6 +14,7 @@ private:
 	std::map<std::string, unsigned int> datalenTable;
 	//return to API
 	Entry EntryResult;
+    std::map<std::string, int> totalEntries;
 
 	//save the present address 
 	unsigned int nextAddr;
@@ -30,26 +31,27 @@ private:
 	Wrapper get_wrapper(const std::list<Wrapper>::const_iterator it, const char * temp);
 public:
 	RecordManager(BufferManager &buffer) :buffer(buffer){}
-	~RecordManager();
-	//get the next address
-	unsigned int getNext(const  std::string &tableName, bool reset);
-	//creat schema,if exist, return false
+	~RecordManager() {};
+	
+	unsigned int getNext(const  std::string &tableName, bool reset);//get the next address
+	
 	void creatSchema(const std::string &tableName, 
-						const Entry &entry);
-	//build a fileptr,then return the Entry
+						const Entry &entry);//creat schema,if exist, return false
+	
 	Entry & getValue(const std::string &tableName, 
 						const unsigned int &pos, 
-						const Entry &entry);
-	//build a fileptr,then return the attribuye
+						const Entry &entry);//build a fileptr,then return the Entry
+	
 	Wrapper getAttValue(const std::string &tableName, 
 						const unsigned int &pos, 
 						const std::string &colName,
-						const Entry &entry);
-	//delete the entry pionted, if 
+						const Entry &entry);//build a fileptr,then return the attribuye
+	
 	void deleteEntry(const std::string &tableName,
-						const unsigned int &pos);
-
-	bool deleteSchema(const std::string &tableName);
+						const unsigned int &pos);//delete the entry pionted
+	
+	int deleteEntry(const std::string &tableName);//delete the all entries in of the table
+	bool dropSchema(const std::string &tableName);//drop the schema
 
 	unsigned int insertEntry(const std::string &tableName,
 						const Entry &entry);

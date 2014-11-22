@@ -47,7 +47,7 @@ int main() {
         BufferManager bufferManager;
         CatalogManager catlogManager;
         RecordManager recordManager(bufferManager);
-        IndexManager indexManager;
+        IndexManager indexManager(bufferManager);
 
         API api(catlogManager,
                 recordManager,

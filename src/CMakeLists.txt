@@ -25,9 +25,13 @@ SET(src_main
 # ----------------------------------------------------------------------
 # Setup link && include directories
 
+link_directories(
+    "/usr/local/lib"
+  "/usr/lib64"
+)
+
 include_directories(
   "/usr/local/include"
-  "/usr/lib64"
   
   "./API"
   "./BufferManager"
@@ -55,8 +59,10 @@ file(GLOB SrcList
   "${dmnb_src}/CatalogManager/*.h*"
   "${dmnb_src}/IndexManager/*.cpp"
   "${dmnb_src}/IndexManager/*.hpp"
-  "${dmnb_src}/Interpreter/*.c*"
-  "${dmnb_src}/Interpreter/*.h*"
+  "${dmnb_src}/Interpreter/lex.yy.cpp"
+  "${dmnb_src}/Interpreter/parse.tab.cpp"
+  #"${dmnb_src}/Interpreter/*.c*"
+  #"${dmnb_src}/Interpreter/*.h*"
   "${dmnb_src}/RecordManager/*.cpp"
   "${dmnb_src}/RecordManager/*.hpp"
   "${dmnb_src}/Utility/*.cpp"
