@@ -244,3 +244,20 @@ vector<unsigned int>::iterator BufferManager::find(vector<unsigned int> deleted,
 	}
 	return it;
 }
+
+bool BufferManager::Has(const FilePtr &addr)
+{
+	fstream file(addr.filename.c_str());
+	if (file)
+		return true;
+	else 
+		return false;
+}
+
+void BufferManager::Drop(const FilePtr addr)
+{
+	string operater1 = "del " + addr.filename;
+	string operater2 = "del del_" + addr.filename;
+	system(operater1.c_str());
+	system(operater2.c_str());
+}
