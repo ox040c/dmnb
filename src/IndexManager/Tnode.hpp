@@ -20,9 +20,7 @@ private:
     filepoint childpoint[MAXNUM_CHILD+1];
 
 public:
-    Tnode(){
-        leaf = 0;
-        keynum = 0;
+    Tnode():keynum(0),leaf(0){
         childpoint[keynum] = 0;
     }
     void clear(){
