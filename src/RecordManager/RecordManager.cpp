@@ -21,7 +21,7 @@ unsigned int RecordManager::get_datalen(const Entry &entry)
 			datalen += sizeof(float);
 			break;
 		case utls::CHAR:
-			datalen += it->intv * sizeof(char);
+			datalen += (it->intv+1) * sizeof(char);
 			break;
 		default:
 			break;
@@ -77,12 +77,12 @@ Wrapper RecordManager::get_wrapper(const std::list<Wrapper>::const_iterator it,c
 	case utls::INT:
 		int k;
 		k = *(int *)temp;
-		return Wrapper(utls::INT, k);
+		return Wrapper(utls::INT, k,it->name);
 		break;
 	case utls::FLOAT:
 		float kk;
 		kk = *(float *)temp;
-		return Wrapper(utls::FLOAT, kk);
+		return Wrapper(utls::FLOAT, kk,it->name);
 		break;
 	case utls::CHAR:
 	{
@@ -92,7 +92,7 @@ Wrapper RecordManager::get_wrapper(const std::list<Wrapper>::const_iterator it,c
         ch[it->intv] = 0;
         string s(ch);
         delete[] ch;
-        return Wrapper(utls::CHAR, s);
+        return Wrapper(utls::CHAR, s,it->name,it->intv);
         break;
 	}
 	default:
@@ -167,7 +167,7 @@ Entry &  RecordManager::getValue(
 			offset += sizeof(float);
 			break;
 		case utls::CHAR:
-			offset += it->intv * sizeof(char);
+			offset += (it->intv+1) * sizeof(char);
 			break;
 		default:
             throw runtime_error("type erreor");
@@ -211,7 +211,7 @@ Wrapper  RecordManager::getAttValue(
 				offset += sizeof(float);
 				break;
 			case utls::CHAR:
-				offset += it->intv * sizeof(char);
+				offset += (it->intv+1) * sizeof(char);
 				break;
 			default:
 				break;
@@ -302,7 +302,7 @@ unsigned int  RecordManager::insertEntry(
 				temp[i] = it->strv[i];
 			}
 			temp[it->strv.length()] = 0;
-			offset += it->intv * sizeof(char);
+			offset += (it->intv+1) * sizeof(char);
 		default:
             throw runtime_error("insert attribute type error");
 //			cerr << "insert attribute type error" << endl;
