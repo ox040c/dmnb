@@ -1,4 +1,4 @@
-﻿ #include "BufferManager.hpp"
+﻿#include "BufferManager.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,7 +16,7 @@ BufferManager::~BufferManager()
 			page[i].write_to_file();
 		}
 	}
-	
+
 	//cout << "~BufferManager" << endl;
 }
 bool check_in_page(const Page &page, const FilePtr &dataaddr)
@@ -251,14 +251,14 @@ bool BufferManager::has(const string &filename)
     fstream file(filename.c_str());
 	if (file)
 		return true;
-	else 
+	else
 		return false;
 }
 
 void BufferManager::drop(const FilePtr addr)
 {
 	string operater1 = "del " + addr.filename;
-	string operater2 = "del del_" + addr.filename;
+	string operater2 = "del del_" + addr.filename + ".txt";
 	system(operater1.c_str());
 	system(operater2.c_str());
 }
