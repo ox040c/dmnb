@@ -29,7 +29,8 @@ unsigned int RecordManager::get_datalen(const Entry &entry)
 		}
 		it++;
 	}
-    for (unsigned int i = 1; i < datalen; i = i * 2);
+	unsigned int i;
+    for (i = 1; i < datalen; i = i * 2);
 	if (i<=4096)
 	{
 		datalen = i;
