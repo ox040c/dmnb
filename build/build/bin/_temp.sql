@@ -6,22 +6,22 @@ create table student (
     sgender char (1)
     
 );
+
+//create index stunameidx on student ( sname  );
+//drop index stunameidx;
+insert into student values ('12345678','w',22,'M');
+
+
 exit;
-create index stunameidx on student ( sname  );
 
 select * from student;
-select * from student where sno = '88888888';
-select * from student where sage >= 20 and sgender < 'F';
 
 drop table student;
 
 
 
-drop index stunameidx;
-
-
-
-insert into student values ('12345678','w',22,'M');
+select * from student where sno = '88888888';
+select * from student where sage >= 20 and sgender < 'F';
 
 delete from student;
 delete from student where sno = '88888888';

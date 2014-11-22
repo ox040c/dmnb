@@ -1,5 +1,5 @@
 %option noyywrap
-
+%option yylineno
 %{
 #include <cstdio>
 #include <iostream>
@@ -15,9 +15,12 @@ using namespace std;
 
 %}
 %%
+
+
 [ \t\n\r] /* whitespace */
 [0-9]+\.[0-9]+ { yylval.fval = atof(yytext); return FLOAT_v; }
 [0-9]+            { yylval.ival = atoi(yytext); return INT_v; }
+"//".* /* ignore comments */
 
 add|ADD { return ADD; }
 and|AND { return AND; }

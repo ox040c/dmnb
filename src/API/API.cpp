@@ -84,10 +84,13 @@ void API::createIndex(const string &tableName,
         } else {
             const TableDefinition &td = catalogManager.getTableDef(tableName);
             indexManager.createIndex(tableName, colName, indexName, getDataType(td, colName));
-            while (int pos = recordManager.getNext(tableName, true)) {
+            int pos = recordManager.getNext(tableName, true);
+            while (pos > 0) {
                 indexManager.insert(indexName, pos,
                                     recordManager.getAttValue(tableName, pos, colName, td));
+                pos = recordManager.getNext(tableName, false);
             }
+
         }
     } catch (exception &e) {
         throw e;
@@ -122,7 +125,6 @@ void API::insertEntry(const string &tableName, const Entry &entry) {
             throw runtime_error(tableName + " does not exist");
         } else {
             checkEntry(tableName, entry);
-
             int pos = recordManager.insertEntry(tableName, entry);
             const TableDefinition &df = catalogManager.getTableDef(tableName);
             for (TableDefinition::const_iterator i = df.begin(); i != df.end(); ++i) {

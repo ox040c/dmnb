@@ -1773,13 +1773,14 @@ PlanList& parse(string str) {
     try {
         do {
             clear();
+            //yyunput();
             yyparse();
         } while (!feof(yyin));
     }
     catch (logic_error const &e) {
         cerr << "exit in sql, exec stmt before exit\n";
     }
-
+    fclose(myfile);
     return plist;
 }
 
@@ -1796,8 +1797,9 @@ void apnd(const Wrapper& a) {
 }
 
 void yyerror(const char *s) {
-    cerr << "Eek, parse error! Message: " << s << endl;
-    throw runtime_error("par_syn");
+    //extern yylineno;
+    //cerr << "Eek, parse error! Message: " << s << "near line: " << yylineno << endl;
+    throw runtime_error("parse_error_syntax");
 }
 
 void exec() {

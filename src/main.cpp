@@ -81,7 +81,12 @@ int main() {
                     switch(acti) {
                         case DELV: api.dropTable(tname); break;
                         case SELV: if ( !wlist.size() ) {
-                                       api.select(tname);
+                                        const Entries rlist = api.select(tname);
+                                        for (Entries::const_iterator i = rlist.begin();
+                                            i != rlist.end(); i++) 
+                                        for (Entry::const_iterator j = i->begin();
+                                            j != i->end(); j++) 
+                                            j->debug();
                                    }
                                    else {
                                        api.select(tname, wlist);
@@ -91,18 +96,20 @@ int main() {
                         case DTBL: api.dropTable(tname); break;
                         case CIDX: api.createIndex(tname, wlist.begin()->name,
                                            wlist.begin()->strv); break;
+                        case INSV: api.insertEntry(tname, wlist);
                         case DIDX: api.dropIndex(tname); break;
-                        case LEAVE: break;
+                        default: cerr << "unhandled action\n"; break;
                     }
                 }
-                catch (...) {
-
+                catch (exception const& e) {
+                    cerr << "err: " << e.what() << endl;
                 }
                 //cout << str << endl;
-
+                /*
                 for (WrapperList::const_iterator j = plan->wlist.begin();
                         j != plan->wlist.end(); j++)
                     j->debug();
+                    */
             }
 
         } while (1);
