@@ -23,7 +23,7 @@ public:
     BufferManager &buffer;
     std::list<filepoint> ans;
     //    std::map<std::string,int> dataLength;//每个表一个节点的长度
-	
+
 public:
     IndexManager(BufferManager &x): buffer(x){
         std::ifstream ifile("IndexManager.txt");
@@ -101,7 +101,7 @@ public:
             fp.datalen = 128;
             buffer.drop (fp);
         }
-        system("del IndexManager.txt");
+        remove("IndexManager.txt");
         indexList.clear ();
         tableList.clear ();
         rootList.clear ();

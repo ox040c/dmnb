@@ -3,6 +3,7 @@
 #include <list>
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 using namespace std;
 //calculate the datalen
 unsigned int RecordManager::get_datalen(const Entry &entry)
@@ -152,7 +153,7 @@ Entry &  RecordManager::getValue(
 	unsigned int datalen = get_datalen(tableName);
 	value = new char[datalen];
 	addr = get_fileptr(tableName, pos, datalen);
-	buffer.Search(addr, value);
+	buffer.search(addr, value);
 
 	EntryResult.clear();
 	list<Wrapper>::const_iterator it = entry.begin();
@@ -195,7 +196,7 @@ Wrapper  RecordManager::getAttValue(
 	unsigned int datalen = get_datalen(tableName);
 	value = new char[datalen];
 	addr = get_fileptr(tableName, pos, datalen);
-	buffer.Search(addr, value);
+	buffer.search(addr, value);
 
 	list<Wrapper>::const_iterator it = entry.begin();
 	while (it != entry.end())
@@ -242,14 +243,14 @@ void  RecordManager::deleteEntry(
     --totalEntries[tableName];
 }
 
-void RecordManager::deleteEntry(const std::string &tableName)
+int RecordManager::deleteEntry(const std::string &tableName)
 {
     int total = totalEntries[tableName];
     totalEntries[tableName] = 0;
 
 	FilePtr addr;
 	addr = get_fileptr(tableName, 0, get_datalen(tableName));
-	buffer.Drop(addr);
+	buffer.drop(addr);
 	buffer.create(addr);
 
     return total;
@@ -261,7 +262,7 @@ bool RecordManager::dropSchema(const std::string &tableName)
 
 	FilePtr addr;
 	addr = get_fileptr(tableName, 0, 0);
-	buffer.Drop(addr);
+	buffer.drop(addr);
 	return true;
 }
 
@@ -311,5 +312,5 @@ unsigned int  RecordManager::insertEntry(
 		}
 		it++;
 	}
-	buffer.Insert(addr, insertvalue);
+	buffer.insert(addr, insertvalue);
 }

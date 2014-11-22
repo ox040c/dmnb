@@ -31,7 +31,7 @@ private:
 	Wrapper get_wrapper(const std::list<Wrapper>::const_iterator it, const char * temp);
 public:
 	RecordManager(BufferManager &buffer) :buffer(buffer){}
-	~RecordManager();
+	~RecordManager() {};
 	
 	unsigned int getNext(const  std::string &tableName, bool reset);//get the next address
 	
@@ -50,7 +50,7 @@ public:
 	void deleteEntry(const std::string &tableName,
 						const unsigned int &pos);//delete the entry pionted
 	
-	void deleteEntry(const std::string &tableName);//delete the all entries in of the table
+	int deleteEntry(const std::string &tableName);//delete the all entries in of the table
 	bool dropSchema(const std::string &tableName);//drop the schema
 
 	unsigned int insertEntry(const std::string &tableName,

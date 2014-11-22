@@ -1,6 +1,7 @@
 ﻿#include "Page.hpp"
 #include <stdio.h>
 #include <iostream>
+#include <stdexcept>
 using namespace std;
 
 Page::~Page(){}
@@ -14,8 +15,8 @@ void Page::read_from_file()
 	infile = fopen(filename.c_str(), "rb");
 	if (infile == NULL)
 	{
-		cerr << "there is no such file:" + filename << endl;
-		abort();
+		//cerr << "there is no such file:" + filename << endl;
+		throw runtime_error( "there is no such file:" + filename );
 	}
 //	infile.seekg(pages_addr, ios::beg);
 	fseek(infile, pages_addr, SEEK_SET);

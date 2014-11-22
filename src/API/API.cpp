@@ -1,7 +1,7 @@
 #include "API.hpp"
 #include <iostream>
 #include <string>
-
+#include <stdexcept>
 /// TODO...
 ///
 ///
@@ -185,9 +185,12 @@ void API::selectIdx(const string &tableName, const Conditions &conditions) {
     for (; i != conditions.end(); ++i) {
         gainIdx(tableName, *i, tempIdxSet);
         resultSet.clear();
+	while(1) cout << "Not implemented set_intersection\n";
+	/*
         set_intersection(idxSet.begin(), idxSet.end(),
                          tempIdxSet.begin(), tempIdxSet.end(),
                          insert_iterator<Idx>(resultSet, resultSet.begin()));
+	    */
         idxSet = resultSet;
     }
 }

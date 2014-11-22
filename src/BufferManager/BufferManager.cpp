@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 #include <string.h>
+#include <cstdio>
+#include <stdexcept>
 
 using namespace std;
 
@@ -257,8 +259,8 @@ bool BufferManager::has(const string &filename)
 
 void BufferManager::drop(const FilePtr addr)
 {
-	string operater1 = "del " + addr.filename;
-	string operater2 = "del del_" + addr.filename + ".txt";
-	system(operater1.c_str());
-	system(operater2.c_str());
+	string operater1 = addr.filename;
+	string operater2 = "del_" + addr.filename + ".txt";
+	std::remove(operater1.c_str());
+	std::remove(operater2.c_str());
 }
