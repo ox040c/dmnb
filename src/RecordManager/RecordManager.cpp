@@ -231,19 +231,28 @@ void  RecordManager::deleteEntry(
 {
 	FilePtr addr;
 	addr = get_fileptr(tableName, pos, get_datalen(tableName));
-	buffer.delete(addr);
+    buffer.remove(addr);
+
+    --totalEntries[tableName];
 }
 
-void RecordManager::deleteEntry(const std::string &tableName)
+int RecordManager::deleteEntry(const std::string &tableName)
 {
+    int total = totalEntries[tableName];
+    totalEntries[tableName] = 0;
+
 	FilePtr addr;
 	addr = get_fileptr(tableName, 0, get_datalen(tableName));
 	buffer.Drop(addr);
 	buffer.create(addr);
+
+    return total;
 }
 
 bool RecordManager::dropSchema(const std::string &tableName)
 {
+    totalEntries.erase(tableName);
+
 	FilePtr addr;
 	addr = get_fileptr(tableName, 0, 0);
 	buffer.Drop(addr);
@@ -254,6 +263,10 @@ unsigned int  RecordManager::insertEntry(
 	const std::string &tableName,
 	const Entry &entry)
 {
+    if (totalEntries.count(tableName) == 0) totalEntries[tableName] = 1;
+    else ++totalEntries[tableName];
+
+
 	FilePtr addr;
 	char * insertvalue, * temp;
 	int offset = 0;

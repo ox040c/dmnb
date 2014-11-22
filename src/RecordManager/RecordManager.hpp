@@ -14,6 +14,7 @@ private:
 	std::map<std::string, unsigned int> datalenTable;
 	//return to API
 	Entry EntryResult;
+    std::map<std::string, int> totalEntries;
 
 	//save the present address 
 	unsigned int nextAddr;

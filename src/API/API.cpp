@@ -244,7 +244,7 @@ int API::remove(const string &tableName) {
             }
         }
         // remove entries
-        int total = recordManager.remove(tableName);
+        int total = recordManager.deleteEntry(tableName);
         return total;
     }
 #endif
@@ -268,7 +268,7 @@ int API::remove(const std::string &tableName, const Conditions &conditions) {
                 indexManager.remove(idxName, condition);
             }
         }
-        recordManager.remove(tableName, *i);
+        recordManager.deleteEntry(tableName, *i);
     }
     return total;
 
