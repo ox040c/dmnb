@@ -1,12 +1,8 @@
 #ifndef TNODE_H_
 #define TNODE_H_
 
-// #define NULL 0
 typedef unsigned int filepoint;
-enum NODE_TYPE{INTERNAL, LEAF};        // 结点类型：内结点、叶子结点
-enum SIBLING_DIRECTION{LEFT, RIGHT};   // 兄弟结点方向：左兄弟结点、右兄弟结点
-typedef int DataType;                  // 值类型
-const int ORDER = 10;                   // B+树的阶（非根内结点的最小子树个数）
+const int ORDER = 3;                   // B+树的阶（非根内结点的最小子树个数）
 const int MINNUM_KEY = ORDER-1;        // 最小键值个数
 const int MAXNUM_KEY = 2*ORDER-1;      // 最大键值个数
 const int MINNUM_CHILD = MINNUM_KEY+1; // 最小子树个数
@@ -14,29 +10,40 @@ const int MAXNUM_CHILD = MAXNUM_KEY+1; // 最大子树个数
 const int MINNUM_LEAF = MINNUM_KEY;    // 最小叶子结点键值个数
 const int MAXNUM_LEAF = MAXNUM_KEY;    // 最大叶子结点键值个数
 
-typedef void* CNode;
-
 // 结点基类
 template <class KeyType>
 class Tnode{
 private:
     int leaf;
     int keynum;
-    KeyType keyvalues[MAXNUM_KEY];
-    filepoint childpoint[MAXNUM_CHILD];
+    KeyType keyvalues[MAXNUM_KEY+1];
+    filepoint childpoint[MAXNUM_CHILD+1];
 
 public:
     Tnode(){
         leaf = 0;
         keynum = 0;
+        childpoint[keynum] = 0;
     }
     void clear(){
         leaf = 0;
         keynum = 0;
+        childpoint[keynum] = 0;
     }
-
     ~Tnode(){
 
+    }
+    void printData(){
+        std::cout<<"leaf:"<<leaf<<std::endl;
+        std::cout<<"keynum:"<<keynum<<std::endl;
+        for (int i=0;i<keynum;i++){
+            std::cout<<keyvalues[i]<<" ";
+        }
+        std::cout<<std::endl;
+        for (int i=0;i<keynum+1;i++){
+            std::cout<<childpoint[i]<<" ";
+        }
+        std::cout<<std::endl;
     }
 
     void WritetoFile(char* t){
@@ -95,21 +102,22 @@ public:
 
 
     int getKeyIndex(KeyType key)const{        // 找到键值在结点中存储的下标
-        int left = 0;
-        int right = this->keynum;
-        int mid = (left+right)/2;
-        while (left!=right){
-            if (key>keyvalues[mid]) left=mid;else right= mid;
-            mid = (left+right)/2;
+        if (keynum ==0) return 0;
+        for (int i=0;i<keynum;i++){
+            if (key<keyvalues[i]) return i;
         }
-        return left;
+        return keynum;
+    }
+
+    int getChildIndex(filepoint p)const{
+        for (int i=0;i<keynum+1;i++){
+            if (p==childpoint[i]) return i;
+        }
+        return -1;
     }
 
     filepoint getChild(int i) const{
-        if (!leaf) return childpoint[i];
-    }
-    filepoint getData(int i) const{
-        if (leaf) return childpoint[i];
+        return childpoint[i];
     }
     void setChild(int i,filepoint p){
         childpoint[i] = p;
@@ -127,31 +135,34 @@ public:
     }
 
     void remove(KeyType key,filepoint p){
-        int keyIndex = getKeyIndex(key);
-        removeKey (keyIndex,keyIndex+1);
+        int kid = getKeyIndex(key);
+        int cid = getChildIndex (p);
+        if (kid>0 && keyvalues[kid-1]==key)
+        removeKey (kid-1,cid);
     }
 
     void insert(int keyIndex, int childIndex,const KeyType &key,const filepoint &p){
         int i;
-        keynum++;
         for (i=keynum;i>keyIndex;--i){
             keyvalues[i] = keyvalues[i-1];
         }
         keyvalues[keyIndex] = key;
-        for (i=keynum;i>childIndex;--i){
+        for (i=keynum+1;i>childIndex;--i){
             childpoint[i] = childpoint[i-1];
         }
         childpoint[childIndex] = p;
+        keynum++;
     }
 
-    void insert(KeyType key, const filepoint& data)
+    void insert(KeyType key, const filepoint& data)//在叶子节点插入数据
     {
         int i;
         for (i=keynum; i>=1 && keyvalues[i-1]>key; --i){
             keyvalues[i] = keyvalues[i-1];
-            childpoint[i] = childpoint[i-1];
+            childpoint[i+1] =childpoint[i];
         }
         keyvalues[i]=key;
+        childpoint[i+1]=childpoint[i];
         childpoint[i]=data;
         keynum++;
     }

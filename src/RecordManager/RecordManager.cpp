@@ -234,8 +234,19 @@ void  RecordManager::deleteEntry(
 	buffer.Delete(addr);
 }
 
-bool RecordManager::deleteSchema(const std::string &tableName)
+void RecordManager::deleteEntry(const std::string &tableName)
 {
+	FilePtr addr;
+	addr = get_fileptr(tableName, 0, get_datalen(tableName));
+	buffer.Drop(addr);
+	buffer.Creat(addr);
+}
+
+bool RecordManager::dropSchema(const std::string &tableName)
+{
+	FilePtr addr;
+	addr = get_fileptr(tableName, 0, 0);
+	buffer.Drop(addr);
 	return true;
 }
 
@@ -267,7 +278,7 @@ unsigned int  RecordManager::insertEntry(
 			}
 			temp += sizeof(float);
 		case utls::CHAR:
-			for (int i = 0; i < it->strv.length(); i++)
+			for (unsigned int i = 0; i < it->strv.length(); i++)
 			{
 				temp[i] = it->strv[i];
 			}

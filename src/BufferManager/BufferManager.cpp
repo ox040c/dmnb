@@ -2,12 +2,24 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <string.h>
 
 using namespace std;
 
 BufferManager::BufferManager(){}
-BufferManager::~BufferManager(){}
-bool check_in_page(Page page, FilePtr dataaddr)
+BufferManager::~BufferManager()
+{
+	for (int i = 0; i < 100; i++)
+	{
+		if (page[i].call_time != -1)
+		{
+			page[i].write_to_file();
+		}
+	}
+	
+	//cout << "~BufferManager" << endl;
+}
+bool check_in_page(const Page &page, const FilePtr &dataaddr)
 {
 	bool result = false;
 	if (page.call_time > 0 && page.filename == dataaddr.filename)
@@ -77,7 +89,6 @@ void writedeleted(string name, vector <unsigned int> deleted)
 		outfile << *it << " ";
 	}
 	outfile.close();
-	outfile.clear();
 }
 
 vector<unsigned int> readdeleted(string name)
@@ -95,7 +106,7 @@ vector<unsigned int> readdeleted(string name)
 	return result;
 }
 
-FilePtr BufferManager::Insert(FilePtr addr, const char * data) //通过DataAddr决定插入的文件
+FilePtr BufferManager::Insert(const FilePtr &addr, const char * data) //通过DataAddr决定插入的文件
 {
 	FilePtr result = addr;
 	unsigned int blocknum;
@@ -126,7 +137,7 @@ FilePtr BufferManager::Insert(FilePtr addr, const char * data) //通过DataAddr�
 	fstream outfile(result.filename.c_str(), ios::in | ios::out | ios::binary);
 	outfile.seekp(result.dataaddr, ios::beg);
 	char * ch = new char[4096];
-	outfile.write(ch, 4096);
+//	outfile.write(ch, 4096);
 	outfile.close();
 	Update(result, data);
 	//新建了一个表格之后
@@ -137,7 +148,7 @@ FilePtr BufferManager::Insert(FilePtr addr, const char * data) //通过DataAddr�
 	writedeleted(result.filename, deleted);
 	return result;
 }
-void BufferManager::Search(FilePtr addr, char * ReturnDate)//数据通过ReturnDate 返回
+void BufferManager::Search(const FilePtr &addr, char * ReturnDate)//数据通过ReturnDate 返回
 {
 	int page_id = -1;
 	unsigned int offset;
@@ -146,10 +157,11 @@ void BufferManager::Search(FilePtr addr, char * ReturnDate)//数据通过ReturnD
 	offset = addr.dataaddr - page[page_id].pages_addr;
 
 	page[page_id].call_time++;
-	for (unsigned int i = 0; i < addr.datalen; i++)
-		ReturnDate[i] = page[page_id].data[offset + i];
+//	for (unsigned int i = 0; i < addr.datalen; i++)
+//		ReturnDate[i] = page[page_id].data[offset + i];
+	memcpy(ReturnDate, page[page_id].data + offset, addr.datalen);
 }
-void BufferManager::Delete(FilePtr addr) //直接删除指定地点的指定长度，通过懒删除实现,记录在del_filename.txt中
+void BufferManager::Delete(const FilePtr &addr) //直接删除指定地点的指定长度，通过懒删除实现,记录在del_filename.txt中
 {
 	ofstream outfile;
 	string filename = "del_" + addr.filename + ".txt";
@@ -157,7 +169,7 @@ void BufferManager::Delete(FilePtr addr) //直接删除指定地点的指定长�
 	outfile << addr.dataaddr<< " ";
 	outfile.close();
 }
-void BufferManager::Update(FilePtr addr, const char * date)//直接将需要更新的地址送给
+void BufferManager::Update(const FilePtr &addr, const char * data)//直接将需要更新的地址送给
 {
 	int page_id = -1;
 	int offset;
@@ -165,11 +177,12 @@ void BufferManager::Update(FilePtr addr, const char * date)//直接将需要更�
 	page_id = get_pageid(addr);
 	offset = addr.dataaddr - page[page_id].pages_addr;
 	page[page_id].call_time++;
-	for (unsigned int i = 0; i < addr.datalen; i++)
-		page[page_id].data[offset + i] = date[i];
+//	for (unsigned int i = 0; i < addr.datalen; i++)
+//		page[page_id].data[offset + i] = date[i];
+	memcpy(page[page_id].data + offset, data, addr.datalen);
 }
 
-void BufferManager::Creat(FilePtr addr)
+void BufferManager::Creat(const FilePtr &addr)
 {
 	unsigned int datalen = addr.datalen;
 	unsigned int blocknum = 0;
@@ -196,7 +209,7 @@ void BufferManager::Creat(FilePtr addr)
 	delete[] ch;
 }
 
-FilePtr BufferManager::NextAddr(FilePtr addr)
+FilePtr BufferManager::NextAddr(const FilePtr &addr)
 {
 	vector <unsigned int> deleted;
 	unsigned blocknum;
@@ -230,4 +243,21 @@ vector<unsigned int>::iterator BufferManager::find(vector<unsigned int> deleted,
 		it++;
 	}
 	return it;
+}
+
+bool BufferManager::Has(const FilePtr &addr)
+{
+	fstream file(addr.filename.c_str());
+	if (file)
+		return true;
+	else 
+		return false;
+}
+
+void BufferManager::Drop(const FilePtr addr)
+{
+	string operater1 = "del " + addr.filename;
+	string operater2 = "del del_" + addr.filename;
+	system(operater1.c_str());
+	system(operater2.c_str());
 }
