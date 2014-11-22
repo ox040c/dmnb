@@ -23,7 +23,7 @@ public:
 	void Search(const FilePtr &addr, char * ReturnDate);//数据通过ReturnDate 返回
 	void Delete(const FilePtr &addr); //直接删除指定地点的指定长度，通过懒删除实现,记录在del_filename.txt中
 	void Update(const FilePtr &addr, const char * date);//把需要修改的数据传进来
-	bool Has(const FilePtr &addr);//检查文件是否存在
+	bool Has(const std::string &filename);//检查文件是否存在
 	void Drop(const FilePtr);//删除整个表单和相应的懒删除记录
 };
 #endif
