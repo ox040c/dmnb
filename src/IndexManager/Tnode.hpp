@@ -46,7 +46,7 @@ public:
         std::cout<<std::endl;
     }
 
-    void WritetoFile(char* t){
+    void writeToFile(char* t){
         char *s = t;
         *((int*)s) = leaf;
         s=s+4;
@@ -62,7 +62,7 @@ public:
         }
     }
 
-    void ReadFromFile(const char* t){
+    void readFromFile(const char* t){
         const char* s =t;
         leaf = *(int*)s;s=s+4;
         keynum = *(int*)s;s=s+4;

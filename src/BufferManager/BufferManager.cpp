@@ -106,7 +106,7 @@ vector<unsigned int> readdeleted(string name)
 	return result;
 }
 
-FilePtr BufferManager::Insert(const FilePtr &addr, const char * data) //通过DataAddr决定插入的文件
+FilePtr BufferManager::insert(const FilePtr &addr, const char * data) //通过DataAddr决定插入的文件
 {
 	FilePtr result = addr;
 	unsigned int blocknum;
@@ -119,7 +119,7 @@ FilePtr BufferManager::Insert(const FilePtr &addr, const char * data) //通过Da
 		result.dataaddr = deleted[0];
 		deleted.erase(deleted.begin());//把表中的数据再写回文件中
 		writedeleted(result.filename, deleted);
-		Update(result, data);
+		update(result, data);
 		return result;
 	}//表格中没有空间做插入，需要向file中增加一个block
 	fstream file;
@@ -139,7 +139,7 @@ FilePtr BufferManager::Insert(const FilePtr &addr, const char * data) //通过Da
 	char * ch = new char[4096];
 //	outfile.write(ch, 4096);
 	outfile.close();
-	Update(result, data);
+	update(result, data);
 	//新建了一个表格之后
 	for (unsigned int i = 1; i*result.datalen < 4096; i++)
 	{
@@ -148,7 +148,7 @@ FilePtr BufferManager::Insert(const FilePtr &addr, const char * data) //通过Da
 	writedeleted(result.filename, deleted);
 	return result;
 }
-void BufferManager::Search(const FilePtr &addr, char * ReturnDate)//数据通过ReturnDate 返回
+void BufferManager::search(const FilePtr &addr, char * ReturnDate)//数据通过ReturnDate 返回
 {
 	int page_id = -1;
 	unsigned int offset;
@@ -161,7 +161,7 @@ void BufferManager::Search(const FilePtr &addr, char * ReturnDate)//数据通过
 //		ReturnDate[i] = page[page_id].data[offset + i];
 	memcpy(ReturnDate, page[page_id].data + offset, addr.datalen);
 }
-void BufferManager::Delete(const FilePtr &addr) //直接删除指定地点的指定长度，通过懒删除实现,记录在del_filename.txt中
+void BufferManager::remove(const FilePtr &addr) //直接删除指定地点的指定长度，通过懒删除实现,记录在del_filename.txt中
 {
 	ofstream outfile;
 	string filename = "del_" + addr.filename + ".txt";
@@ -169,7 +169,7 @@ void BufferManager::Delete(const FilePtr &addr) //直接删除指定地点的指
 	outfile << addr.dataaddr<< " ";
 	outfile.close();
 }
-void BufferManager::Update(const FilePtr &addr, const char * data)//直接将需要更新的地址送给
+void BufferManager::update(const FilePtr &addr, const char * data)//直接将需要更新的地址送给
 {
 	int page_id = -1;
 	int offset;
@@ -182,7 +182,7 @@ void BufferManager::Update(const FilePtr &addr, const char * data)//直接将需
 	memcpy(page[page_id].data + offset, data, addr.datalen);
 }
 
-void BufferManager::Creat(const FilePtr &addr)
+void BufferManager::create(const FilePtr &addr)
 {
 	unsigned int datalen = addr.datalen;
 	unsigned int blocknum = 0;
@@ -209,7 +209,7 @@ void BufferManager::Creat(const FilePtr &addr)
 	delete[] ch;
 }
 
-FilePtr BufferManager::NextAddr(const FilePtr &addr)
+FilePtr BufferManager::nextAddr(const FilePtr &addr)
 {
 	vector <unsigned int> deleted;
 	unsigned blocknum;
@@ -245,16 +245,16 @@ vector<unsigned int>::iterator BufferManager::find(vector<unsigned int> deleted,
 	return it;
 }
 
-bool BufferManager::Has(const FilePtr &addr)
+bool BufferManager::has(const string &filename)
 {
-	fstream file(addr.filename.c_str());
+    fstream file(filename.c_str());
 	if (file)
 		return true;
 	else 
 		return false;
 }
 
-void BufferManager::Drop(const FilePtr addr)
+void BufferManager::drop(const FilePtr addr)
 {
 	string operater1 = "del " + addr.filename;
 	string operater2 = "del del_" + addr.filename;

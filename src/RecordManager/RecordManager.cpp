@@ -122,7 +122,7 @@ unsigned int  RecordManager::getNext(const  std::string &tableName, bool reset)
 		addr = get_fileptr(tableName, 4096 - addr.datalen, addr.datalen);
 	}
 
-	addr = buffer.NextAddr(addr);
+	addr = buffer.nextAddr(addr);
 	return addr.dataaddr;
 }
 //creat schema,if exist, return false
@@ -134,7 +134,7 @@ void  RecordManager::creatSchema(
 	unsigned int datalen;
 	datalen = get_datalen(entry);
 	addr = get_fileptr(tableName, 0, datalen);
-	buffer.Creat(addr);
+	buffer.create(addr);
 }
 //build a fileptr,then return the Entry
 Entry &  RecordManager::getValue(
@@ -231,7 +231,7 @@ void  RecordManager::deleteEntry(
 {
 	FilePtr addr;
 	addr = get_fileptr(tableName, pos, get_datalen(tableName));
-	buffer.Delete(addr);
+	buffer.delete(addr);
 }
 
 void RecordManager::deleteEntry(const std::string &tableName)
@@ -239,7 +239,7 @@ void RecordManager::deleteEntry(const std::string &tableName)
 	FilePtr addr;
 	addr = get_fileptr(tableName, 0, get_datalen(tableName));
 	buffer.Drop(addr);
-	buffer.Creat(addr);
+	buffer.create(addr);
 }
 
 bool RecordManager::dropSchema(const std::string &tableName)
