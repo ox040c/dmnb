@@ -1,4 +1,4 @@
-﻿#include "RecordManager.hpp"
+#include "RecordManager.hpp"
 #include "Utility.hpp"
 #include <list>
 #include <fstream>
@@ -63,6 +63,7 @@ unsigned int RecordManager::get_datalen_from_file(std::string tableName)
 	unsigned int result;
 	string filename = tableName + ".db";
 	ifstream infile(filename.c_str(), ios::binary | ios::in);
+    if(!infile) throw runtime_error("the is no table:"+tableName);
 	infile.seekg(sizeof(unsigned int), ios::beg);
 	infile.read((char *)&result, sizeof(unsigned int));
 	infile.close();
@@ -85,13 +86,14 @@ Wrapper RecordManager::get_wrapper(const std::list<Wrapper>::const_iterator it,c
 		break;
 	case utls::CHAR:
 	{
-					   char *ch = new char[it->intv];
-					   for (int i = 0; i < it->intv; i++)
-						   ch[i] = temp[i];
-					   string s(ch);
-					   delete[] ch;
-					   return Wrapper(utls::CHAR, s);
-					   break;
+        char *ch = new char[it->intv+1];
+        for (int i = 0; i < it->intv; i++)
+            ch[i] = temp[i];
+        ch[it->intv] = 0;
+        string s(ch);
+        delete[] ch;
+        return Wrapper(utls::CHAR, s);
+        break;
 	}
 	default:
         throw runtime_error("getAttValue error");
@@ -221,14 +223,14 @@ Wrapper  RecordManager::getAttValue(
 	}
 	if (it == entry.end())
 	{
-        throw runtime_error("there is no attribute");
+        throw runtime_error("there is no such attribute:"+colName);
 //		cerr << "there is no attribute " + colName << endl;
 //		abort();
 	}
 	temp = value + offset;
 	return get_wrapper(it, temp);
 }
-//delete the entry pionted, if 
+//delete the entry pionted
 void  RecordManager::deleteEntry(
 	const std::string &tableName,
 	const unsigned int &pos)
@@ -285,22 +287,22 @@ unsigned int  RecordManager::insertEntry(
 		case utls::INT:
 			for (int i = 0; i < sizeof (int); i++)
 			{
-				temp[i] = *((char *)&(it->intv)+i);
+				temp[i] = *(char *)(&(it->intv)+i);
 			}
-			temp += sizeof(int);
+			offset += sizeof(int);
 		case utls::FLOAT:
 			for (int i = 0; i < sizeof (float); i++)
 			{
 				temp[i] = *((char *)&(it->floatv) + i);
 			}
-			temp += sizeof(float);
+			offset += sizeof(float);
 		case utls::CHAR:
 			for (unsigned int i = 0; i < it->strv.length(); i++)
 			{
 				temp[i] = it->strv[i];
 			}
 			temp[it->strv.length()] = 0;
-			temp += it->intv * sizeof(char);
+			offset += it->intv * sizeof(char);
 		default:
             throw runtime_error("insert attribute type error");
 //			cerr << "insert attribute type error" << endl;
