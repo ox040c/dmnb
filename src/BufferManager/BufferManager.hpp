@@ -1,11 +1,13 @@
 ﻿#ifndef BUFFER_MANAGER_HPP
 #define BUFFER_MANAGER_HPP
+
 #include "Utility.hpp"
 #include "Page.hpp"  
 #include <string>
 #include <fstream>
 #include <map>
 #include <vector>
+typedef struct DataAddr FilePtr;
 class BufferManager{
 private:
 	Page page[100];

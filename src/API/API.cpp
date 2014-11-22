@@ -8,7 +8,7 @@
 ///
 using namespace std;
 
-#define DEBUG
+// #define DEBUG
 
 void API::checkEntry(const std::string &tableName, const Entry &entry) {
     int j=0;
@@ -36,7 +36,8 @@ void API::createTable(const std::string &tableName, const TableDefinition &data)
         throw runtime_error(tableName + " has existed");
     } else {
         catalogManager.createTable(tableName, data);
-        recordManager.createTable(tableName, data);
+        // FIXME: recordManager.createTable(tableName, data);
+        recordManager.creatSchema(tableName, data);
     }
 #endif
 }
@@ -49,11 +50,24 @@ void API::dropTable(const std::string &tableName) {
     if (!catalogManager.isTableExist(tableName)) {
         throw runtime_error(tableName + " dose not exist");
     } else {
+        const TableDefinition &td = catalogManager.getTableDef(tableName);
+        for (TableDefinition::const_iterator i = td.begin(); i != td.end(); ++i)
+        {
+            string idxName = indexManager.getIndexName(tableName, i->name);
+            if (!idxName.empty()) indexManager.dropIndex(idxName);
+        }
         catalogManager.dropTable(tableName);
-        recordManager.dropTable(tableName);
-        indexManager.dropTable(tableName);
+        // FIXME: recordManager.dropTable(tableName);
+        recordManager.dropSchema(tableName);
     }
 #endif
+}
+
+DataType getDataType(const TableDefinition &td, const string &colName) {
+    for (TableDefinition::const_iterator i = td.begin(); i != td.end(); ++i) {
+        if (i->name == colName)
+            return i->type;
+    }
 }
 
 void API::createIndex(const string &tableName,
@@ -64,14 +78,14 @@ void API::createIndex(const string &tableName,
     return;
 #else
     try {
-        if (indexManager.hasIndex(indexName)) {
+        if (indexManager.hasIndex(tableName, colName)) {
             throw runtime_error(indexName + " has existed");
         } else {
-            indexManager.create_index(tableName, colName, indexName, getDataType(td, colName));
             const TableDefinition &td = catalogManager.getTableDef(tableName);
-            while (int pos = recordManager.getNext(tableName)) {
+            indexManager.createIndex(tableName, colName, indexName, getDataType(td, colName));
+            while (int pos = recordManager.getNext(tableName, true)) {
                 indexManager.insert(indexName, pos,
-                                    recordManager.getAttValue(tableName, pos, colName));
+                                    recordManager.getAttValue(tableName, pos, colName, td));
             }
         }
     } catch (exception &e) {
@@ -86,12 +100,12 @@ void API::dropIndex(const std::string &indexName) {
     return;
 #else
     try {
-        if (!indexManager.hasIndex(indexName)) {
-            throw runtime_error(indexName + " does not exist");
-        } else {
+        // if (!indexManager.hasIndex(indexName)) {
+        //    throw runtime_error(indexName + " does not exist");
+        // } else {
             indexManager.dropIndex(indexName);
         }
-    } catch (exception &e) { // FIXME
+    catch (exception &e) { // FIXME
             throw e;
     }
 #endif
@@ -108,13 +122,13 @@ void API::insertEntry(const string &tableName, const Entry &entry) {
         } else {
             checkEntry(tableName, entry);
 
-            int pos = recordManager.insert(tableName, entry);
-            TableDefinition &df = catalogManager.getTableDef(tableName);
-            for (TableDefinition::const_iterator &i = df.begin(); i != df.end(); ++i) {
+            int pos = recordManager.insertEntry(tableName, entry);
+            const TableDefinition &df = catalogManager.getTableDef(tableName);
+            for (TableDefinition::const_iterator i = df.begin(); i != df.end(); ++i) {
                 string indexName = indexManager.getIndexName(tableName, i->name);
                 if (!indexName.empty()) {
                     indexManager.insert(indexName, pos,
-                                        recordManager.getAttValue(tableName, pos, i->name));
+                                        recordManager.getAttValue(tableName, pos, i->name, df));
                 }
             }
         }
@@ -204,10 +218,10 @@ const Entries &API::select(const std::string &tableName) {
         throw runtime_error(tableName + " dose not exist");
     } else {
         result.clear();
-        unsigned int ptr = getNext(tableName, true);
+        unsigned int ptr = recordManager.getNext(tableName, true);
         while (ptr != -1) {
             result.push_back(recordManager.getValue(tableName, ptr, catalogManager.getTableDef(tableName)));
-            ptr = getNext(tableName, false);
+            ptr = recordManager.getNext(tableName, false);
         }
         return result;
     }
@@ -222,7 +236,7 @@ const Entries &API::select(const std::string &tableName, const Conditions &condi
     selectIdx(tableName, conditions);
     result.clear();
     for (Idx::const_iterator i = idxSet.begin(); i != idxSet.end(); ++i) {
-        result.push_back(recordManager.getValue(tableName, *i));
+        result.push_back(recordManager.getValue(tableName, *i, catalogManager.getTableDef(tableName)));
     }
     return result;
 
@@ -262,10 +276,10 @@ int API::remove(const std::string &tableName, const Conditions &conditions) {
     selectIdx(tableName, conditions);
     int total = idxSet.size();
     for (Idx::const_iterator i = idxSet.begin(); i != idxSet.end(); ++i) {
-        Entry entry = recordManager.getValue(tableName, *i);
+        Entry entry = recordManager.getValue(tableName, *i, catalogManager.getTableDef(tableName));
         for (Entry::const_iterator j = entry.begin(); j != entry.end(); ++j) {
             string idxName = indexManager.getIndexName(tableName, j->name);
-            if (!idxName) {
+            if (!idxName.empty()) {
                 Condition condition = *j;
                 condition.op = EQUAL;
                 indexManager.remove(idxName, condition);

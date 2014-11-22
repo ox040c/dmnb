@@ -11,6 +11,7 @@
 #include "CatalogManager.hpp"
 #include "Utility.hpp"
 #include <cmath>
+#include <set>
 
 //using namespace utls;
 

@@ -27,6 +27,7 @@ SET(src_main
 
 link_directories(
     "/usr/local/lib"
+  "/usr/lib64"
 )
 
 include_directories(

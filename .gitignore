@@ -1,4 +1,5 @@
 .DS*
+**/.DS*
 
 # Compiled Object files
 *.slo
