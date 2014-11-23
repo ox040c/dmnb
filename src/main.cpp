@@ -65,7 +65,7 @@ int main() {
             do {
 
                 getline(cin, temp);
-                str += temp;
+                str += " " + temp;
 
             } while (temp.find(';') == string::npos && cin);
 
