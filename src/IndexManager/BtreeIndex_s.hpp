@@ -1,7 +1,7 @@
 #ifndef BTREE_STRING_HPP
 #define BTREE_STRING_HPP
 #include "Snode.hpp"
-#include "utility.hpp"
+#include "Utility.hpp"
 #include "BufferManager.hpp"
 #include <vector>
 #include <map>
