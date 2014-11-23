@@ -33,7 +33,7 @@ public:
 	RecordManager(BufferManager &buffer) :buffer(buffer){}
 	~RecordManager() {};
 	
-	unsigned int getNext(const  std::string &tableName, bool reset);//get the next address
+    unsigned int getNext(const  std::string &tableName, bool reset, unsigned int pos);//get the next address
 	
 	void creatSchema(const std::string &tableName, 
 						const Entry &entry);//creat schema,if exist, return false

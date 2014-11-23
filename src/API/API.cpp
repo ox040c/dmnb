@@ -28,7 +28,7 @@ void API::checkEntry(const std::string &tableName, const Entry &entry) {
     }
 }
 
-void API::createTable(const std::string &tableName, const TableDefinition &data) {
+void API::createTable(const std::string &tableName, TableDefinition &data) {
 #ifdef DEBUG
     cout << "create" << data.size() << "attrs\n--\n";
     return;
@@ -84,11 +84,11 @@ void API::createIndex(const string &tableName,
         } else {
             const TableDefinition &td = catalogManager.getTableDef(tableName);
             indexManager.createIndex(tableName, colName, indexName, getDataType(td, colName));
-            int pos = recordManager.getNext(tableName, true);
+            int pos = recordManager.getNext(tableName, true,0);
             while (pos > 0) {
                 indexManager.insert(indexName, pos,
                                     recordManager.getAttValue(tableName, pos, colName, td));
-                pos = recordManager.getNext(tableName, false);
+                pos = recordManager.getNext(tableName, false,pos);
             }
 
         }
@@ -124,11 +124,11 @@ void API::insertEntry(const string &tableName, Entry &entry) {
         if (!catalogManager.isTableExist(tableName)) {
             throw runtime_error(tableName + " does not exist");
         } else {
-            cout << "[API] insertEntry: tableName = " << tableName << endl;
+            //cout << "[API] insertEntry: tableName = " << tableName << endl;
 
             checkEntry(tableName, entry);
 
-            cout << "[API] pass check!" << endl;
+            //cout << "[API] pass check!" << endl;
 
 
             int j = 0;
@@ -136,14 +136,14 @@ void API::insertEntry(const string &tableName, Entry &entry) {
                 if (i->type == utls::CHAR) {
                     i->intv = catalogManager.getAtt(tableName, j).intv;
 
-                    cout << "[API]: " << i->strv << ": " << i->intv << endl;
+                    //cout << "[API]: " << i->strv << ": " << i->intv << endl;
 
                 }
             }
 
             int pos = recordManager.insertEntry(tableName, entry);
 
-            cout << "[API] pos = " << pos << endl;
+            //cout << "[API] pos = " << pos << endl;
 
             const TableDefinition &df = catalogManager.getTableDef(tableName);
             for (TableDefinition::const_iterator i = df.begin(); i != df.end(); ++i) {
@@ -198,7 +198,7 @@ void API::gainIdx(const string &tableName, const Condition &condition, Idx &idx)
     idx.clear();
     string idxName = indexManager.getIndexName(tableName, condition.name);
     if (idxName.empty()) {
-        unsigned int ptr = recordManager.getNext(tableName, true);
+        unsigned int ptr = recordManager.getNext(tableName, true,0);
         while (ptr != -1) {
             Wrapper value = recordManager.getAttValue(tableName, ptr, condition.name, catalogManager.getTableDef(tableName));
             switch (value.type) {
@@ -206,7 +206,7 @@ void API::gainIdx(const string &tableName, const Condition &condition, Idx &idx)
             case FLOAT: if (check(value.floatv, condition.op, condition.floatv)) idx.insert(ptr); break;
             case CHAR:  if (check(value.strv, condition.op, condition.strv)) idx.insert(ptr); break;
             }
-            ptr = recordManager.getNext(tableName, false);
+            ptr = recordManager.getNext(tableName, false,ptr);
         }
     } else {
         const list <unsigned int> &idxList = indexManager.select(idxName, condition);
@@ -241,7 +241,7 @@ const Entries &API::select(const std::string &tableName) {
         cout << "[API] select * called!" << endl;
 
         result.clear();
-        int ptr = recordManager.getNext(tableName, true);
+        unsigned int ptr = recordManager.getNext(tableName, true,0);
 
         cout << "[API] gotta! ptr = " << ptr << endl;
 
@@ -249,7 +249,7 @@ const Entries &API::select(const std::string &tableName) {
             cout << "[API] ptr = " << ptr << endl;
 
             result.push_back(recordManager.getValue(tableName, ptr, catalogManager.getTableDef(tableName)));
-            ptr = recordManager.getNext(tableName, false);
+            ptr = recordManager.getNext(tableName, false,ptr);
         }
         return result;
     }
@@ -290,6 +290,9 @@ int API::remove(const string &tableName) {
         }
         // remove entries
         int total = recordManager.deleteEntry(tableName);
+
+        cout << "API delete"<<endl;
+
         return total;
     }
 #endif

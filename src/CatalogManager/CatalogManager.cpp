@@ -78,7 +78,7 @@ void CatalogManager::readTable(const std::string &tableName) {
                 if (typeString == "CHAR") {
                     type = CHAR;
                     stringstream(parseNames(names)) >> charLength;
-                    ++charLength;
+
                 }
 
                 if (primaryMap.count(name) > 0) isPrimary = true;
@@ -95,7 +95,7 @@ void CatalogManager::readTable(const std::string &tableName) {
     }
 }
 
-void CatalogManager::createTable(const std::string &tableName, const TableDefinition &table) {
+void CatalogManager::createTable(const std::string &tableName, TableDefinition &table) {
     if (isTableExist(tableName)) {
         throw runtime_error(tableName + " has existed");
     } else {
@@ -105,16 +105,16 @@ void CatalogManager::createTable(const std::string &tableName, const TableDefini
         string names;
         string primaryKey, uniqueKey;
         TableProtobuf tablePb;
-        for (TableDefinition::const_iterator i = table.begin(); i != table.end(); ++i) {
+        for (TableDefinition::iterator i = table.begin(); i != table.end(); ++i) {
             names += i->name + "|";
             type = i->type;
             switch (type) {
                 case INT: names += "INT|"; break;
                 case FLOAT: names += "FLOAT|"; break;
-                case CHAR: names += "CHAR";
+                case CHAR: names += "CHAR"; ++i->intv;
             }
 	    stringstream sstrm;
-	    sstrm << i->intv;
+        sstrm << i->intv;
 	    string temp;
 	    sstrm>> temp;
             if (type == CHAR) names += "|" + temp + "|";

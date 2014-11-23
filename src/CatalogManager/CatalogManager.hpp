@@ -36,7 +36,7 @@ public:
 
     void readTable(const std::string &tableName);
     void createTable(const std::string &tableName,
-                     const TableDefinition &table);
+                     TableDefinition &table);
     void dropTable(const std::string &tableName);
 
     const Scheme &getAtt(const std::string &tableName,
