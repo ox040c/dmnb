@@ -1,7 +1,7 @@
 #ifndef BtreeIndex_H_
 #define BtreeIndex_H_
 #include "Tnode.hpp"
-#include "utility.hpp"
+#include "Utility.hpp"
 #include "BufferManager.hpp"
 #include <vector>
 #include <map>
