@@ -55,16 +55,22 @@ int main() {
 
         cout << welcm << endl;
 
-        string str;
+        string str, temp;
         do {
 
-            str.clear();
+            str.clear(); temp.clear();
             if (!cin) { cout << endl; break; } // check if ^D
             cout << "dMNb> ";
-            getline(cin, str);
+
+            do {
+
+                getline(cin, temp);
+                str += temp;
+
+            } while (temp.find(';') == string::npos && cin);
 
             if (str == "exit;" || str == "exit") break;
-            if (str == "") continue;
+            if (str == "" ) continue;
 
             PlanList& plist = parse(str);
 
@@ -79,17 +85,29 @@ int main() {
 
                 try {
                     switch(acti) {
-                        case DELV: api.dropTable(tname); break;
-                        case SELV: if ( !wlist.size() ) {
-                                        const Entries rlist = api.select(tname);
-                                        for (Entries::const_iterator i = rlist.begin();
-                                            i != rlist.end(); i++) 
-                                        for (Entry::const_iterator j = i->begin();
-                                            j != i->end(); j++) 
-                                            j->debug();
+                        case DELV: if ( !wlist.size() ) {
+                                       cout << "del item num:" << api.remove(tname) << endl;
                                    }
                                    else {
-                                       api.select(tname, wlist);
+                                       cout << "del item num:" << api.remove(tname, wlist) << endl;
+                                   }
+                                   break;
+
+                        case SELV: if ( !wlist.size() ) {
+                                       const Entries rlist = api.select(tname);
+                                       for (Entries::const_iterator i = rlist.begin();
+                                               i != rlist.end(); i++)
+                                           for (Entry::const_iterator j = i->begin();
+                                                   j != i->end(); j++)
+                                               j->debug();
+                                   }
+                                   else {
+                                       const Entries rlist = api.select(tname, wlist);
+                                       for (Entries::const_iterator i = rlist.begin();
+                                               i != rlist.end(); i++)
+                                           for (Entry::const_iterator j = i->begin();
+                                                   j != i->end(); j++)
+                                               j->debug();
                                    }
                                    break;
                         case CTBL: api.createTable(tname, wlist); break;
@@ -106,10 +124,10 @@ int main() {
                 }
                 //cout << str << endl;
                 /*
-                for (WrapperList::const_iterator j = plan->wlist.begin();
-                        j != plan->wlist.end(); j++)
-                    j->debug();
-                    */
+                   for (WrapperList::const_iterator j = plan->wlist.begin();
+                   j != plan->wlist.end(); j++)
+                   j->debug();
+                   */
             }
 
         } while (1);

@@ -1747,7 +1747,6 @@ PlanList& parse(string str) {
         fout.open("temp.sql");
         fout << str;
         fout.close();
-	remove("temp.sql");
 
     }
     catch (...) {
@@ -1758,11 +1757,12 @@ PlanList& parse(string str) {
     }
 
     // open a file handle to a particular file:
-    FILE *myfile = fopen("_temp.sql", "r");
+    FILE *myfile = fopen("temp.sql", "r");
     // make sure it is valid:
     if (!myfile) {
         cout << "I can't open temp.sql file!" << endl;
         plist.clear();
+        //remove("temp.sql");
         return plist;
     }
     // set flex to read from it instead of defaulting to STDIN:
@@ -1780,7 +1780,9 @@ PlanList& parse(string str) {
     catch (logic_error const &e) {
         cerr << "exit in sql, exec stmt before exit\n";
     }
+    
     fclose(myfile);
+    remove("temp.sql");
     return plist;
 }
 
