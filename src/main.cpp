@@ -36,6 +36,10 @@ int main() {
         "   init failed :( \n"
         ;
 
+    char byee[] =
+        " BBBByyyyeeee ~~~~\n"
+        ;
+
     char welcm[] =
         " Welcome to DminiB system(exclaimation),\n"
         " enter command below\n"
@@ -70,7 +74,7 @@ int main() {
             } while (temp.find(';') == string::npos && cin);
 
             if (str == "exit;" || str == "exit") break;
-            if (str == "" ) continue;
+            if (str == " " ) break;
 
             PlanList& plist = parse(str);
 
@@ -135,6 +139,7 @@ int main() {
     }
     catch (exception const& e) {
         cerr << "err: " << e.what() << endl;
+        return(-1);
     }
     catch (...) {
 
@@ -142,7 +147,8 @@ int main() {
         return(-1);
 
     }
-
+    
+    cout << byee;
     return 0;
 }
 

@@ -7,8 +7,7 @@ create table student (
     
 );
 
---create index stunameidx on student ( sname  );
---drop index stunameidx;
+
 insert into student values ('12345678','w',22,'M');
 insert into student values ('12355678','a',22,'M');
 insert into student values ('12545678','b',22,'M');
@@ -16,8 +15,12 @@ insert into student values ('15345678','c',22,'M');
 insert into student values ('52345678','d',22,'M');
 insert into student values ('12348678','e',22,'M');
 insert into student values ('12345678','f',22,'M');
+
+insert into student values ('12222678','f',22,'M');
 insert into student values ('12345666','g',22,'M');
 
+--create index stunameidx on student ( sname  );
+--drop index stunameidx;
 
 --select * from student;
 
