@@ -8,7 +8,9 @@
 
 using namespace std;
 #define YY_DECL extern "C" int yylex()
+extern void flushzz();
 
+#include "parse.h"
 #include "parse.tab.h"  // to get the token types that we return
 
 // TODO: void yyerror(char *s, ...);
@@ -24,7 +26,7 @@ using namespace std;
 
 add|ADD { return ADD; }
 and|AND { return AND; }
-char|CHAR(ACTER)? { return CHAR; }
+char|CHAR(ACTER)? { return CHAR_t; }
 create|CREATE { return CREATE; }
 database|DATABASE { return DATABASE; }
 databases|DATABASES { return DATABASES; }
@@ -81,3 +83,6 @@ return STRING;
 }
 
 %%
+void flushzz() {
+	YY_FLUSH_BUFFER;
+}

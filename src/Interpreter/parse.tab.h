@@ -51,7 +51,7 @@ extern int yydebug;
     OP = 261,
     ADD = 262,
     AND = 263,
-    CHAR = 264,
+    CHAR_t = 264,
     CREATE = 265,
     DATABASE = 266,
     DATABASES = 267,

@@ -139,7 +139,7 @@ extern int yydebug;
     OP = 261,
     ADD = 262,
     AND = 263,
-    CHAR = 264,
+    CHAR_t = 264,
     CREATE = 265,
     DATABASE = 266,
     DATABASES = 267,
@@ -505,7 +505,7 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "INT_v", "FLOAT_v", "STRING", "OP",
-  "ADD", "AND", "CHAR", "CREATE", "DATABASE", "DATABASES", "DELETE",
+  "ADD", "AND", "CHAR_t", "CREATE", "DATABASE", "DATABASES", "DELETE",
   "DROP", "EXIT", "FLOAT_type", "FROM", "INTO", "INDEX", "INSERT",
   "INT_type", "KEY", "NOT", "ON", "PRIMARY", "SELECT", "TABLE", "VALUES",
   "UNIQUE", "WHERE", "QUIT", "';'", "'('", "')'", "','", "'*'", "$accept",
@@ -1773,7 +1773,7 @@ PlanList& parse(string str) {
     try {
         do {
             clear();
-            //yyunput();
+            flushzz();
             yyparse();
         } while (!feof(yyin));
     }

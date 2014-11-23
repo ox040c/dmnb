@@ -697,12 +697,14 @@ char *yytext;
 
 using namespace std;
 #define YY_DECL extern "C" int yylex()
+extern void flushzz();
 
+#include "parse.h"
 #include "parse.tab.h"  // to get the token types that we return
 
 // TODO: void yyerror(char *s, ...);
 
-#line 706 "lex.yy.c"
+#line 708 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -911,11 +913,11 @@ YY_DECL
 		}
 
 	{
-#line 17 "parse.l"
+#line 19 "parse.l"
 
 
 
-#line 919 "lex.yy.c"
+#line 921 "lex.yy.c"
 
 	while ( 1 )		/* loops until end-of-file is reached */
 		{
@@ -985,154 +987,154 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 20 "parse.l"
+#line 22 "parse.l"
 /* whitespace */
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 21 "parse.l"
+#line 23 "parse.l"
 { yylval.fval = atof(yytext); return FLOAT_v; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 22 "parse.l"
+#line 24 "parse.l"
 { yylval.ival = atoi(yytext); return INT_v; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 23 "parse.l"
+#line 25 "parse.l"
 /* ignore comments */
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 25 "parse.l"
+#line 27 "parse.l"
 { return ADD; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 26 "parse.l"
+#line 28 "parse.l"
 { return AND; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 27 "parse.l"
-{ return CHAR; }
+#line 29 "parse.l"
+{ return CHAR_t; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 28 "parse.l"
+#line 30 "parse.l"
 { return CREATE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 29 "parse.l"
+#line 31 "parse.l"
 { return DATABASE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 30 "parse.l"
+#line 32 "parse.l"
 { return DATABASES; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 31 "parse.l"
+#line 33 "parse.l"
 { return DELETE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 32 "parse.l"
+#line 34 "parse.l"
 { return DROP; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 33 "parse.l"
+#line 35 "parse.l"
 { return EXIT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 34 "parse.l"
+#line 36 "parse.l"
 { return FLOAT_type; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 35 "parse.l"
+#line 37 "parse.l"
 { return FROM; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 36 "parse.l"
+#line 38 "parse.l"
 { return INDEX; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 37 "parse.l"
+#line 39 "parse.l"
 { return INSERT; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 38 "parse.l"
+#line 40 "parse.l"
 { return INT_type; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 39 "parse.l"
+#line 41 "parse.l"
 { return INTO; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 40 "parse.l"
+#line 42 "parse.l"
 { return KEY; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 41 "parse.l"
+#line 43 "parse.l"
 { return NOT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 42 "parse.l"
+#line 44 "parse.l"
 { return ON; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 43 "parse.l"
+#line 45 "parse.l"
 { return PRIMARY; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 44 "parse.l"
+#line 46 "parse.l"
 { return SELECT; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 45 "parse.l"
+#line 47 "parse.l"
 { return TABLE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 46 "parse.l"
+#line 48 "parse.l"
 { return VALUES; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 47 "parse.l"
+#line 49 "parse.l"
 { return UNIQUE; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 48 "parse.l"
+#line 50 "parse.l"
 { return WHERE; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 50 "parse.l"
+#line 52 "parse.l"
 { return QUIT; }
 	YY_BREAK
 case 30:
-#line 53 "parse.l"
+#line 55 "parse.l"
 case 31:
 YY_RULE_SETUP
-#line 53 "parse.l"
+#line 55 "parse.l"
 {
 char temp[257]; 
 if (strlen(yytext) > 256) cout << "warn: too long a string, truncated\n";
@@ -1147,7 +1149,7 @@ case 32:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 61 "parse.l"
+#line 63 "parse.l"
 { printf("Unterminated string %s", yytext); }
 	YY_BREAK
 case 33:
@@ -1155,12 +1157,12 @@ case 33:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 62 "parse.l"
+#line 64 "parse.l"
 { printf("Unterminated string %s", yytext); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 64 "parse.l"
+#line 66 "parse.l"
 {
 	// we have to copy because we can't rely on yytext not changing underneath us:
 	yylval.sval = strdup(yytext);
@@ -1169,52 +1171,52 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 70 "parse.l"
+#line 72 "parse.l"
 { return yytext[0]; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 72 "parse.l"
+#line 74 "parse.l"
 { yylval.comp_sign = utls::NO_LESS ; return OP; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 73 "parse.l"
+#line 75 "parse.l"
 { yylval.comp_sign = utls::NO_MORE ; return OP; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 74 "parse.l"
+#line 76 "parse.l"
 { yylval.comp_sign = utls::UNEQUAL ; return OP; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 75 "parse.l"
+#line 77 "parse.l"
 { yylval.comp_sign = utls::MORE ; return OP; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 76 "parse.l"
+#line 78 "parse.l"
 { yylval.comp_sign = utls::LESS ; return OP; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 77 "parse.l"
+#line 79 "parse.l"
 { yylval.comp_sign = utls::EQUAL ; return OP; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 79 "parse.l"
+#line 81 "parse.l"
 { cout << "mystery character " << yytext;
 //yyerror("mystery character '%c'", *yytext);
 }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 83 "parse.l"
+#line 85 "parse.l"
 ECHO;
 	YY_BREAK
-#line 1218 "lex.yy.c"
+#line 1220 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2221,7 +2223,9 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 83 "parse.l"
+#line 85 "parse.l"
 
 
-
+void flushzz() {
+	YY_FLUSH_BUFFER;
+}

@@ -29,4 +29,6 @@ typedef std::list<Plan> PlanList;
 
 PlanList& parse(std::string str);
 
+void flushzz();
+
 #endif // parse.h

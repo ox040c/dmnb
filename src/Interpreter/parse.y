@@ -53,7 +53,7 @@ std::string tname;
 // *****
 %token ADD
 %token AND
-%token CHAR
+%token CHAR_t
 %token CREATE
 %token DATABASE
 %token DATABASES
@@ -116,7 +116,7 @@ attr_list:
     ;
 
 attr:
-      STRING CHAR '(' INT_v ')' {
+      STRING CHAR_t '(' INT_v ')' {
         apnd(Wrapper(string($1), utls::CHAR, $4));
     }
     | STRING INT_type {
@@ -230,7 +230,7 @@ PlanList& parse(string str) {
     try {
         do {
             clear();
-            //yyunput();
+            flushzz();
             yyparse();
         } while (!feof(yyin));
     }
