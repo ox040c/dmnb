@@ -73,7 +73,7 @@ int main() {
 
             } while (temp.find(';') == string::npos && cin);
 
-            if (str == "exit;" || str == "exit") break;
+            if (str == " exit;" || str == " exit") break;
             if (str == " " ) break;
 
             PlanList& plist = parse(str);
