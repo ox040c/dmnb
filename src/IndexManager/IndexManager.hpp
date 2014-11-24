@@ -205,8 +205,8 @@ public:
     void insert(const std::string indexname,
                         const  int &pos,
                         const Condition &condition_info){
-        cout << "[IM] insert called!" << endl;
-        cout.flush();
+        //cout << "[IM] insert called!" << endl;
+        //cout.flush();
 
         DataType dtype = dataTypeList[indexname];
         filepoint root = rootList[indexname];
@@ -231,29 +231,30 @@ public:
         }
             break;
         case utls::CHAR:{
-            cout << "[IM] insert CHAR begin ..." << endl;
-            cout.flush();
+            //cout << "[IM] insert CHAR begin ..." << endl;
+            //cout.flush();
 
 
             string key2 = condition_info.strv;
             BtreeIndex_s btree2(buffer,indexname,root,first);
 
-            cout << "[IM] btree2 created!" << endl;
-            cout.flush();
+            //cout << "[IM] btree2 created!" << endl;
+            //cout.flush();
 
             btree2.insert (key2,pos);
 
-            cout << "[IM] btree2.insert OK!" << endl;
-            cout.flush();
+            //cout << "[IM] btree2.insert OK!" << endl;
+            //cout.flush();
 
             rootList[indexname] = btree2.getRoot ();
             headList[indexname] = btree2.getFirst ();
 
-            cout << "[IM] insert done!" << endl;
-            cout.flush();
+            //cout << "[IM] insert done!" << endl;
+            //cout.flush();
 
         }
         }
+        cout << "[IM] insert finshed!" << endl;
     }
 
 // 在 tableName 的 colName 上建立索引 indexName, 这个 colName 的类型是 type

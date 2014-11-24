@@ -12,8 +12,8 @@ using namespace std;
 // #define DEBUG
 
 void API::checkEntry(const std::string &tableName, const Entry &entry) {
-    cout << "[API::checkEntry] calling..." << endl;
-    cout.flush();
+    //cout << "[API::checkEntry] calling..." << endl;
+    //cout.flush();
 
     int j=0;
     if (entry.size() != catalogManager.getTableDef(tableName).size())
@@ -30,13 +30,13 @@ void API::checkEntry(const std::string &tableName, const Entry &entry) {
             //cout << "[API::checkEntry] att.name = " << att.name << endl;
 
             string indexName = indexManager.getIndexName(tableName, att.name);
-            cout << "[API::checkEntry] indexName = " << indexName << endl;
+/*          cout << "[API::checkEntry] indexName = " << indexName << endl;
             cout << "[API::checkEntry] con.type = " << con.type <<
                     "\n\tcon.op = " << con.op <<
                     "\n\tcon.intv = " << con.intv <<
                     endl;
             cout.flush();
-
+*/
             if (indexManager.select(indexName, con).size() > 0) // FIXME
                 throw runtime_error("Key value conflict");
         }
@@ -173,16 +173,16 @@ void API::insertEntry(const string &tableName, Entry &entry) {
             for (TableDefinition::const_iterator i = df.begin(); i != df.end(); ++i) {
                 string indexName = indexManager.getIndexName(tableName, i->name);
 
-                cout << "[API] after got indexName:" << indexName << endl;
+                //cout << "[API] after got indexName:" << indexName << endl;
 
                 if (!indexName.empty()) {
-                    cout << "[API] add index: " << indexName << " value: " <<
-                            recordManager.getAttValue(tableName, pos, i->name, df).strv << endl;
-                    cout.flush();
+                    //cout << "[API] add index: " << indexName << " value: " <<
+                    //        recordManager.getAttValue(tableName, pos, i->name, df).strv << endl;
+                    //cout.flush();
 
                     indexManager.insert(indexName, pos,
                                         recordManager.getAttValue(tableName, pos, i->name, df));
-                    cout << "[API] added index: " << indexName << endl;
+                    //cout << "[API] added index: " << indexName << endl;
                 }
 
             }
@@ -273,7 +273,7 @@ const Entries &API::select(const std::string &tableName) {
     if (!catalogManager.isTableExist(tableName)) {
         throw runtime_error(tableName + " dose not exist");
     } else {
-        cout << "[API] select * called!" << endl;
+        //cout << "[API] select * called!" << endl;
 
         result.clear();
          int ptr = recordManager.getNext(tableName, true,0);
@@ -330,7 +330,7 @@ int API::remove(const string &tableName) {
         // remove entries
         int total = recordManager.deleteEntry(tableName);
 
-        cout << "[API] delete"<<endl;
+        cout << "[API] delete finished!"<<endl;
 
         return total;
     }

@@ -128,7 +128,7 @@ public:
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
-                std::cout<<"wrong in findless"<<std::endl;
+                //std::cout<<"wrong in findless"<<std::endl;
                 return ans;
             }
             int kid = tempnode.getKeyIndex (key);
@@ -185,9 +185,9 @@ public:
                 keyindex = tempnode.getKeyIndex (key);
                 keynum = tempnode.getKeyNum ();
 
-                std::cout << "[btree] findleaf nextp prv" << nextp << std::endl;
+                //std::cout << "[btree] findleaf nextp prv" << nextp << std::endl;
                 nextp = tempnode.getChild (keyindex);
-                std::cout << "[btree] findleaf nextp got" << nextp << std::endl;
+                //std::cout << "[btree] findleaf nextp got" << nextp << std::endl;
                 father[nextp]=temp;
                 tempnode = readFromFile (nextp);
 
@@ -311,24 +311,24 @@ public:
         filepoint temp;
         int keyindex;
 
-        std::cout << "[btree2] findLeaf" << endl;
+        //std::cout << "[btree2] findLeaf" << endl;
         temp = findLeaf (key);
 
-        std::cout << "[btree2] readFromFile" << endl;
+        //std::cout << "[btree2] readFromFile" << endl;
         tempnode = readFromFile (temp);
 
-        std::cout << "[btree2] getIndex" << endl;
+        //std::cout << "[btree2] getIndex" << endl;
         keyindex = tempnode.getKeyIndex (key);
 
         if (keyindex>0 && key == tempnode.getKeyValue (keyindex-1)){
             return false;
         }                                                                       //已经在树中
         if (tempnode.getKeyNum ()<MAXNUM_KEYs){   //不分裂插入
-            std::cout<<"no split::"<<std::endl;
+            //std::cout<<"no split::"<<std::endl;
             insert_in_leaf(tempnode,key,data);
             updateFile (temp,tempnode);
         }else{                                  //裂开点
-            std::cout<<"split::"<<std::endl;
+            //std::cout<<"split::"<<std::endl;
             Snode newnode;
             insert_in_leaf(tempnode,key,data);
             newnode.setLeaf (1);
