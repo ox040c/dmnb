@@ -21,7 +21,11 @@ void API::checkEntry(const std::string &tableName, const Entry &entry) {
             throw runtime_error("Type of attribute not match");
         if (catalogManager.isAttUnique(tableName, j)) {
             Condition con = att;
+            att.name = indexManager.getIndexName(tableName, att.name);
             con.op = EQUAL;
+
+            cout << "[API::checkEntry] att.name = " << att.name << endl;
+
             if (indexManager.select(tableName, con).size() > 0) // FIXME
                 throw runtime_error("Key value confilt");
         }
@@ -43,7 +47,7 @@ void API::createTable(const std::string &tableName, TableDefinition &data) {
         for (TableDefinition::iterator i = data.begin(); i != data.end(); ++i)
             if (i->isIndex) {
 
-                cout << "[API] creat index: " << tableName <<" " << i->name << endl;
+                cout << "[API] create index: " << tableName <<" " << i->name << endl;
 
                 indexManager.createIndex(tableName, i->name, tableName+"_"+i->name, i->type);
             }
@@ -157,12 +161,13 @@ void API::insertEntry(const string &tableName, Entry &entry) {
             for (TableDefinition::const_iterator i = df.begin(); i != df.end(); ++i) {
                 string indexName = indexManager.getIndexName(tableName, i->name);
 
-                //cout << "[API] after got indexName:" << indexName << endl;
+                cout << "[API] after got indexName:" << indexName << endl;
 
                 if (!indexName.empty()) {
                     cout << "[API] add index: " << indexName << endl;
                     indexManager.insert(indexName, pos,
                                         recordManager.getAttValue(tableName, pos, i->name, df));
+                    cout << "[API] added index: " << indexName << endl;
                 }
 
             }
@@ -261,7 +266,11 @@ const Entries &API::select(const std::string &tableName) {
 
         while (ptr != 0) {
             //cout << "[API] ptr = " << ptr << endl;
-
+            /*
+            for (TableDefinition::const_iterator i = catalogManager.getTableDef(tableName).begin();
+                 i != catalogManager.getTableDef(tableName).end(); ++i)
+                cout << "[API] " << i->name << " is " << i->type << endl;
+            */
             result.push_back(recordManager.getValue(tableName, ptr, catalogManager.getTableDef(tableName)));
             ptr = recordManager.getNext(tableName, false,ptr);
         }

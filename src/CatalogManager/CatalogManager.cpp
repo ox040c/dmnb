@@ -9,11 +9,15 @@
 using namespace std;
 
 string parseNames(string &names) {
+    //cout << "[CM] parseName called!" << endl;
+
     char name[255];
     int idx = names.find("|");
     int len = names.copy(name, idx, 0);
     name[len] = '\0';
     names.erase(0, idx+1);
+
+    //cout << "[CM] parse result: #" << string(name) <<"#" << endl;
 
     return string(name);
 }
@@ -42,6 +46,8 @@ void CatalogManager::readTable(const std::string &tableName) {
     if (!isTableExist(tableName)) {
         throw runtime_error(tableName + " dose not exist");
     } else {
+         //cout << "[CM] readTable called!" << endl;
+
         if (tables.count(tableName) != 0) return;
 
         fstream input((tableName + ".def").c_str(), ios::in | ios::binary);
@@ -54,7 +60,11 @@ void CatalogManager::readTable(const std::string &tableName) {
             string names = tablePb.names();
             string primaryKey = tablePb.primary();
             string uniqueKey = tablePb.unique();
-
+/*
+            cout << "[CM] names = " << names << endl
+                    << "[CM] primaryKey = " << primaryKey << endl
+                       << "[CM] uniqueKey = " << uniqueKey << endl;
+*/
             TableDefinition table;
             map <string, bool> primaryMap;
             map <string, bool> uniqueMap;
@@ -91,6 +101,7 @@ void CatalogManager::readTable(const std::string &tableName) {
                                        isPrimary));
                                        //TODO: isUnique));
             }
+            tables[tableName] = table;
         }
     }
 }

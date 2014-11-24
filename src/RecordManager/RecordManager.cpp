@@ -160,7 +160,9 @@ Entry &  RecordManager::getValue(
 	const unsigned int &pos,
 	const Entry &entry)
 {
-	FilePtr addr;
+    //cout << "[RM] call" << endl;
+
+    FilePtr addr;
 	int offset = 0;
 	char * value, *temp;
 	unsigned int datalen = get_datalen(tableName);
