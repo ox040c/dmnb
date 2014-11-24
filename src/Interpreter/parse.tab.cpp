@@ -1806,6 +1806,8 @@ void clear() {
 
 void apnd(const Wrapper& a) {
 
+    //cout << "parse.y: " << a.floatv << endl;
+    
     wlist.push_back(a);
 
 }

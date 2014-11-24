@@ -11,16 +11,21 @@ using namespace std;
 
 // #define DEBUG
 
-void API::checkEntry(const std::string &tableName, const Entry &entry) {
+void API::checkEntry(const std::string &tableName, Entry &entry) {
     //cout << "[API::checkEntry] calling..." << endl;
     //cout.flush();
 
     int j=0;
     if (entry.size() != catalogManager.getTableDef(tableName).size())
         throw runtime_error("Number of attributes not match");
-    for (Entry::const_iterator i = entry.begin(); i != entry.end(); ++i, ++j) {
+    for (Entry::iterator i = entry.begin(); i != entry.end(); ++i, ++j) {
         Scheme att = catalogManager.getAtt(tableName, j);
-        if (i->type != att.type)
+        if (i->type == INT && att.type == FLOAT) {
+            //cout << "API::checkEntry " << i->intv << " " << i->floatv << endl;
+            i->type = FLOAT;
+            i->floatv = i->intv;
+        }
+        if (i->type != att.type && !(i->type == INT && att.type == FLOAT))
             throw runtime_error("Type of attribute not match");
         if (catalogManager.isAttUnique(tableName, j)) {
             Condition con = *i;
@@ -64,6 +69,8 @@ void API::createTable(const std::string &tableName, TableDefinition &data) {
             if (i->isIndex) {
 
                 //cout << "[API] create index: " << tableName <<"_" << i->name << endl;
+                indexMap[tableName+"_"+i->name] = 1;
+                indexMap2[tableName+"_"+i->name] = tableName+"_"+i->name;
 
                 indexManager.createIndex(tableName, i->name, tableName+"_"+i->name, i->type);
             }
@@ -106,10 +113,34 @@ void API::createIndex(const string &tableName,
 
     return;
 #else
+    const TableDefinition &td = catalogManager.getTableDef(tableName);
+    int j=0;
+    bool uflag = false, hflag = false;
+    for (TableDefinition::const_iterator i = td.begin();
+         i != td.end(); ++i, ++j) {
+        if (i->name == colName) {
+            if (catalogManager.isAttUnique(tableName, j)) {
+                uflag = true;
+            }
+            hflag = true;
+            break;
+        }
+    }
+    if (!hflag) throw runtime_error(tableName + " dose not has " +colName);
+    if (!uflag) throw runtime_error(colName + " is not unique");
     try {
         if (indexManager.hasIndex(tableName, colName)) {
-            throw runtime_error(indexName + " has existed");
+            if (indexMap.count(tableName+"_"+colName) &&
+                    indexMap[tableName+"_"+colName]>1)
+                throw runtime_error("index on "+tableName+" ("+
+                                    colName+") has existed");
+            else {
+                indexMap[tableName+"_"+colName] = 2;
+                indexMap2[indexName] = tableName+"_"+colName;
+            }
         } else {
+            indexMap[tableName+"_"+colName] = 2;
+            indexMap2[indexName] = indexName;
             const TableDefinition &td = catalogManager.getTableDef(tableName);
             indexManager.createIndex(tableName, colName, indexName, getDataType(td, colName));
             int pos = recordManager.getNext(tableName, true,0);
@@ -118,11 +149,11 @@ void API::createIndex(const string &tableName,
                                     recordManager.getAttValue(tableName, pos, colName, td));
                 pos = recordManager.getNext(tableName, false,pos);
             }
-
         }
     } catch (runtime_error const &e) {
-        throw e;
+            throw e;
     }
+
 #endif
 }
 
@@ -135,7 +166,9 @@ void API::dropIndex(const std::string &indexName) {
         // if (!indexManager.hasIndex(indexName)) {
         //    throw runtime_error(indexName + " does not exist");
         // } else {
-            indexManager.dropIndex(indexName);
+            if (!indexMap2.count(indexName))
+                throw runtime_error(indexName + " does not exist");
+            indexManager.dropIndex(indexMap2[indexName]);
         }
     catch (runtime_error const &e) { // FIXME
             throw e;
@@ -215,11 +248,11 @@ bool API::check(const int &x, const Operator &op, const int &y) {
 bool API::check(const float &x, const Operator &op, const float &y) {
     switch (op) {
     case LESS:      return y-x>1e-6;
-    case NO_MORE:   return y-x>=1e-6;
+    case NO_MORE:   return y-x>=-1e-6;
     case EQUAL:     return abs(x-y)<=1e-6;
     case UNEQUAL:   return abs(x-y)>1e-6;
-    case MORE:      return x-y>1e-6;
-    case NO_LESS:   return x-y>=1e-6;
+    case MORE:      return x-y>0;
+    case NO_LESS:   return x-y>=-1e-6;
     }
 }
 
@@ -243,7 +276,9 @@ void API::gainIdx(const string &tableName, const Condition &condition, Idx &idx)
             Wrapper value = recordManager.getAttValue(tableName, ptr, condition.name, catalogManager.getTableDef(tableName));
             switch (value.type) {
             case INT:   if (check(value.intv, condition.op, condition.intv)) idx.insert(ptr); break;
-            case FLOAT: if (check(value.floatv, condition.op, condition.floatv)) idx.insert(ptr); break;
+            case FLOAT:
+                //cout << "API: " << condition.floatv << endl;
+                if (check(value.floatv, condition.op, condition.floatv)) idx.insert(ptr); break;
             case CHAR:  if (check(value.strv, condition.op, condition.strv)) idx.insert(ptr); break;
             }
             ptr = recordManager.getNext(tableName, false,ptr);
@@ -340,7 +375,7 @@ int API::remove(const string &tableName) {
         // remove entries
         int total = recordManager.deleteEntry(tableName);
 
-        cout << "[API] delete finished!"<<endl;
+        //cout << "[API] delete finished!"<<endl;
 
         return total;
     }

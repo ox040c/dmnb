@@ -12,6 +12,7 @@
 #include "Utility.hpp"
 #include <cmath>
 #include <set>
+#include <map>
 
 //using namespace utls;
 
@@ -26,11 +27,14 @@ private:
     Entries result;
     Idx idxSet, tempIdxSet;
 
+    std::map <string, int> indexMap;
+    std::map <string, string> indexMap2;
+
     bool check(const int &x, const Operator &op, const int &y);
     bool check(const float &x, const Operator &op, const float &y);
     bool check(const std::string &x, const Operator &op, const std::string &y);
     void checkEntry(const std::string &tableName,
-                    const Entry &entry);
+                    Entry &entry);
 
     void gainIdx(const std::string &tableName,
                  const Condition &condition,

@@ -47,8 +47,10 @@ class Wrapper {
                 std::string strv = "",
                 bool isIndex = false):
             name(name), type(type), op(op), isIndex(isIndex),
-            intv(intv), floatv(floatv), strv(strv), isUnique(false) {
+            intv(intv), floatv(intv), strv(strv), isUnique(false) {
                 //debug();
+                //floatv = intv;
+                //std::cout << floatv << std::endl;
             }
         Wrapper (std::string name,
                 utls::Operator op,
@@ -71,6 +73,7 @@ class Wrapper {
             name(name), type(type), op(op), isIndex(isIndex),
             intv(intv), floatv(floatv), strv(strv), isUnique(false) {
                 //debug();
+                //std::cout << "called" << std::endl;
             }
 
         // Attribute
@@ -113,6 +116,8 @@ class Wrapper {
             name(name), type(type), op(op), isIndex(isIndex),
             intv(intv), floatv(floatv), strv(strv), isUnique(false) {
                 //debug();
+                floatv = intv;
+                //std::cout << floatv << std::endl;
             }
         Wrapper (
                 utls::DataType type,
