@@ -269,7 +269,7 @@ int RecordManager::deleteEntry(const std::string &tableName)
 	buffer.drop(addr);
 	buffer.create(addr);
 
-    cout<<"delete"<<endl;
+//    cout<<"delete"<<endl;
 
     return total;
 }
@@ -357,7 +357,7 @@ bool RecordManager::dropSchema(const std::string &tableName)
     //cout << "[recordManager] before buffer.insert" << endl;
 
     addr = buffer.insert(addr, insertvalue);
-    cout << addr.dataaddr << endl;
+    //cout << addr.dataaddr << endl;
     return addr.dataaddr;
 
     //cout << "[recordManager] after buffer.insert" << endl;

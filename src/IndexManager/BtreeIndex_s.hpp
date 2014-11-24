@@ -92,6 +92,9 @@ public:
         char* s = new char[fp.datalen];
         x.writeToFile(s);
         struct DataAddr fp1;
+
+        //cout << "fp.addr = " << fp.dataaddr << endl;
+
         fp1 = buff.insert (fp,s);
         delete[] s;
         return fp1.dataaddr;
@@ -109,6 +112,7 @@ public:
         char* s = new char[fp.datalen];
         x.writeToFile (s);
         fp.dataaddr = p;
+//        cout << "[b]" <<fp.dataaddr<<endl;
         buff.update(fp,s);
         delete[] s;
     }
@@ -125,6 +129,8 @@ public:
             return ans;
         }
         temp = firstloc;
+        ans.clear();
+        if (temp==0) return ans;
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
@@ -149,6 +155,8 @@ public:
             return ans;
         }
         temp = firstloc;
+        ans.clear();
+        if (temp==0) return ans;
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
@@ -195,7 +203,7 @@ public:
             }
             return temp;
         }
-        //else std::cout<<"error in index findleaf"<<std::endl;
+        // std::cout<<"error in index findleaf"<<std::endl;
         return 0;
     }
     std::list<filepoint> findbigeq(const string &key){
@@ -203,6 +211,8 @@ public:
         filepoint temp;
         std::list<filepoint> ans;
         temp = findLeaf (key);
+        ans.clear();
+        if (temp==0) return ans;
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
@@ -223,6 +233,8 @@ public:
         filepoint temp;
         temp = findLeaf (key);
         std::list<filepoint> ans;
+        ans.clear();
+        if (temp==0) return ans;
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
@@ -241,6 +253,8 @@ public:
         filepoint temp;
         std::list<filepoint> ans;
         temp = findLeaf (key);
+        ans.clear();
+        if (temp==0) return ans;
         tempnode = readFromFile (temp);
         if (tempnode.getLeaf ()==0) {
             //std::cout<<"wrong in findless"<<std::endl;
@@ -284,6 +298,9 @@ public:
                 }
                 newnode.setChild (ORDERs,parentnode.getChild (ORDERs));
                 filepoint newp = writeToFile (newnode);
+
+//                cout << "newp = " << newp << endl;
+
                 string newkey = parentnode.getKeyValue (ORDERs-1);
                 parentnode.removeKey (ORDERs-1,ORDERs);
                 updateFile (parent,parentnode);

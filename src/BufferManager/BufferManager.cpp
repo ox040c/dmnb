@@ -62,7 +62,7 @@ int BufferManager::get_pageid(FilePtr addr)
 	if (page[i].call_time == -1)
 	{
 		page_id = i;
-		read_from_file(page_id, addr);
+        read_from_file(page_id, addr);
 		return page_id;
 	}
 
@@ -112,6 +112,8 @@ vector< int> readdeleted(string name)
 
 FilePtr BufferManager::insert(const FilePtr &addr, const char * data) //通过DataAddr决定插入的文件
 {
+    //cout << "[BM::insert] calling" << endl;
+
 	FilePtr result = addr;
      int blocknum;
     vector< int> deleted;
@@ -120,6 +122,9 @@ FilePtr BufferManager::insert(const FilePtr &addr, const char * data) //通过Da
 	//表格中有空间可以做插入，直接插入所对应的位置
 	if (deleted.size() != 0)
 	{
+
+//        cout << "[BM] deleted.size() != 0" << endl << "\tdeleted[0] = " << deleted[0] << endl;
+
 		result.dataaddr = deleted[0];
 		deleted.erase(deleted.begin());//把表中的数据再写回文件中
 		writedeleted(result.filename, deleted);
@@ -131,8 +136,14 @@ FilePtr BufferManager::insert(const FilePtr &addr, const char * data) //通过Da
 	file.seekg(0,ios::beg);
 	//将表格中的信息块数据更新
     file.read((char *)&blocknum, sizeof( int));
+
+//    cout << "[BM] Before ++, blocknum = " << blocknum << endl;
+
 	blocknum++;
 	file.seekp(0,ios::beg);
+
+//    cout << "[BM] file.write: " << blocknum << endl;
+
     file.write((char *)&blocknum, sizeof( int));
 	file.close();
 	result.dataaddr = 4096 * blocknum;
@@ -157,7 +168,8 @@ void BufferManager::search(const FilePtr &addr, char * ReturnDate)//数据通过
 	int page_id = -1;
      int offset;
 
-	page_id = get_pageid(addr);
+//    cout << "[bm]:" << addr.filename <<" " <<addr.dataaddr<<endl;
+    page_id = get_pageid(addr);
 	offset = addr.dataaddr - page[page_id].pages_addr;
 
 	page[page_id].call_time++;

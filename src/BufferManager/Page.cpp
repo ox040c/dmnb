@@ -19,6 +19,8 @@ void Page::read_from_file()
 		throw runtime_error( "there is no such file:" + filename );
 	}
 //	infile.seekg(pages_addr, ios::beg);
+//    cout << "[page]:" << filename <<endl;
+//    cout << "[page]:" << pages_addr <<endl;
 	fseek(infile, pages_addr, SEEK_SET);
 //	infile.read(data, 4096);
 	fread(data, 4096, 1, infile);
@@ -35,7 +37,13 @@ void Page::write_to_file()
 //	outfile.open(filename.c_str(), ios::in | ios::out | ios::binary );
 	outfile = fopen(filename.c_str(), "r+b");
 //	outfile.seekp(pages_addr, ios::beg);
-	fseek(outfile, pages_addr, SEEK_SET);
+//    cout << "[page]:" << filename <<endl;
+//    cout << "[page]:" << pages_addr <<endl;
+    if (!outfile) {
+        return;
+        //dirty dirty
+    }
+    fseek(outfile, pages_addr, SEEK_SET);
 //	outfile.write(data, 4096);
 	fwrite(data, 4096, 1, outfile);
 	call_time = -1;

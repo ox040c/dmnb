@@ -1767,7 +1767,7 @@ PlanList& parse(string str) {
     }
 
     // open a file handle to a particular file:
-    FILE *myfile = fopen("temp.sql", "r");
+    FILE *myfile = fopen("output.sql", "r");
     // make sure it is valid:
     if (!myfile) {
         cout << "I can't open temp.sql file!" << endl;

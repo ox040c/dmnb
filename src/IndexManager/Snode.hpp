@@ -113,7 +113,7 @@ public:
         for (int i=0;i<keynum+1;i++){
             if (p==childpoint[i]) return i;
         }
-        return -1;
+        return 0;
     }
 
     filepoint getChild(int i) const{
