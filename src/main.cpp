@@ -77,7 +77,13 @@ int main() {
 
             if (str == " exit;" || str == " exit") break;
             if (str == " " ) break;
-
+            
+            if ( str.substr(0, 4) == "exec" ) {
+                str.erase(0, 5); str.erase(str.length() -1, 1);
+                cout << str; break;
+            }
+            
+            
             PlanList& plist = parse(str);
 
             // call api according to plist
