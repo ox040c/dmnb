@@ -54,9 +54,14 @@ quit|QUIT { return QUIT; }
 '(\\.|''|[^'\n])*' |
 \"(\\.|\"\"|[^"\n])*\" {
 char temp[257]; 
+
+//cout << "flex string_v token" << endl;
+//cout.flush();
 if (strlen(yytext) > 256) cout << "warn: too long a string, truncated\n";
 strcpy(temp, yytext + 1);
 temp[strlen(temp) - 1 > 255? 255: strlen(temp) - 1] = 0;
+
+//cout << "flex copy value" << endl;
 yylval.sval = strdup(temp); 
 return STRING;
 }

@@ -20,14 +20,21 @@ void API::checkEntry(const std::string &tableName, const Entry &entry) {
         if (i->type != att.type)
             throw runtime_error("Type of attribute not match");
         if (catalogManager.isAttUnique(tableName, j)) {
-            Condition con = att;
-            att.name = indexManager.getIndexName(tableName, att.name);
+            Condition con = *i;
             con.op = EQUAL;
+            con.type = att.type;
 
-            cout << "[API::checkEntry] att.name = " << att.name << endl;
+            //cout << "[API::checkEntry] att.name = " << att.name << endl;
 
-            if (indexManager.select(tableName, con).size() > 0) // FIXME
-                throw runtime_error("Key value confilt");
+            string indexName = indexManager.getIndexName(tableName, att.name);
+            cout << "[API::checkEntry] indexName = " << indexName << endl;
+            cout << "[API::checkEntry] con.type = " << con.type <<
+                    "\n\tcon.op = " << con.op <<
+                    "\n\tcon.intv = " << con.intv <<
+                    endl;
+
+            if (indexManager.select(indexName, con).size() > 0) // FIXME
+                throw runtime_error("Key value conflict");
         }
     }
 }
@@ -47,7 +54,7 @@ void API::createTable(const std::string &tableName, TableDefinition &data) {
         for (TableDefinition::iterator i = data.begin(); i != data.end(); ++i)
             if (i->isIndex) {
 
-                cout << "[API] create index: " << tableName <<" " << i->name << endl;
+                cout << "[API] create index: " << tableName <<"_" << i->name << endl;
 
                 indexManager.createIndex(tableName, i->name, tableName+"_"+i->name, i->type);
             }
@@ -104,7 +111,7 @@ void API::createIndex(const string &tableName,
             }
 
         }
-    } catch (exception &e) {
+    } catch (runtime_error const &e) {
         throw e;
     }
 #endif
@@ -121,7 +128,7 @@ void API::dropIndex(const std::string &indexName) {
         // } else {
             indexManager.dropIndex(indexName);
         }
-    catch (exception &e) { // FIXME
+    catch (runtime_error const &e) { // FIXME
             throw e;
     }
 #endif
@@ -164,7 +171,8 @@ void API::insertEntry(const string &tableName, Entry &entry) {
                 cout << "[API] after got indexName:" << indexName << endl;
 
                 if (!indexName.empty()) {
-                    cout << "[API] add index: " << indexName << endl;
+                    cout << "[API] add index: " << indexName << " value: " <<
+                            recordManager.getAttValue(tableName, pos, i->name, df).intv << endl;
                     indexManager.insert(indexName, pos,
                                         recordManager.getAttValue(tableName, pos, i->name, df));
                     cout << "[API] added index: " << indexName << endl;
@@ -174,7 +182,8 @@ void API::insertEntry(const string &tableName, Entry &entry) {
 
             cout << "[API] insertEntry finished!" << endl;
         }
-    } catch (exception &e) {
+    } catch (runtime_error const &e) {
+        // cerr << "[API] err: " << e.what() << endl;
         throw e;
     }
 #endif
@@ -314,7 +323,7 @@ int API::remove(const string &tableName) {
         // remove entries
         int total = recordManager.deleteEntry(tableName);
 
-        cout << "API delete"<<endl;
+        cout << "[API] delete"<<endl;
 
         return total;
     }

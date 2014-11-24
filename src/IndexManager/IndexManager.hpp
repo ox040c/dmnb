@@ -50,7 +50,9 @@ public:
             dataTypeList.clear ();
         }
     }
-    ~IndexManager(){}
+    ~IndexManager(){
+        save();
+    }
 
     void save(){
         std::ofstream ofile("IndexManager.txt");

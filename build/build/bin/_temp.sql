@@ -1,3 +1,6 @@
+create table x (sno int, primary key(sno));
+insert into x values(1);
+
 create table student (
     sno char(8),
     sname char(16) unique,

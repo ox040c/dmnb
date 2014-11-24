@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cstdio>
+#include <stdexcept>
 
 #include "parse.h"
 
@@ -118,7 +119,10 @@ int main() {
                         case DTBL: api.dropTable(tname); break;
                         case CIDX: api.createIndex(tname, wlist.begin()->name,
                                            wlist.begin()->strv); break;
-                        case INSV: api.insertEntry(tname, wlist); break;
+                        case INSV:
+                            cout << "[main] api.insertEntry calling..." << endl;
+
+                            api.insertEntry(tname, wlist); break;
                         case DIDX: api.dropIndex(tname); break;
                         default: cerr << "unhandled action\n"; break;
                     }
