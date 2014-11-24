@@ -71,7 +71,7 @@ return STRING_v;
 '(\\.|[^'\n])*$ { printf("Unterminated string %s", yytext); }
 \"(\\.|[^"\n])*$ { printf("Unterminated string %s", yytext); }
 
-[a-zA-Z0-9]+      {
+[a-zA-Z0-9_]+      {
 	// we have to copy because we can't rely on yytext not changing underneath us:
 	yylval.sval = strdup(yytext);
 	return STRING;

@@ -37,8 +37,13 @@ void API::checkEntry(const std::string &tableName, const Entry &entry) {
                     endl;
             cout.flush();
 */
+            if (indexName.empty()) {
+                // pass
+                // dirty dirty
+            } else {
             if (indexManager.select(indexName, con).size() > 0) // FIXME
                 throw runtime_error("Key value conflict");
+            }
         }
     }
 }
@@ -58,7 +63,7 @@ void API::createTable(const std::string &tableName, TableDefinition &data) {
         for (TableDefinition::iterator i = data.begin(); i != data.end(); ++i)
             if (i->isIndex) {
 
-                cout << "[API] create index: " << tableName <<"_" << i->name << endl;
+                //cout << "[API] create index: " << tableName <<"_" << i->name << endl;
 
                 indexManager.createIndex(tableName, i->name, tableName+"_"+i->name, i->type);
             }
@@ -147,8 +152,8 @@ void API::insertEntry(const string &tableName, Entry &entry) {
         if (!catalogManager.isTableExist(tableName)) {
             throw runtime_error(tableName + " does not exist");
         } else {
-            cout << "[API] insertEntry: tableName = " << tableName << endl;
-            cout.flush();
+            //cout << "[API] insertEntry: tableName = " << tableName << endl;
+            //cout.flush();
 
             checkEntry(tableName, entry);
 
@@ -187,7 +192,7 @@ void API::insertEntry(const string &tableName, Entry &entry) {
 
             }
 
-            cout << "[API] insertEntry finished!" << endl;
+            //cout << "[API] insertEntry finished!" << endl;
         }
     } catch (runtime_error const &e) {
         // cerr << "[API] err: " << e.what() << endl;
@@ -263,6 +268,11 @@ void API::selectIdx(const string &tableName, const Conditions &conditions) {
                          insert_iterator<Idx>(resultSet, resultSet.begin()));
         idxSet = resultSet;
     }
+/*
+    indexManager.print();
+    cout << "----" << endl;
+    indexManager.showdetail();
+*/
 }
 
 const Entries &API::select(const std::string &tableName) {

@@ -132,6 +132,8 @@ public:
             return ans;
         }
         temp = firstloc;
+        ans.clear();
+        if (temp==0) return ans;
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
@@ -156,6 +158,8 @@ public:
             return ans;
         }
         temp = firstloc;
+        ans.clear();
+        if (temp==0) return ans;
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
@@ -204,6 +208,8 @@ public:
         filepoint temp;
         std::list<filepoint> ans;
         temp = findLeaf (key);
+        ans.clear();
+        if (temp==0) return ans;
         while (temp!=0){
             tempnode = readFromFile (temp);
             if (tempnode.getLeaf ()==0) {
@@ -242,6 +248,8 @@ public:
         filepoint temp;
         std::list<filepoint> ans;
         temp = findLeaf (key);
+        ans.clear();
+        if (temp==0) return ans;
         tempnode = readFromFile (temp);
         if (tempnode.getLeaf ()==0) {
             //std::cout<<"wrong in findless"<<std::endl;

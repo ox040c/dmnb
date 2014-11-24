@@ -35,6 +35,7 @@ public:
         if (ifile){
             while(!ifile.eof()){
                 ifile>>indexname>>tablename>>root>>first>>temptype;
+                if (indexname.empty()) continue; // dirty dirty
                 indexList[tablename] = indexname;
                 tableList[indexname] = tablename;
                 rootList[indexname] = root;
@@ -55,6 +56,7 @@ public:
     }
 
     void save(){
+        //print();
         std::ofstream ofile("IndexManager.txt");
         std::string indexname;
         NodeList::const_iterator  it=rootList.begin();
@@ -159,7 +161,7 @@ public:
 
     bool dropIndex(const std::string indexName){
         if (tableList.count (indexName) == 0){
-            std::cout<<"no index exit to drop!"<<std::endl;
+            //std::cout<<"no index exit to drop!"<<std::endl;
             return false;
         }
         DataType dtype = dataTypeList[indexName];
@@ -174,6 +176,11 @@ public:
             case utls::FLOAT:{
                 BtreeIndex<float> btree1(buffer,indexName,root,first);
                 btree1.drop ();
+                break;
+            }
+            case utls::CHAR:{
+                BtreeIndex_s btree2(buffer,indexName,root,first);
+                btree2.drop ();
                 break;
             }
         }
@@ -202,7 +209,7 @@ public:
         tableList[indexName] = tableName+"_"+colName;
     }
 
-    void insert(const std::string indexname,
+    void insert(const std::string &indexname,
                         const  int &pos,
                         const Condition &condition_info){
         //cout << "[IM] insert called!" << endl;
@@ -254,7 +261,7 @@ public:
 
         }
         }
-        cout << "[IM] insert finshed!" << endl;
+        //cout << "[IM] insert finshed!" << endl;
     }
 
 // 在 tableName 的 colName 上建立索引 indexName, 这个 colName 的类型是 type
