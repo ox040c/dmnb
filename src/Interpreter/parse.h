@@ -27,7 +27,8 @@ public:
 };
 typedef std::list<Plan> PlanList;
 
-PlanList& parse(std::string str);
+PlanList& parse(std::string str, int action = 0);
+
 
 void flushzz();
 

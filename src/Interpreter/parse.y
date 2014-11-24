@@ -202,7 +202,7 @@ var_list:
 
 %%
 
-PlanList& parse(string str) {
+PlanList& parse(string str, int action) {
 
     // put the input string into a temporary file
     // where the parser to read from
@@ -220,9 +220,11 @@ PlanList& parse(string str) {
 	throw runtime_error("par_file");
 
     }
-
+    string fileName;
+    if ( action ) fileName = str;
+    else fileName = "temp.sql";
     // open a file handle to a particular file:
-    FILE *myfile = fopen("temp.sql", "r");
+    FILE *myfile = fopen(fileName.c_str(), "r");
     // make sure it is valid:
     if (!myfile) {
         cout << "I can't open temp.sql file!" << endl;
