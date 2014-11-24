@@ -6,9 +6,9 @@
 #include <stdexcept>
 using namespace std;
 //calculate the datalen
-unsigned int RecordManager::get_datalen(const Entry &entry)
+ int RecordManager::get_datalen(const Entry &entry)
 {
-	unsigned int datalen = 0;
+     int datalen = 0;
 	list<Wrapper>::const_iterator it;
 	it = entry.begin();
 	while (it != entry.end())
@@ -29,7 +29,7 @@ unsigned int RecordManager::get_datalen(const Entry &entry)
 		}
 		it++;
 	}
-	unsigned int i;
+     int i;
     for (i = 1; i < datalen; i = i * 2);
 	if (i<=4096)
 	{
@@ -44,10 +44,10 @@ unsigned int RecordManager::get_datalen(const Entry &entry)
 	return datalen;
 }
 
-unsigned int RecordManager::get_datalen(std::string tableName)
+ int RecordManager::get_datalen(std::string tableName)
 {
-	unsigned int datalen;
-	map<string, unsigned int>::iterator it = datalenTable.find(tableName);
+     int datalen;
+    map<string,  int>::iterator it = datalenTable.find(tableName);
 	if (it != datalenTable.end())
 	{
 		datalen = it->second;
@@ -60,14 +60,14 @@ unsigned int RecordManager::get_datalen(std::string tableName)
 	return datalen;
 }
 
-unsigned int RecordManager::get_datalen_from_file(std::string tableName)
+ int RecordManager::get_datalen_from_file(std::string tableName)
 {
-	unsigned int result;
+     int result;
 	string filename = tableName + ".db";
 	ifstream infile(filename.c_str(), ios::binary | ios::in);
     if(!infile) throw runtime_error("the is no table:"+tableName);
-	infile.seekg(sizeof(unsigned int), ios::beg);
-	infile.read((char *)&result, sizeof(unsigned int));
+    infile.seekg(sizeof( int), ios::beg);
+    infile.read((char *)&result, sizeof( int));
 	infile.close();
 	return result;
 }
@@ -111,8 +111,8 @@ Wrapper RecordManager::get_wrapper(const std::list<Wrapper>::const_iterator it,c
 //use the info from API to bulid FilePtr
 FilePtr RecordManager::get_fileptr(
 	const std::string &tablename,
-	const unsigned int &dataaddr,
-	const unsigned int &datalen)
+    const  int &dataaddr,
+    const  int &datalen)
 {
 	FilePtr addr;
 	addr.filename = tablename + ".db";
@@ -121,7 +121,7 @@ FilePtr RecordManager::get_fileptr(
 	return addr;
 }
 //get the next address
-unsigned int  RecordManager::getNext(const  std::string &tableName, bool reset ,unsigned int pos)
+ int  RecordManager::getNext(const  std::string &tableName, bool reset , int pos)
 {
     //cout << "[RM] getNext called!" << endl;
 	FilePtr addr;
@@ -129,7 +129,7 @@ unsigned int  RecordManager::getNext(const  std::string &tableName, bool reset ,
     addr.dataaddr = pos;
 	if (reset)
 	{
-        addr = get_fileptr(tableName, (unsigned int)4096 - addr.datalen, addr.datalen);
+        addr = get_fileptr(tableName, ( int)4096 - addr.datalen, addr.datalen);
     }else
     {
         addr = get_fileptr(tableName, addr.dataaddr, addr.datalen);
@@ -149,7 +149,7 @@ void  RecordManager::creatSchema(
 	const Entry &entry)
 {
 	FilePtr addr;
-	unsigned int datalen;
+     int datalen;
 	datalen = get_datalen(entry);
 	addr = get_fileptr(tableName, 0, datalen);
 	buffer.create(addr);
@@ -157,7 +157,7 @@ void  RecordManager::creatSchema(
 //build a fileptr,then return the Entry
 Entry &  RecordManager::getValue(
 	const std::string &tableName,
-	const unsigned int &pos,
+    const  int &pos,
 	const Entry &entry)
 {
     //cout << "[RM] call" << endl;
@@ -165,7 +165,7 @@ Entry &  RecordManager::getValue(
     FilePtr addr;
 	int offset = 0;
 	char * value, *temp;
-	unsigned int datalen = get_datalen(tableName);
+     int datalen = get_datalen(tableName);
 	value = new char[datalen];
 	addr = get_fileptr(tableName, pos, datalen);
 
@@ -202,14 +202,14 @@ Entry &  RecordManager::getValue(
 //build a fileptr,then return the attribuye
 Wrapper  RecordManager::getAttValue(
 	const std::string &tableName,
-	const unsigned int &pos,
+    const  int &pos,
 	const std::string &colName,
 	const Entry &entry)
 {
 	FilePtr addr;
 	int offset = 0;
 	char * value, *temp;
-	unsigned int datalen = get_datalen(tableName);
+     int datalen = get_datalen(tableName);
 	value = new char[datalen];
 	addr = get_fileptr(tableName, pos, datalen);
 	buffer.search(addr, value);
@@ -250,7 +250,7 @@ Wrapper  RecordManager::getAttValue(
 //delete the entry pionted
 void  RecordManager::deleteEntry(
 	const std::string &tableName,
-	const unsigned int &pos)
+    const  int &pos)
 {
 	FilePtr addr;
 	addr = get_fileptr(tableName, pos, get_datalen(tableName));
@@ -284,7 +284,7 @@ bool RecordManager::dropSchema(const std::string &tableName)
 	return true;
 }
 
-unsigned int  RecordManager::insertEntry(
+ int  RecordManager::insertEntry(
 	const std::string &tableName,
 	const Entry &entry)
 {
@@ -336,7 +336,7 @@ unsigned int  RecordManager::insertEntry(
             offset += sizeof(float);
             break;
 		case utls::CHAR:
-            for (unsigned int i = 0; i < it->strv.length(); i++)
+            for ( int i = 0; i < it->strv.length(); i++)
 			{
 				temp[i] = it->strv[i];
 			}

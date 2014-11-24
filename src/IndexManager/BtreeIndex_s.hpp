@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 #include <list>
-typedef unsigned int filepoint;
+typedef  int filepoint;
 extern const int ORDERs;                   // B+树的阶（非根内结点的最小子树个数）
 extern const int MINNUM_KEYs;        // 最小键值个数
 extern const int MAXNUM_KEYs;      // 最大键值个数
@@ -178,13 +178,19 @@ public:
 //            tempnode.printData ();
 //            std::cout<<"___________________"<<std::endl;
             while (tempnode.getLeaf ()==0){
-//                std::cout<<"this filepoint"<<temp<<std::endl;
-//                tempnode.printData ();
+
+                //std::cout<<"this filepoint"<<temp<<std::endl;
+                //tempnode.printData ();
+
                 keyindex = tempnode.getKeyIndex (key);
                 keynum = tempnode.getKeyNum ();
+
+                std::cout << "[btree] findleaf nextp prv" << nextp << std::endl;
                 nextp = tempnode.getChild (keyindex);
+                std::cout << "[btree] findleaf nextp got" << nextp << std::endl;
                 father[nextp]=temp;
                 tempnode = readFromFile (nextp);
+
                 temp = nextp;
             }
             return temp;
@@ -304,19 +310,25 @@ public:
         Snode tempnode;
         filepoint temp;
         int keyindex;
+
+        std::cout << "[btree2] findLeaf" << endl;
         temp = findLeaf (key);
+
+        std::cout << "[btree2] readFromFile" << endl;
         tempnode = readFromFile (temp);
+
+        std::cout << "[btree2] getIndex" << endl;
         keyindex = tempnode.getKeyIndex (key);
 
         if (keyindex>0 && key == tempnode.getKeyValue (keyindex-1)){
             return false;
         }                                                                       //已经在树中
         if (tempnode.getKeyNum ()<MAXNUM_KEYs){   //不分裂插入
-//            std::cout<<"notspl::"<<std::endl;
+            std::cout<<"no split::"<<std::endl;
             insert_in_leaf(tempnode,key,data);
             updateFile (temp,tempnode);
         }else{                                  //裂开点
-//            std::cout<<"splite::"<<std::endl;
+            std::cout<<"split::"<<std::endl;
             Snode newnode;
             insert_in_leaf(tempnode,key,data);
             newnode.setLeaf (1);

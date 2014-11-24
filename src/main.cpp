@@ -121,6 +121,7 @@ int main() {
                                            wlist.begin()->strv); break;
                         case INSV:
                             cout << "[main] api.insertEntry calling..." << endl;
+                            cout.flush();
 
                             api.insertEntry(tname, wlist); break;
                         case DIDX: api.dropIndex(tname); break;

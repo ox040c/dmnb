@@ -1141,17 +1141,19 @@ case 31:
 YY_RULE_SETUP
 #line 55 "parse.l"
 {
-char temp[257]; 
 
-cout << "flex string_v token" << endl;
-cout.flush();
+/*
+char temp[257];
+//cout << "[lex] string_v token" << yytext << endl;
 if (strlen(yytext) > 256) cout << "warn: too long a string, truncated\n";
 strcpy(temp, yytext + 1);
 temp[strlen(temp) - 1 > 255? 255: strlen(temp) - 1] = 0;
 
-cout << "flex copy value" << endl;
-yylval.sval = strdup(temp); 
-return STRING;
+//cout << "[lex] copy value" << temp << endl;
+yylval.sval = strdup(temp);
+*/
+yylval.ssval = strdup(yytext); 
+return STRING_v;
 }
 	YY_BREAK
 case 32:
@@ -1159,7 +1161,7 @@ case 32:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 68 "parse.l"
+#line 71 "parse.l"
 { printf("Unterminated string %s", yytext); }
 	YY_BREAK
 case 33:
@@ -1167,12 +1169,12 @@ case 33:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 69 "parse.l"
+#line 72 "parse.l"
 { printf("Unterminated string %s", yytext); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 71 "parse.l"
+#line 74 "parse.l"
 {
 	// we have to copy because we can't rely on yytext not changing underneath us:
 	yylval.sval = strdup(yytext);
@@ -1181,52 +1183,52 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 77 "parse.l"
+#line 80 "parse.l"
 { return yytext[0]; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 79 "parse.l"
+#line 82 "parse.l"
 { yylval.comp_sign = utls::NO_LESS ; return OP; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 80 "parse.l"
+#line 83 "parse.l"
 { yylval.comp_sign = utls::NO_MORE ; return OP; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 81 "parse.l"
+#line 84 "parse.l"
 { yylval.comp_sign = utls::UNEQUAL ; return OP; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 82 "parse.l"
+#line 85 "parse.l"
 { yylval.comp_sign = utls::MORE ; return OP; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 83 "parse.l"
+#line 86 "parse.l"
 { yylval.comp_sign = utls::LESS ; return OP; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 84 "parse.l"
+#line 87 "parse.l"
 { yylval.comp_sign = utls::EQUAL ; return OP; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 86 "parse.l"
+#line 89 "parse.l"
 { cout << "mystery character " << yytext;
 //yyerror("mystery character '%c'", *yytext);
 }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 90 "parse.l"
+#line 93 "parse.l"
 ECHO;
 	YY_BREAK
-#line 1230 "lex.yy.c"
+#line 1232 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2236,7 +2238,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 90 "parse.l"
+#line 93 "parse.l"
 
 
 void flushzz() {

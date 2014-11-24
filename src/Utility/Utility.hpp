@@ -20,8 +20,8 @@ namespace utls {
 
 typedef struct DataAddr {
     std::string filename;
-    unsigned int dataaddr;
-    unsigned int datalen;
+     int dataaddr;
+     int datalen;
 } FilePtr;
 
 class Wrapper {

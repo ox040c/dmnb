@@ -12,6 +12,9 @@ using namespace std;
 // #define DEBUG
 
 void API::checkEntry(const std::string &tableName, const Entry &entry) {
+    cout << "[API::checkEntry] calling..." << endl;
+    cout.flush();
+
     int j=0;
     if (entry.size() != catalogManager.getTableDef(tableName).size())
         throw runtime_error("Number of attributes not match");
@@ -32,6 +35,7 @@ void API::checkEntry(const std::string &tableName, const Entry &entry) {
                     "\n\tcon.op = " << con.op <<
                     "\n\tcon.intv = " << con.intv <<
                     endl;
+            cout.flush();
 
             if (indexManager.select(indexName, con).size() > 0) // FIXME
                 throw runtime_error("Key value conflict");
@@ -144,6 +148,7 @@ void API::insertEntry(const string &tableName, Entry &entry) {
             throw runtime_error(tableName + " does not exist");
         } else {
             cout << "[API] insertEntry: tableName = " << tableName << endl;
+            cout.flush();
 
             checkEntry(tableName, entry);
 
@@ -172,7 +177,9 @@ void API::insertEntry(const string &tableName, Entry &entry) {
 
                 if (!indexName.empty()) {
                     cout << "[API] add index: " << indexName << " value: " <<
-                            recordManager.getAttValue(tableName, pos, i->name, df).intv << endl;
+                            recordManager.getAttValue(tableName, pos, i->name, df).strv << endl;
+                    cout.flush();
+
                     indexManager.insert(indexName, pos,
                                         recordManager.getAttValue(tableName, pos, i->name, df));
                     cout << "[API] added index: " << indexName << endl;
@@ -226,8 +233,8 @@ void API::gainIdx(const string &tableName, const Condition &condition, Idx &idx)
     idx.clear();
     string idxName = indexManager.getIndexName(tableName, condition.name);
     if (idxName.empty()) {
-        unsigned int ptr = recordManager.getNext(tableName, true,0);
-        while (ptr != -1) {
+         int ptr = recordManager.getNext(tableName, true,0);
+        while (ptr > 0) {
             Wrapper value = recordManager.getAttValue(tableName, ptr, condition.name, catalogManager.getTableDef(tableName));
             switch (value.type) {
             case INT:   if (check(value.intv, condition.op, condition.intv)) idx.insert(ptr); break;
@@ -237,7 +244,7 @@ void API::gainIdx(const string &tableName, const Condition &condition, Idx &idx)
             ptr = recordManager.getNext(tableName, false,ptr);
         }
     } else {
-        const list <unsigned int> &idxList = indexManager.select(idxName, condition);
+        const list < int> &idxList = indexManager.select(idxName, condition);
         idx.insert(idxList.begin(), idxList.end());
     }
 }
@@ -269,11 +276,11 @@ const Entries &API::select(const std::string &tableName) {
         cout << "[API] select * called!" << endl;
 
         result.clear();
-        unsigned int ptr = recordManager.getNext(tableName, true,0);
+         int ptr = recordManager.getNext(tableName, true,0);
 
         //cout << "[API] gotta! ptr = " << ptr << endl;
 
-        while (ptr != 0) {
+        while (ptr > 0) {
             //cout << "[API] ptr = " << ptr << endl;
             /*
             for (TableDefinition::const_iterator i = catalogManager.getTableDef(tableName).begin();

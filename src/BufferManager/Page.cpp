@@ -45,7 +45,7 @@ void Page::write_to_file()
 //
 //void Page::read_page(pagedata &info)
 //{
-//	for (unsigned int i = 0; i < info.datalen; i++)
+//	for ( int i = 0; i < info.datalen; i++)
 //	{
 //		info.data[i] = data[info.offset + i];
 //	}
@@ -53,7 +53,7 @@ void Page::write_to_file()
 //
 //void Page::write_page(const pagedata info)
 //{
-//	for (unsigned int i = 0; i < info.datalen; i++)
+//	for ( int i = 0; i < info.datalen; i++)
 //	{
 //		data[info.offset+i] = info.data[i];
 //	}

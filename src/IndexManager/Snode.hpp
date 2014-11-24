@@ -2,7 +2,7 @@
 #define SNODE_H
 #include "string.h"
 #include "string"
-typedef unsigned int filepoint;
+typedef int filepoint;
 const int ORDERs = 7;     //7              // B+树的阶（非根内结点的最小子树个数）
 const int MINNUM_KEYs = ORDERs-1;        // 最小键值个数
 const int MAXNUM_KEYs = 2*ORDERs-1;      // 最大键值个数
@@ -57,7 +57,7 @@ public:
             s=s+256;
         }
         for (int i=0;i<MAXNUM_CHILDs;++i){
-            *((unsigned int*)(s)) = childpoint[i];
+            *(( int*)(s)) = childpoint[i];
             s=s+8;
         }
     }
@@ -71,7 +71,7 @@ public:
             s=s+256;
         }
         for (int i=0;i<MAXNUM_CHILDs;++i){
-            childpoint[i]= *((unsigned int*)(s));
+            childpoint[i]= *(( int*)(s));
             s=s+8;
         }
     }

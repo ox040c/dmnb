@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 #include <list>
-typedef unsigned int filepoint;
+typedef int filepoint;
 extern const int ORDER;                   // B+树的阶（非根内结点的最小子树个数）
 extern const int MINNUM_KEY;        // 最小键值个数
 extern const int MAXNUM_KEY;      // 最大键值个数

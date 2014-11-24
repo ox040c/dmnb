@@ -1,7 +1,7 @@
 #ifndef TNODE_H_
 #define TNODE_H_
 
-typedef unsigned int filepoint;
+typedef int filepoint;
 const int ORDER = 100;                   // B+树的阶（非根内结点的最小子树个数）
 const int MINNUM_KEY = ORDER-1;        // 最小键值个数
 const int MAXNUM_KEY = 2*ORDER-1;      // 最大键值个数
@@ -55,7 +55,7 @@ public:
             s=s+12;
         }
         for (int i=0;i<MAXNUM_CHILD;++i){
-            *((unsigned int*)(s)) = childpoint[i];
+            *(( int*)(s)) = childpoint[i];
             s=s+8;
         }
     }
@@ -69,7 +69,7 @@ public:
             s=s+12;
         }
         for (int i=0;i<MAXNUM_CHILD;++i){
-            childpoint[i]= *((unsigned int*)(s));
+            childpoint[i]= *(( int*)(s));
             s=s+8;
         }
     }

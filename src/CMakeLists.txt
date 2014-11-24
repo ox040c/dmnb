@@ -76,7 +76,8 @@ file(GLOB SrcList
 
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x") # required for unrestricted unions
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -p") # add gprof information
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+# add gprof information
 
 ADD_EXECUTABLE(main ${src_main} ${SrcList})
 target_link_libraries(main

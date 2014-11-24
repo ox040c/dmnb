@@ -16,7 +16,7 @@
 //using namespace utls;
 
 class API {
-typedef std::set <unsigned int> Idx;
+typedef std::set < int> Idx;
 
 private:
     RecordManager &recordManager;

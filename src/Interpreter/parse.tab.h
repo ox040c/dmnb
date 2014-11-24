@@ -47,33 +47,34 @@ extern int yydebug;
   {
     INT_v = 258,
     FLOAT_v = 259,
-    STRING = 260,
-    OP = 261,
-    ADD = 262,
-    AND = 263,
-    CHAR_t = 264,
-    CREATE = 265,
-    DATABASE = 266,
-    DATABASES = 267,
-    DELETE = 268,
-    DROP = 269,
-    EXIT = 270,
-    FLOAT_type = 271,
-    FROM = 272,
-    INTO = 273,
-    INDEX = 274,
-    INSERT = 275,
-    INT_type = 276,
-    KEY = 277,
-    NOT = 278,
-    ON = 279,
-    PRIMARY = 280,
-    SELECT = 281,
-    TABLE = 282,
-    VALUES = 283,
-    UNIQUE = 284,
-    WHERE = 285,
-    QUIT = 286
+    STRING_v = 260,
+    STRING = 261,
+    OP = 262,
+    ADD = 263,
+    AND = 264,
+    CHAR_t = 265,
+    CREATE = 266,
+    DATABASE = 267,
+    DATABASES = 268,
+    DELETE = 269,
+    DROP = 270,
+    EXIT = 271,
+    FLOAT_type = 272,
+    FROM = 273,
+    INTO = 274,
+    INDEX = 275,
+    INSERT = 276,
+    INT_type = 277,
+    KEY = 278,
+    NOT = 279,
+    ON = 280,
+    PRIMARY = 281,
+    SELECT = 282,
+    TABLE = 283,
+    VALUES = 284,
+    UNIQUE = 285,
+    WHERE = 286,
+    QUIT = 287
   };
 #endif
 
@@ -87,9 +88,10 @@ union YYSTYPE
 	int ival;
 	float fval;
 	char *sval;
+	char *ssval;
     int comp_sign;
 
-#line 93 "parse.tab.h" /* yacc.c:1909  */
+#line 95 "parse.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

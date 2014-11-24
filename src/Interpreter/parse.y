@@ -38,6 +38,7 @@ std::string tname;
 	int ival;
 	float fval;
 	char *sval;
+	char *ssval;
     int comp_sign;
 }
 
@@ -45,6 +46,7 @@ std::string tname;
 // by convention), and associate each with a field of the union:
 %token <ival> INT_v
 %token <fval> FLOAT_v
+%token <ssval> STRING_v
 %token <sval> STRING
 %token <comp_sign> OP
 
@@ -160,8 +162,10 @@ condition_list:
     ;
 
 expr:
-      STRING OP STRING { apnd(Wrapper(string($1),
-        (op_t) $2, string($3)));
+      STRING OP STRING_v { string temp($3); 
+            temp.erase(temp.length() - 1, 1); temp.erase(0, 1); //cout << temp;
+            apnd(Wrapper(string($1),
+        (op_t) $2, string(temp.c_str())));
     }
     | STRING OP INT_v { apnd(Wrapper(string($1),
         (op_t) $2, $3));
@@ -182,7 +186,11 @@ insert_stmt:
     ;
 
 var:
-      STRING { apnd(Wrapper(utls::CHAR, string($1))); }
+      STRING_v { 
+            string temp($1);
+            temp.erase(0, 1); temp.erase(temp.length() - 1, 1); 
+            apnd(Wrapper(utls::CHAR, string(temp.c_str()))); 
+      }
     | FLOAT_v { apnd(Wrapper(utls::FLOAT, $1)); }
     | INT_v { apnd(Wrapper(utls::INT, $1)); }
     ;
@@ -225,17 +233,17 @@ PlanList& parse(string str) {
     // set flex to read from it instead of defaulting to STDIN:
     yyin = myfile;
     plist.clear();
-    // parse through the input until there is no more:
+    // parse through the input until there is no 
     
+    //flushzz();
     try {
         do {
             clear();
-            flushzz();
             yyparse();
         } while (!feof(yyin));
     }
     catch (logic_error const &e) {
-        cerr << "exit in sql, exec stmt before exit\n";
+        cerr << e.what() << "exit in sql, exec stmt before exit\n";
     }
     
     fclose(myfile);

@@ -14,7 +14,7 @@ private:
 	int min_call();
 	int get_pageid(FilePtr);//找到有要寻找的page，若不存在这将block读入到page，返回pageID
 	void read_from_file(int,FilePtr);
-    std::vector<unsigned int>::const_iterator find(const std::vector<unsigned int> &deleted, unsigned int num);
+    std::vector< int>::const_iterator find(const std::vector< int> &deleted,  int num);
 	void addblock(FilePtr addr);
 public:
 	BufferManager();

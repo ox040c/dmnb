@@ -80,12 +80,12 @@ void BufferManager::read_from_file(int page_id, FilePtr addr)
 	page[page_id].read_from_file();
 }
 
-void writedeleted(string name, vector <unsigned int> deleted)
+void writedeleted(string name, vector < int> deleted)
 {
 	ofstream outfile;
 	string filename = "del_" + name + ".txt";
 	outfile.open(filename.c_str());
-	vector<unsigned int>::iterator it;
+    vector< int>::iterator it;
 	for (it = deleted.begin(); it != deleted.end(); it++)
 	{
 		outfile << *it << " ";
@@ -93,11 +93,11 @@ void writedeleted(string name, vector <unsigned int> deleted)
 	outfile.close();
 }
 
-vector<unsigned int> readdeleted(string name)
+vector< int> readdeleted(string name)
 {
     fstream infile;
-	unsigned int  key;
-	vector<unsigned int> result;
+     int  key;
+    vector< int> result;
 	string filename = "del_" + name + ".txt";
     infile.open(filename.c_str(), ios::in | ios::out);
     //if(!infile) cout << "can't open" <<endl;
@@ -113,8 +113,8 @@ vector<unsigned int> readdeleted(string name)
 FilePtr BufferManager::insert(const FilePtr &addr, const char * data) //通过DataAddr决定插入的文件
 {
 	FilePtr result = addr;
-	unsigned int blocknum;
-	vector<unsigned int> deleted;
+     int blocknum;
+    vector< int> deleted;
 
 	deleted = readdeleted(result.filename);
 	//表格中有空间可以做插入，直接插入所对应的位置
@@ -130,10 +130,10 @@ FilePtr BufferManager::insert(const FilePtr &addr, const char * data) //通过Da
 	file.open(result.filename.c_str(), ios::in | ios::out | ios::binary );
 	file.seekg(0,ios::beg);
 	//将表格中的信息块数据更新
-	file.read((char *)&blocknum, sizeof(unsigned int));
+    file.read((char *)&blocknum, sizeof( int));
 	blocknum++;
 	file.seekp(0,ios::beg);
-	file.write((char *)&blocknum, sizeof(unsigned int));
+    file.write((char *)&blocknum, sizeof( int));
 	file.close();
 	result.dataaddr = 4096 * blocknum;
 
@@ -145,7 +145,7 @@ FilePtr BufferManager::insert(const FilePtr &addr, const char * data) //通过Da
 	outfile.close();
 	update(result, data);
 	//新建了一个表格之后
-	for (unsigned int i = 1; i*result.datalen < 4096; i++)
+    for ( int i = 1; i*result.datalen < 4096; i++)
 	{
 		deleted.push_back(result.dataaddr + i*result.datalen);
 	}
@@ -155,13 +155,13 @@ FilePtr BufferManager::insert(const FilePtr &addr, const char * data) //通过Da
 void BufferManager::search(const FilePtr &addr, char * ReturnDate)//数据通过ReturnDate 返回
 {
 	int page_id = -1;
-	unsigned int offset;
+     int offset;
 
 	page_id = get_pageid(addr);
 	offset = addr.dataaddr - page[page_id].pages_addr;
 
 	page[page_id].call_time++;
-//	for (unsigned int i = 0; i < addr.datalen; i++)
+//	for ( int i = 0; i < addr.datalen; i++)
 //		ReturnDate[i] = page[page_id].data[offset + i];
 	memcpy(ReturnDate, page[page_id].data + offset, addr.datalen);
 }
@@ -181,20 +181,20 @@ void BufferManager::update(const FilePtr &addr, const char * data)//直接将需
 	page_id = get_pageid(addr);
 	offset = addr.dataaddr - page[page_id].pages_addr;
 	page[page_id].call_time++;
-//	for (unsigned int i = 0; i < addr.datalen; i++)
+//	for ( int i = 0; i < addr.datalen; i++)
 //		page[page_id].data[offset + i] = date[i];
 	memcpy(page[page_id].data + offset, data, addr.datalen);
 }
 
 void BufferManager::create(const FilePtr &addr)
 {
-	unsigned int datalen = addr.datalen;
-	unsigned int blocknum = 0;
+     int datalen = addr.datalen;
+     int blocknum = 0;
 	char * ch,*temp;
 	ch = new char[4096];
-	temp = ch + sizeof(unsigned int);
+    temp = ch + sizeof( int);
 
-	for (int i = 0; i < sizeof(unsigned int); i++)
+    for (int i = 0; i < sizeof( int); i++)
 	{
 		ch[i] = *((char *)&blocknum + i);
 		temp[i] = *((char *)&datalen+i);
@@ -216,8 +216,8 @@ void BufferManager::create(const FilePtr &addr)
 
 FilePtr BufferManager::nextAddr(const FilePtr &addr)
 {
-	vector <unsigned int> deleted;
-    unsigned int blocknum;
+    vector < int> deleted;
+     int blocknum;
 	FilePtr result = addr;
 
     //cout << "[BM] result.filename: " << result.filename << endl;
@@ -229,12 +229,12 @@ FilePtr BufferManager::nextAddr(const FilePtr &addr)
 	fstream file;
 	file.open(result.filename.c_str(), ios::in | ios::binary | ios::out);
 	file.seekg(0, ios::beg);
-	file.read((char *)&blocknum, sizeof(unsigned int));
+    file.read((char *)&blocknum, sizeof( int));
 	file.close();
 
 	result.dataaddr += result.datalen;
      //cout << result.dataaddr <<endl;
-    vector<unsigned int>::const_iterator it = find(deleted, result.dataaddr);
+    vector< int>::const_iterator it = find(deleted, result.dataaddr);
 	while (it != deleted.end())
 	{
 		result.dataaddr += result.datalen;
@@ -247,9 +247,9 @@ FilePtr BufferManager::nextAddr(const FilePtr &addr)
 	return result;
 }
 
-vector<unsigned int>::const_iterator BufferManager::find(const vector<unsigned int> &deleted,unsigned int num)
+vector< int>::const_iterator BufferManager::find(const vector< int> &deleted, int num)
 {
-    vector<unsigned int>::const_iterator it = deleted.begin();
+    vector< int>::const_iterator it = deleted.begin();
 	while (it != deleted.end())
 	{
 		if (*it == num) return it;

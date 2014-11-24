@@ -12,7 +12,7 @@
 using namespace utls;
 using namespace std;
 class IndexManager{
-typedef std::map<std::string,unsigned int> NodeList;
+typedef std::map<std::string, int> NodeList;
 typedef std::map<std::string,std::string> StringList;
 typedef std::map<std::string,DataType> TypeList;
 public:
@@ -31,7 +31,7 @@ public:
         std::string indexname,tablename;
         DataType dtype;
         int temptype;
-        unsigned int root,first;
+         int root,first;
         if (ifile){
             while(!ifile.eof()){
                 ifile>>indexname>>tablename>>root>>first>>temptype;
@@ -203,13 +203,16 @@ public:
     }
 
     void insert(const std::string indexname,
-                        const unsigned int &pos,
+                        const  int &pos,
                         const Condition &condition_info){
+        cout << "[IM] insert called!" << endl;
+        cout.flush();
+
         DataType dtype = dataTypeList[indexname];
         filepoint root = rootList[indexname];
         filepoint first = headList[indexname];
         switch (dtype){
-        case INT:{
+        case utls::INT:{
             int key0 = condition_info.intv;
             BtreeIndex<int> btree0(buffer,indexname,root,first);
 //                cout<<"BtreeIndex"<<key0<<pos<<" "<<root<<" "<<first<<endl;
@@ -228,17 +231,33 @@ public:
         }
             break;
         case utls::CHAR:{
+            cout << "[IM] insert CHAR begin ..." << endl;
+            cout.flush();
+
+
             string key2 = condition_info.strv;
             BtreeIndex_s btree2(buffer,indexname,root,first);
+
+            cout << "[IM] btree2 created!" << endl;
+            cout.flush();
+
             btree2.insert (key2,pos);
+
+            cout << "[IM] btree2.insert OK!" << endl;
+            cout.flush();
+
             rootList[indexname] = btree2.getRoot ();
             headList[indexname] = btree2.getFirst ();
+
+            cout << "[IM] insert done!" << endl;
+            cout.flush();
+
         }
         }
     }
 
 // 在 tableName 的 colName 上建立索引 indexName, 这个 colName 的类型是 type
-    std::list <unsigned int> &select(const std::string &indexName,const Condition &condition_info){
+    std::list < int> &select(const std::string &indexName,const Condition &condition_info){
         ans.clear ();
         DataType dtype = dataTypeList[indexName];
         filepoint root = rootList[indexName];
