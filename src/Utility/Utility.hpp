@@ -130,6 +130,7 @@ class Wrapper {
 
     public:
         void debug() const{
+            /*
             std::cout << name;
             switch (op) {
                 case utls::EQUAL:   std::cout << " == "; break;
@@ -140,14 +141,15 @@ class Wrapper {
                 case utls::NO_LESS: std::cout << " >= "; break;
                 case utls::TOTAL_OP:std::cout << ""; break;
             }
+            */
 
             switch (type) {
-                case utls::INT:   std::cout << " int " << intv; break;
-                case utls::FLOAT: std::cout << " float "<< floatv; break;
-                case utls::CHAR:  std::cout << " char "<< strv; break;
+                case utls::INT:   std::cout << intv << '\t'; break;
+                case utls::FLOAT: std::cout << floatv << '\t'; break;
+                case utls::CHAR:  std::cout << strv << '\t'; break;
                 case utls::TOTAL_TYPE:  std::cout << ""<< strv; break;
             }
-            std::cout << std::endl;
+            //std::cout << std::endl;
         }
 };
 

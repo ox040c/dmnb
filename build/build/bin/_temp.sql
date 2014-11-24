@@ -32,13 +32,11 @@ insert into student values ('312010xxxx', 'koalas', 20, 'F');
 insert into student values ('3120101984','jt',21,'M');
 insert into student values ('3120102066','xkt',21,'M');
 
-
+select * from student;
 
 
 --create index stunameidx on student ( sname  );
 --drop index stunameidx;
-
---select * from student;
 
 
 

@@ -13,6 +13,7 @@
 
 
 using namespace std;
+void printList (const Entries& rlist, const TableDefinition& tdef);
 
 int main() {
 
@@ -91,28 +92,20 @@ int main() {
                 try {
                     switch(acti) {
                         case DELV: if ( !wlist.size() ) {
-                                       cout << "del item num:" << api.remove(tname) << endl;
+                                       cout << "del item num: " << api.remove(tname) << endl;
                                    }
                                    else {
-                                       cout << "del item num:" << api.remove(tname, wlist) << endl;
+                                       cout << "del item num: " << api.remove(tname, wlist) << endl;
                                    }
                                    break;
 
                         case SELV: if ( !wlist.size() ) {
                                        const Entries rlist = api.select(tname);
-                                       for (Entries::const_iterator i = rlist.begin();
-                                               i != rlist.end(); i++)
-                                           for (Entry::const_iterator j = i->begin();
-                                                   j != i->end(); j++)
-                                               j->debug();
+                                       printList(rlist, catlogManager.getTableDef(tname));
                                    }
                                    else {
                                        const Entries rlist = api.select(tname, wlist);
-                                       for (Entries::const_iterator i = rlist.begin();
-                                               i != rlist.end(); i++)
-                                           for (Entry::const_iterator j = i->begin();
-                                                   j != i->end(); j++)
-                                               j->debug();
+                                       printList(rlist, catlogManager.getTableDef(tname));
                                    }
                                    break;
                         case CTBL: api.createTable(tname, wlist); break;
@@ -120,10 +113,10 @@ int main() {
                         case CIDX: api.createIndex(tname, wlist.begin()->name,
                                            wlist.begin()->strv); break;
                         case INSV:
-                            cout << "[main] api.insertEntry calling..." << endl;
-                            cout.flush();
+                                   //cout << "[main] api.insertEntry calling..." << endl;
+                                   cout.flush();
 
-                            api.insertEntry(tname, wlist); break;
+                                   api.insertEntry(tname, wlist); break;
                         case DIDX: api.dropIndex(tname); break;
                         default: cerr << "unhandled action\n"; break;
                     }
@@ -152,8 +145,31 @@ int main() {
         return(-1);
 
     }
-    
+
     cout << byee;
     return 0;
 }
 
+void printList (const Entries& rlist, const TableDefinition& tdef) {
+
+    if ( rlist.size() ) {
+        for (TableDefinition::const_iterator i = tdef.begin();
+                i != tdef.end(); i++) {
+            //if ( i->type == utls::CHAR) cout.width(i->intv);
+            //else cout.width(10);
+            cout << i->name << "    ";
+        }
+
+        cout << endl;
+    }
+
+    for (Entries::const_iterator i = rlist.begin();
+            i != rlist.end(); i++) {
+        for (Entry::const_iterator j = i->begin();
+                j != i->end(); j++) {
+            j->debug();
+        }
+        cout << endl;
+    }
+    cout << rlist.size() << " rows selected" << endl;
+}
